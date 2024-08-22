@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./css/Navbar.css";
+
+@layer base {
+   /*TELEPATH PAGE*/
+  .telepathBox {
+    @apply bg-slate-200 text-slate-800 shadow-lg;
+  }
+}
+
+.App {
+  text-align: center;
+}
+
+
+.telepathBox {
+  width: 500px;
+  height: auto;
+  margin: auto;
+  margin-top: 40px;
+  padding: 10px 5px 40px 5px;
+  border-radius: 50px;
+}
+
+.list {
+  height: auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-top: 50px;
+  flex-direction: column;
+}
+
+.listItem {
+  width: 400px;
+  height: 50px;
+  display: flex;
+  margin: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+
+.listItem h2 {
+  width: 100%;
+  text-align: left;
+}
+
+.listItem button {
+  width: auto;
+  height: 20px;
+  text-align: right;
+}
+

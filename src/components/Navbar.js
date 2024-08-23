@@ -5,7 +5,7 @@ import '../css/Navbar.css';
 import { Sidebar } from '../components/Sidebar';
 
 export const Navbar = () => {
-    const [sidebarWidth, setSidebarWidth] = useState(-400);
+    const [sidebarWidth, setSidebarWidth] = useState(-300);
 
     return (
         <div className="navbar"> 

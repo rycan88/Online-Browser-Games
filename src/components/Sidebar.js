@@ -1,11 +1,15 @@
 import '../css/Sidebar.css';
+
+import { IoMdClose } from "react-icons/io";
+
 import { useRef, useEffect } from "react";
+import { SidebarData } from './SidebarData';
 
 export const Sidebar = (props) => {
     let sidebarRef = useRef(null);
 
     const closeSidebar = () => {
-        props.setSidebarWidth(-400);
+        props.setSidebarWidth(-300);
     }
 
     useEffect(() => {
@@ -25,13 +29,27 @@ export const Sidebar = (props) => {
         <div className="sidebar" ref={sidebarRef} style={{left: props.sidebarWidth+"px"}}>
             <div className="flex flex-col">
                 <div className="flex place-content-center items-center w-full h-[50px]">
-                    <h1 className="text-2xl">Cool Games Online</h1>
-                    <button className="absolute right-[10px] w-[50px] h-[50px] text-2xl"
-                            onClick={closeSidebar}>X</button>
+                    <h1 className="text-lg">Cool Games Online</h1>
+                    <IoMdClose className="closeButton"
+                            onClick={closeSidebar}/>
                 </div>
-                <div className="w-full h-[50px] bg-red-700">
-                </div>
+                <ul>
+                  {(SidebarData.map((val, key) => {
+                    const extraFormatting = val.isMain ? "pl-[30px] border-t-[0.1px]" : "pl-[80px]"
+                    return (
+                      <li key={key}>
+                        <div className={`sidebarItem ${extraFormatting}`} 
+                             id = {window.location.pathname === val.link ? "active" : ""}
+                             onClick={() => { window.location.pathname = val.link}}
+                        >
+                          {val.icon && <div className="pr-2">{val.icon}</div>}
+                          <h2>{val.title}</h2>
+                        </div>
 
+                      </li>
+                    );
+                  }))}
+                </ul>
 
             </div>
         </div>

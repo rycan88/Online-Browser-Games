@@ -26,6 +26,9 @@ module.exports = {
       backgroundImage: {
         'wooden-table': "url(../images/wooden-table-bg.jpg)",
         'timer': "url(../images/timer.svg)",
+        'cog': "url(../images/cog-8-tooth.svg)",
+        'info': "url(../images/info.svg)",
+        'hamburger': "url(../images/hamburger-icon.svg)",
       }
 
     },

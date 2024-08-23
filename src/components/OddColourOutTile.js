@@ -3,13 +3,13 @@ import { OddColourOutContext } from "../pages/OddColourOut";
 import '../css/OddColourOut.css';
 
 export const OddColourOutTile = (props) => {
-    const { isGameRunning, CorrectAction, WrongAction } = useContext(OddColourOutContext);
+    const { isGameRunning, correctAction, wrongAction } = useContext(OddColourOutContext);
     const clickAction = (isOdd) => {
 
         if (isOdd) {
-            CorrectAction();
+            correctAction();
         } else {
-            WrongAction();
+            wrongAction();
         }
     }
 

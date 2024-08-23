@@ -53,7 +53,7 @@ export const OddColourOut = () => {
 
 
 
-    const CorrectAction = () => {
+    const correctAction = () => {
         setIsGameRunning(true);
         const newScore = score + level * 10;
         const newLevel = level + 1;
@@ -71,74 +71,133 @@ export const OddColourOut = () => {
         if (bestScore <= newScore) {
             setBestScore(newScore);
         }
-        ReconfigureBoard(newOffset, newGridSize);
+        reconfigureBoard(newOffset, newGridSize);
     }
 
-    const WrongAction = () => {
+    const wrongAction = () => {
         setIsGameRunning(false);
-        ShowSolution();
+        showSolution();
     }
 
-    const ReconfigureBoard = (offset, gridSize) => {
+    const reconfigureBoard = (offset, gridSize) => {
         setColorTransition("none");
         setColors(generateRandomColours(offset))
         setOddOne(Math.floor(Math.random() * (gridSize ** 2)));
         setBoxBgColor(startValues.bgColor);
     }
 
-    const ShowSolution = () => {
+    const showSolution = () => {
         setColorTransition(startValues.transition);
         setBoxBgColor(colors[0]);
         setIsShow(false);
     }
 
-    const HideSolution = () => {
+    const hideSolution = () => {
         setColorTransition(startValues.transition);
         setBoxBgColor(startValues.bgColor);
         setIsShow(true);
     }
 
-    const RestartAction = () => {
+    const restartAction = () => {
         setIsGameRunning(true);
         setGridSize(startValues.gridSize);
         setOffset(startValues.offset);
         setLevel(startValues.level);
         setScore(startValues.score);
-        ReconfigureBoard(startValues.offset, startValues.gridSize);
+        reconfigureBoard(startValues.offset, startValues.gridSize);
     }
 
+    // TODO: Style Overlays
+    const SettingsOverlay = () => {
+        return (
+            <>
+                <legend>Time Controls</legend>
+                <div>
+                    <div>
+                        <input type="radio" id="lightning" name="timeControl"/>
+                        <label for="lightning">Lightning</label>
+                    </div>
+                    <div>                        
+                        <input type="radio" id="min" name="timeControl"/>
+                        <label for="min">1 Min</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="endless" name="timeControl" checked/>
+                        <label for="endless">Endless</label>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
+    const InfoOverlay = () => {
+        return (
+            <>
+                <h1>Odd Colour Out Game</h1>
+                <p>
+                    Click on the tile that is a different colour from the rest. Every 10 levels, the difficulty will increase by increasing the grid size and decrease the difference in colours.
+                    You can change the time constraints in the settings.
+                </p>
+            </>
+        )
+    }
+
+    const settingsOverlay = SettingsOverlay();
+    const infoOverlay = InfoOverlay();
     const [isOverlayOpen, setIsOverlayOpen] = useState(true);
+    const [overlay, setOverlay] = useState(InfoOverlay);
+
+    const toggleOverlay = () => {
+        setIsOverlayOpen(!isOverlayOpen);
+    }
 
     return (
-        <OddColourOutContext.Provider value={{ isGameRunning, CorrectAction, WrongAction}}>
+        <OddColourOutContext.Provider value={{ isGameRunning, correctAction, wrongAction}}>
             <div className="page">
-                <div className="gridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
-                    <OddColourOutGrid colors={colors} oddOne={oddOne} gridSize={gridSize}/>
+                <div className="topToolBar">
+                    <div className="infoIcon" 
+                        onClick={() => {
+                            setOverlay(infoOverlay);
+                            toggleOverlay();
+                        }}>
+                    </div>
+                    <div className="settingsIcon" 
+                        onClick={() => {
+                            setOverlay(settingsOverlay);
+                            toggleOverlay();
+                        }}>
+                    </div>
                 </div>
-                <div className="infoBoard">
-                    <div className="infoTexts">
-                        <div>
-                            <h2>Level: {level}</h2>
-                            <h2>Score: {score}</h2>
-                            <h2>Personal Best: {bestScore}</h2>
-                        </div>
-                        <div>
-                            { isGameRunning ?
-                                <div className="oddColourOutTimer">
-                                    <div className="timerClockIcon"></div>
-                                    <h3>&infin;</h3>
-                                </div>
-                            : 
-                            <div className="flex flex-col">
-                                {
-                                    isShow ? 
-                                        <button className="bg-sky-900" onClick={ShowSolution}> Show </button>
-                                        :
-                                        <button className="bg-sky-900" onClick={HideSolution}> Hide </button>
-                                }
-                                <button className="bg-red-800" onClick={RestartAction}> Restart </button>
+                <div className="content">
+                    <div className="gridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
+                        <OddColourOutGrid colors={colors} oddOne={oddOne} gridSize={gridSize}/>
+                    </div>
+                    <div className="infoBoard">
+                        <div className="infoTexts">
+                            <div>
+                                <h2>Level: {level}</h2>
+                                <h2>Score: {score}</h2>
+                                <h2>Personal Best: {bestScore}</h2>
                             </div>
-                            }
+                            <div>
+                                { isGameRunning ?
+                                    // TODO: Add timer
+                                    <div className="oddColourOutTimer">
+                                        <div className="timerClockIcon"></div>
+                                        <h3>&infin;</h3>
+                                    </div>
+                                : 
+                                <div className="flex flex-col">
+                                    {
+                                        isShow ? 
+                                            <button className="bg-sky-900" onClick={showSolution}> Show </button>
+                                            :
+                                            <button className="bg-sky-900" onClick={hideSolution}> Hide </button>
+                                    }
+                                    <button className="bg-red-800" onClick={restartAction}> Restart </button>
+                                </div>
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -147,8 +206,7 @@ export const OddColourOut = () => {
                     isOpen={isOverlayOpen}
                     onClose={() => setIsOverlayOpen(!isOverlayOpen)}
                 >
-                    <h1>Hello</h1>
-                    <button className="bg-red-800">Hey</button>
+                {overlay}
             </Overlay>
         </OddColourOutContext.Provider>
     );

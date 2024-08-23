@@ -1,9 +1,22 @@
 import { Link } from 'react-router-dom';
+import { useState } from "react";
+
+import '../css/Navbar.css';
+import { Sidebar } from '../components/Sidebar';
 
 export const Navbar = () => {
+    const [sidebarWidth, setSidebarWidth] = useState(0);
+
     return (
         <div className="navbar"> 
-            <div className="leftNavItems">
+            <Sidebar sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth}/>
+            <div className="sidebarDiv" 
+                onClick={() => {
+                    setSidebarWidth(400);
+                }}>
+                <div />
+            </div>
+            <div className="leftNavItems">                
                 <Link to="/">Home</Link>
                 <Link to="/telepath">Telepath</Link>
                 <Link to="/odd_colour_out">Odd Colour Out</Link>

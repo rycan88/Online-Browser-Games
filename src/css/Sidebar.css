@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .sidebar {
+        @apply h-full bg-slate-950 absolute top-[0] left-[0] z-40 transition-all ease-in-out duration-500;
+    }
+}

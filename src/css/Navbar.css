@@ -5,7 +5,19 @@
 @layer base {
   /* NAVIGATION BAR*/
   .navbar {
-    @apply bg-sky-900 text-slate-200 w-full h-[60px] items-center flex shadow-lg;
+    @apply bg-sky-900 text-slate-200 w-full h-navbar items-center flex shadow-lg;
+  }
+
+  .sidebarDiv {
+    @apply w-[50px] h-[40px] m-2 ml-[30px] flex place-content-center items-center border-slate-800 border-[1px] cursor-pointer;
+  }
+
+  .sidebarDiv div {
+    @apply bg-hamburger w-[30px] h-[30px];   
+  }
+
+  .sidebarDiv:hover {
+    @apply bg-black/25;   
   }
 
   .leftNavItems {

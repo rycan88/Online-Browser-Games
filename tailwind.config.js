@@ -23,6 +23,9 @@ module.exports = {
       colors: {
 
       },
+      height: {
+        'navbar': "60px",
+      },
       backgroundImage: {
         'wooden-table': "url(../images/wooden-table-bg.jpg)",
         'timer': "url(../images/timer.svg)",

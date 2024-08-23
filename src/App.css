@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "./css/Navbar.css";
-
 @layer base {
    /*TELEPATH PAGE*/
   .telepathBox {

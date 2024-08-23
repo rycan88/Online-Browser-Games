@@ -5,14 +5,14 @@ import '../css/Navbar.css';
 import { Sidebar } from '../components/Sidebar';
 
 export const Navbar = () => {
-    const [sidebarWidth, setSidebarWidth] = useState(0);
+    const [sidebarWidth, setSidebarWidth] = useState(-400);
 
     return (
         <div className="navbar"> 
             <Sidebar sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth}/>
             <div className="sidebarDiv" 
                 onClick={() => {
-                    setSidebarWidth(400);
+                    setSidebarWidth(0);
                 }}>
                 <div />
             </div>

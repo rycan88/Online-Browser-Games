@@ -167,12 +167,12 @@ export const OddColourOut = () => {
                         }}>
                     </div>
                 </div>
-                <div className="oddColourContent">
-                    <div className="oddColourGridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
+                <div className="content">
+                    <div className="gridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
                         <OddColourOutGrid colors={colors} oddOne={oddOne} gridSize={gridSize}/>
                     </div>
-                    <div className="oddColourInfoBoard">
-                        <div className="oddColourInfoTexts">
+                    <div className="infoBoard">
+                        <div className="infoTexts">
                             <div>
                                 <h2>Level: {level}</h2>
                                 <h2>Score: {score}</h2>
@@ -181,7 +181,7 @@ export const OddColourOut = () => {
                             <div>
                                 { isGameRunning ?
                                     // TODO: Add timer
-                                    <div className="oddColourOutTimer">
+                                    <div className="timer">
                                         <div className="timerClockIcon"></div>
                                         <h3>&infin;</h3>
                                     </div>
@@ -200,7 +200,9 @@ export const OddColourOut = () => {
                         </div>
                     </div>
                 </div>
+                <div className="entirePage bg-black/40 z-[-10]"></div>
             </div>
+
             <Overlay
                     isOpen={isOverlayOpen}
                     onClose={() => setIsOverlayOpen(!isOverlayOpen)}

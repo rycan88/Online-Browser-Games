@@ -19,7 +19,8 @@
         @apply flex flex-row h-[50px] py-4 items-center cursor-pointer border-slate-400;
     }
 
-    .sidebarItem:hover, #active {
+    .sidebarItem:hover,
+    #active {
         @apply bg-slate-800;
     }
 }

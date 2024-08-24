@@ -13,7 +13,7 @@ export const OddColourOutGrid = (props) => {
     }
 
     return (
-        <div className="oddColourGrids">
+        <div className="grids">
             {tiles.map((tile) => {
                 return tile;
             })}

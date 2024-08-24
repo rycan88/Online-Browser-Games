@@ -4,32 +4,55 @@
 
 @layer base {
     .telepathPage {
-        @apply bg-galaxy items-center z-[-20];
-    }
-    
-    .telepathWord {
-        @apply text-white text-5xl my-5 border-b-2
-    }
+        @apply bg-galaxy items-center z-[-20] text-white;
 
-    .list {
-        @apply flex flex-col items-center w-[450px] h-[60vh] bg-slate-200 text-slate-800 shadow-2xl rounded-3xl;
-    }
 
-    .listItem {
-        @apply w-full h-[50px] flex items-center;
-    }
+        .telepathPrompt {
+            @apply text-5xl my-5 border-b-2;
+        }
 
-    .listItem h2 {
-        @apply text-left w-full;
-    }
-      
-    .listItem button {
-        @apply text-right;
+        .leftContainer {
+            @apply flex flex-col place-content-around w-[400px] h-[90%];
+        }
+
+        .middleContainer {
+            @apply w-[400px] h-[90%];
+        }
+
+        .rightContainer {
+            @apply flex flex-col place-content-around w-[400px] h-[90%];
+        }
+
+        .inputContainer {
+            @apply flex w-full;
+        }
+
+        .telepathInput {
+            @apply w-[80%] h-[50px] mb-4 pl-4 text-black;
+        }
+
+        .addButton {
+            @apply w-[20%] h-[50px] bg-sky-800 text-slate-200;
+        }
+
+        .list {
+            @apply flex flex-col items-center w-full h-[60vh] px-2 text-slate-200 overflow-auto;
+        }
+
+        .listItem {
+            @apply w-full h-[50px] flex items-center place-content-between;
+        }
+
+        .listItem h2 {
+            @apply text-left text-xl font-bold;
+        }
+
+        .listItemDelete {
+            @apply w-[30px] h-[30px];
+        }
+
+        .listItemDelete:hover {
+            @apply cursor-pointer bg-red-600;
+        }
     }
 }
-  
-
-  
-  
-
-  

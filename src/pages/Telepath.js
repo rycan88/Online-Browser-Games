@@ -3,6 +3,8 @@ import Axios from "axios";
 
 import { TelepathWords } from "../TelepathWords";
 import { ListItem } from "../components/ListItem";
+import { FaCheck } from "react-icons/fa6";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import '../css/Telepath.css';
 
@@ -39,23 +41,67 @@ export const Telepath = () => {
         }
     }
 
+    const TeamScores = () => {
+        return (
+            <div className="w-full h-[25%] p-4 bg-slate-900/30 mb-1 rounded-2xl">
+                <h2 className="text-3xl">Team 1</h2>
+                <div className="flex w-full h-[75%]">
+                    <div className="flex flex-col place-content-around items-start pl-4 w-[60%] h-full">
+                        <div className="flex w-full h-[50%] items-center">
+                            <h2 className="text-xl">Player 1</h2>
+                            <FaCheck className="h-full ml-4 mt-[2px] text-green-400"/>
+                        </div>
+                        <div className="flex w-full h-[50%] items-center">
+                            <h2 className="text-xl">Player 2</h2>
+                            <AiOutlineLoading3Quarters className="h-full ml-4 mt-[2px] animate-spin text-red-600"/>
+                        </div>
+                    </div>
+                    <h2 className="text-3xl w-[40%] h-full place-content-center items-center">10</h2>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="telepathPage entirePage">
-            <h2 className="telepathWord">APPLES</h2>
-            <div className="flex">
-                <input type='text' ref={fName} placeholder="Type a word..." onChange={ handleTextChange } onKeyDown={ keyDownHandler }></input>
-                <button onClick={ addWord }>Add Word</button>
-            </div>
-            <div className="telepathBox">
-
-                <div className="list">
-                    {pickedWords.map((word) => {
-                        return <ListItem word={word} removeItem={removeItem}/>;
-                    })}
+            <h2 className="telepathPrompt">APPLES</h2>
+            <div className="flex place-content-evenly w-full h-full">
+                <div className="leftContainer">
+                    {TeamScores()}
+                    {TeamScores()}
                 </div>
+                <div className="middleContainer">
+                    <div className="inputContainer">
+                        <input className="telepathInput"
+                                type='text' 
+                                ref={fName} 
+                                placeholder="Type a word..." 
+                                onChange={ handleTextChange } 
+                                onKeyDown={ keyDownHandler }>    
+                        </input>
+                        <button className="addButton"
+                                onClick={ addWord }>
+                            Enter
+                        </button>
+                    </div>
+                    <div className="box">
 
+                        <div className="list">
+                            {pickedWords.map((word) => {
+                                return <ListItem word={word} removeItem={removeItem}/>;
+                            })}
+                        </div>
+
+                    </div>
+                </div>
+                <div className="rightContainer">
+                    {TeamScores()}
+                    {TeamScores()}
+                    {TeamScores()}
+                    {TeamScores()}
+                </div>
             </div>
-            <div className="entirePage bg-black/40 z-[-10]"></div>
+            <div className="entirePage bg-black/50 z-[-10]"></div>
         </div>
 
     );

@@ -6,7 +6,6 @@ export function Overlay({ isOpen, onClose, children }) {
             {isOpen ? (
                 <div className="overlay"> 
                     <div className="background" onClick={(e) => {
-                            console.log(e.target.classList);
                             if (e.target.classList.contains("background")) {
                                 onClose();
                             }

@@ -88,7 +88,6 @@ npm install react-hook-form yup
 npm install @hookform/resolvers
 
 
-
 Tailwind Installation
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
@@ -99,3 +98,6 @@ npm i react-scripts@latest
 Useful VSCode Extensions
 -GitHub Pull Requests
 -Tailwind CSS IntelliSense
+
+Install react Icons
+npm install react-icons

@@ -28,6 +28,7 @@ module.exports = {
       },
       backgroundImage: {
         'wooden-table': "url(../images/wooden-table-bg.jpg)",
+        'galaxy': "url(../images/galaxy-bg.jpg)",
         'timer': "url(../images/timer.svg)",
         'cog': "url(../images/cog-8-tooth.svg)",
         'info': "url(../images/info.svg)",

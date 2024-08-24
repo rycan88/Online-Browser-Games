@@ -22,7 +22,6 @@ export const OddColourOut = () => {
     
         const b_i = lst.indexOf(Math.max(r,g,b));
         lst[b_i] < offset ? lst[b_i] += offset : lst[b_i] -= offset;            
-        //const i = Math.floor(Math.random() * 3);
 
         const modified_color = `rgb(${lst[0]},${lst[1]},${lst[2]})`;
         
@@ -144,7 +143,7 @@ export const OddColourOut = () => {
 
     const settingsOverlay = SettingsOverlay();
     const infoOverlay = InfoOverlay();
-    const [isOverlayOpen, setIsOverlayOpen] = useState(true);
+    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
     const [overlay, setOverlay] = useState(InfoOverlay);
 
     const toggleOverlay = () => {
@@ -153,7 +152,7 @@ export const OddColourOut = () => {
 
     return (
         <OddColourOutContext.Provider value={{ isGameRunning, correctAction, wrongAction}}>
-            <div className="page">
+            <div className="oddColourPage entirePage">
                 <div className="topToolBar">
                     <div className="infoIcon" 
                         onClick={() => {
@@ -168,12 +167,12 @@ export const OddColourOut = () => {
                         }}>
                     </div>
                 </div>
-                <div className="content">
-                    <div className="gridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
+                <div className="oddColourContent">
+                    <div className="oddColourGridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
                         <OddColourOutGrid colors={colors} oddOne={oddOne} gridSize={gridSize}/>
                     </div>
-                    <div className="infoBoard">
-                        <div className="infoTexts">
+                    <div className="oddColourInfoBoard">
+                        <div className="oddColourInfoTexts">
                             <div>
                                 <h2>Level: {level}</h2>
                                 <h2>Score: {score}</h2>

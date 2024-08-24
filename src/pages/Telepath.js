@@ -4,18 +4,13 @@ import Axios from "axios";
 import { TelepathWords } from "../TelepathWords";
 import { ListItem } from "../components/ListItem";
 
+import '../css/Telepath.css';
+
 export const Telepath = () => {
     // typedWord is the text in the input
     // pickedWords are the words added to the list
     const [typedWord, setTypedWord] = useState(""); 
     const [pickedWords, setPickedWords] = useState([]);
-    
-    /*
-    const fetchData = (excuseType) => {
-      Axios.get(`excuser.herokuapp.com/v1/excuse/${excuseType}/`).then((res) => {
-        setExcuse(res.data.excuse);
-      });
-    }*/
   
     const fName = useRef('');
 
@@ -44,16 +39,25 @@ export const Telepath = () => {
         }
     }
 
-    return <div className="telepathBox">
-        <h1>TELEPATH</h1>
-        <input type='text' ref={fName} placeholder="Type a word..." onChange={ handleTextChange } onKeyDown={ keyDownHandler }></input>
-        <button onClick={ addWord }>Add Word</button>
-        <div className="list">
-            {pickedWords.map((word) => {
-                return <ListItem word={word} removeItem={removeItem}/>;
-            })}
+    return (
+        <div className="telepathPage entirePage">
+            <h2 className="telepathWord">APPLES</h2>
+            <div className="flex">
+                <input type='text' ref={fName} placeholder="Type a word..." onChange={ handleTextChange } onKeyDown={ keyDownHandler }></input>
+                <button onClick={ addWord }>Add Word</button>
+            </div>
+            <div className="telepathBox">
+
+                <div className="list">
+                    {pickedWords.map((word) => {
+                        return <ListItem word={word} removeItem={removeItem}/>;
+                    })}
+                </div>
+
+            </div>
+            <div className="entirePage bg-black/40 z-[-10]"></div>
         </div>
 
-    </div>
+    );
 }
 

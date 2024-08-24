@@ -3,54 +3,33 @@
 @tailwind utilities;
 
 @layer base {
-   /*TELEPATH PAGE*/
-  .telepathBox {
-    @apply bg-slate-200 text-slate-800 shadow-lg;
+  .entirePage {
+    @apply flex flex-col h-[calc(100vh-60px)] w-full bg-cover absolute;
   }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .App {
   text-align: center;
-}
-
-
-.telepathBox {
-  width: 500px;
-  height: auto;
-  margin: auto;
-  margin-top: 40px;
-  padding: 10px 5px 40px 5px;
-  border-radius: 50px;
-}
-
-.list {
-  height: auto;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding-top: 50px;
-  flex-direction: column;
-}
-
-.listItem {
-  width: 400px;
-  height: 50px;
-  display: flex;
-  margin: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: left;
-}
-
-
-.listItem h2 {
-  width: 100%;
-  text-align: left;
-}
-
-.listItem button {
-  width: auto;
-  height: 20px;
-  text-align: right;
 }
 

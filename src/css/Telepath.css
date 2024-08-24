@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .telepathPage {
+        @apply bg-galaxy items-center z-[-20];
+    }
+    
+    .telepathWord {
+        @apply text-white text-5xl my-5 border-b-2
+    }
+
+    .list {
+        @apply flex flex-col items-center w-[450px] h-[60vh] bg-slate-200 text-slate-800 shadow-2xl rounded-3xl;
+    }
+
+    .listItem {
+        @apply w-full h-[50px] flex items-center;
+    }
+
+    .listItem h2 {
+        @apply text-left w-full;
+    }
+      
+    .listItem button {
+        @apply text-right;
+    }
+}
+  
+
+  
+  
+
+  

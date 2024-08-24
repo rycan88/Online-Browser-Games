@@ -17,7 +17,7 @@ export const OddColourOutTile = (props) => {
     const size = 90 / (gridSize);
 
     return (
-        <div className="tile" 
+        <div className="oddColourTile" 
             style={{width: size+"%", height: size+"%", backgroundColor: props.color}}
             onClick={() => {
             if (isGameRunning) {

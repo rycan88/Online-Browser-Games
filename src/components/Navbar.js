@@ -18,8 +18,8 @@ export const Navbar = () => {
             </div>
             <div className="leftNavItems">                
                 <Link to="/">Home</Link>
-                <Link to="/telepath">Telepath</Link>
-                <Link to="/odd_colour_out">Odd Colour Out</Link>
+                <Link to="/games">Games</Link>
+                <Link to="/about">About</Link>
             </div>
             <div className="middleNavItems">
                 <Link to="/">Cool Games Online</Link>

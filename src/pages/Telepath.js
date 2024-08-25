@@ -68,11 +68,11 @@ export const Telepath = () => {
                     <div className="flex flex-col place-content-around items-start pl-4 w-[60%] h-full">
                         <div className="flex w-full h-[50%] items-center">
                             <h2 className="text-xl">You</h2>
-                            { ReadyStatusIcon(didSendWords) }
+                            { ReadyStatusIcon(selfReady) }
                         </div>
                         <div className="flex w-full h-[50%] items-center">
                             <h2 className="text-xl">Teammate</h2>
-                            { ReadyStatusIcon(didReceiveWords) }
+                            { ReadyStatusIcon(teamReady) }
                         </div>
                     </div>
                     <h2 className="text-3xl w-[40%] h-full place-content-center items-center">10</h2>
@@ -84,12 +84,8 @@ export const Telepath = () => {
     const [partnerWords, setPartnerWords] = useState(["RED", "ORANGE", "BANANA", "LIME", "MANGO", "FRUIT"]);
     const [sharedWords, setSharedWords] = useState([])
     const [shouldShowResults, setShouldShowResults] = useState(false);
-    const [didSendWords, setDidSendWords] = useState(false);
-    const [didReceiveWords, setDidReceiveWords] = useState(false);
-    const submitEvent = () => {
-        sendMessage();
-        refreshShared();
-    }
+    const [selfReady, setSelfReady] = useState(false);
+    const [teamReady, setTeamReady] = useState(false);
 
     const refreshShared = () => {
         const newSharedWords = [];
@@ -105,10 +101,7 @@ export const Telepath = () => {
     const getNextWord = () => {
         setPrompt(generateNewWord);
         setWordLimit(generateWordLimit);
-        setShouldShowResults(false);
         setMyWords([]);
-        setDidSendWords(false);
-        setDidReceiveWords(false);
     }
 
     const MiddleInputTitle = () => {
@@ -132,22 +125,40 @@ export const Telepath = () => {
         )   
     }
 
-    const sendMessage = () => {
-        socket.emit("send_message", { message: myWords});
-        setDidSendWords(true);
+    const submitEvent = () => {
+        sendWords();
+    }
+
+    const sendWords = () => {
+        socket.emit("send_telepath_words", { message: myWords});
+        setSelfReady(true);
     };
 
     useEffect(() => {
-        socket.on("receive_message", (data) => {
-            console.log("Message Received");
-            setDidReceiveWords(true);
+        socket.on("receive_telepath_words", (data) => {
+            setTeamReady(true);
             setPartnerWords(data.message);
         })
     }, [socket]);
 
-    if (didReceiveWords && didSendWords && !shouldShowResults) {
-        refreshShared();
-        setShouldShowResults(true);
+    const sendReady = () => {
+        socket.emit("send_telepath_ready", {});
+        setSelfReady(true);
+    };
+
+    useEffect(() => {
+        socket.on("receive_telepath_ready", (data) => {
+            setTeamReady(true);
+        })
+    }, [socket]);
+
+
+    if (selfReady && teamReady) {
+        shouldShowResults ? getNextWord() : refreshShared();
+
+        setShouldShowResults(!shouldShowResults);
+        setSelfReady(false);
+        setTeamReady(false);
     }
 
     return (
@@ -168,7 +179,7 @@ export const Telepath = () => {
                     </div>
                     <div className="flex flex-row place-content-center">
                         <button className="submitWords"
-                             onClick={shouldShowResults ? getNextWord : submitEvent}
+                             onClick={shouldShowResults ? sendReady : submitEvent}
                         >
                             <h2>{shouldShowResults ? "Next Word" : "Submit Words"}</h2>
                         </button>

@@ -6,9 +6,8 @@
     .telepathPage {
         @apply bg-galaxy items-center z-[-20] text-white;
 
-
         .telepathPrompt {
-            @apply text-5xl my-5 border-b-2;
+            @apply text-5xl my-4;
         }
 
         .leftContainer {
@@ -20,7 +19,7 @@
         }
 
         .rightContainer {
-            @apply flex flex-col place-content-around w-[400px] h-[90%];
+            @apply w-[400px] h-[90%];
         }
 
         .inputContainer {
@@ -32,19 +31,23 @@
         }
 
         .addButton {
-            @apply w-[20%] h-[50px] bg-sky-800 text-slate-200;
+            @apply w-[20%] h-[50px] bg-sky-800;
+        }
+
+        .wordlistTitle {
+            @apply w-[100%] h-[50px] text-3xl mb-4 underline place-content-center;
         }
 
         .list {
-            @apply flex flex-col items-center w-full h-[60vh] px-2 text-slate-200 overflow-auto;
+            @apply flex flex-col items-center w-full h-[60vh] overflow-auto;
         }
 
         .listItem {
-            @apply w-full h-[50px] flex items-center place-content-between;
+            @apply w-full h-[50px] pl-4 pr-2 flex items-center place-content-between;
         }
 
         .listItem h2 {
-            @apply text-left text-xl font-bold;
+            @apply text-left text-xl font-bold w-[80%] overflow-scroll;
         }
 
         .listItemDelete {
@@ -53,6 +56,10 @@
 
         .listItemDelete:hover {
             @apply cursor-pointer bg-red-600;
+        }
+
+        .submitWords {
+            @apply h-[80px] bg-sky-800 place-content-evenly px-4 text-2xl rounded-3xl;
         }
     }
 }

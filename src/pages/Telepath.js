@@ -9,11 +9,22 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import '../css/Telepath.css';
 
 export const Telepath = () => {
+
+    const generateNewWord = () => {
+        return TelepathWords[Math.floor(Math.random() * TelepathWords.length)].toUpperCase();
+    }
+
+    const generateWordLimit = () => {
+        return Math.floor(Math.random() * 5) + 5;
+    }
+
     // typedWord is the text in the input
     // pickedWords are the words added to the list
     const [typedWord, setTypedWord] = useState(""); 
-    const [pickedWords, setPickedWords] = useState([]);
-  
+    const [myWords, setMyWords] = useState([]);
+    const [prompt, setPrompt] = useState(generateNewWord());
+    const [wordLimit, setWordLimit] = useState(generateWordLimit());
+
     const fName = useRef('');
 
     const handleTextChange = (event) => {
@@ -22,17 +33,17 @@ export const Telepath = () => {
 
     const addWord = () => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
-        if (typedWord === "" || pickedWords.includes(typedWord.toUpperCase(), 0)) {
+        if (typedWord === "" || myWords.includes(typedWord.toUpperCase(), 0)) {
             return
         }
 
         fName.current.value = "";
         setTypedWord("");
-        setPickedWords([...pickedWords, typedWord.toUpperCase()]);
+        setMyWords([...myWords, typedWord.toUpperCase()]);
     }
 
     const removeItem = (chosenWord) => {
-        setPickedWords(pickedWords.filter((word) => word !== chosenWord));
+        setMyWords(myWords.filter((word) => word !== chosenWord));
     }
 
     const keyDownHandler = (event) => {
@@ -62,43 +73,90 @@ export const Telepath = () => {
         );
     }
 
+    const partnerWords = ["RED", "ORANGE", "BANANA", "LIME", "MANGO", "FRUIT"];
+    const [sharedWords, setSharedWords] = useState([])
+    const [shouldShowResults, setShouldShowResults] = useState(false);
+    const submitEvent = () => {
+        const newSharedWords = [];
+        setShouldShowResults(true);
+        myWords.forEach((word) => {
+            if (partnerWords.includes(word)) {
+                newSharedWords.push(word);
+            }
+        });
+
+        setSharedWords(newSharedWords)
+    }
+
+    const getNextWord = () => {
+        setPrompt(generateNewWord);
+        setWordLimit(generateWordLimit);
+        setShouldShowResults(false);
+        setMyWords([])
+    }
+
+    const MiddleInputTitle = () => {
+        return (
+            shouldShowResults ?
+            <div className="wordlistTitle">Your words</div>
+            :
+            <>
+                <input className="telepathInput"
+                        type='text' 
+                        ref={fName} 
+                        placeholder="Type a word..." 
+                        onChange={ handleTextChange } 
+                        onKeyDown={ keyDownHandler }>    
+                </input>
+                <button className="addButton"
+                        onClick={ addWord }>
+                    Enter
+                </button>
+            </>
+        )   
+    }
+
     return (
         <div className="telepathPage entirePage">
-            <h2 className="telepathPrompt">APPLES</h2>
+            <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="flex place-content-evenly w-full h-full">
                 <div className="leftContainer">
+                    {TeamScores()}
                     {TeamScores()}
                     {TeamScores()}
                 </div>
                 <div className="middleContainer">
                     <div className="inputContainer">
-                        <input className="telepathInput"
-                                type='text' 
-                                ref={fName} 
-                                placeholder="Type a word..." 
-                                onChange={ handleTextChange } 
-                                onKeyDown={ keyDownHandler }>    
-                        </input>
-                        <button className="addButton"
-                                onClick={ addWord }>
-                            Enter
-                        </button>
+                        {MiddleInputTitle()}
                     </div>
-                    <div className="box">
-
-                        <div className="list">
-                            {pickedWords.map((word) => {
-                                return <ListItem word={word} removeItem={removeItem}/>;
-                            })}
-                        </div>
-
+                    <div className="list">
+                        {myWords.map((word) => {
+                            return <ListItem word={word} removeItem={removeItem} shouldShowResults={shouldShowResults} sharedWords={sharedWords}/>;
+                        })}
+                    </div>
+                    <div className="flex flex-row place-content-center">
+                        <button className="submitWords"
+                             onClick={shouldShowResults ? getNextWord : submitEvent}
+                        >
+                            <h2>{shouldShowResults ? "Next Word" : "Submit Words"}</h2>
+                        </button>
                     </div>
                 </div>
                 <div className="rightContainer">
-                    {TeamScores()}
-                    {TeamScores()}
-                    {TeamScores()}
-                    {TeamScores()}
+                    {
+                    shouldShowResults ?
+                    <>
+                        <div className="wordlistTitle">Teammate's words</div>
+                                    
+                        <div className="list">
+                            {partnerWords.map((word) => {
+                                return <ListItem word={word} shouldShowResults={shouldShowResults} sharedWords={sharedWords}/>;
+                            })}
+                        </div>
+                    </>
+                    :
+                    <></>
+                    }
                 </div>
             </div>
             <div className="entirePage bg-black/50 z-[-10]"></div>

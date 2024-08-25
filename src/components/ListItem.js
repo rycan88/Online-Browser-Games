@@ -1,10 +1,17 @@
 import { IoMdClose } from "react-icons/io";
 
 export const ListItem = (props) => {
+    const deleteButton = !props.shouldShowResults ? <IoMdClose className="listItemDelete" onClick={() => props.removeItem(props.word)}/> : <></>;
+    let bg_color = "";
+    if (props.shouldShowResults) {
+        bg_color = props.sharedWords.includes(props.word) ? "bg-green-500/50" : "bg-red-500/50" ;
+    } else {
+        bg_color = "bg-slate-900/30";
+    }
     return ( 
-        <div className="listItem">
+        <div className={`listItem ${bg_color}`}>
             <h2>{props.word}</h2>
-            <IoMdClose className="listItemDelete" onClick={() => props.removeItem(props.word)}/>
+            {deleteButton}
         </div>
     );
 }

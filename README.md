@@ -69,8 +69,6 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
-
-
 Create project
 
 npm init
@@ -80,20 +78,18 @@ npx create-react-app name
 Command to start program
 npm start
 
-Install 
+Install
 npm install axios
 npm install react-router-dom
 npm install @tanstack/react-query
 npm install react-hook-form yup
 npm install @hookform/resolvers
 
-
 Tailwind Installation
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 yarn add tailwindcss
 npm i react-scripts@latest
-
 
 Useful VSCode Extensions
 -GitHub Pull Requests
@@ -102,4 +98,9 @@ Useful VSCode Extensions
 Install react Icons
 npm install react-icons
 
+PostCSS
 npm install --save-dev postcss postcss-nested
+
+Server Setup
+yarn add express cors nodemon socket.io (DO THIS IN SERVER FOLDER)
+yarn add socket.io-client

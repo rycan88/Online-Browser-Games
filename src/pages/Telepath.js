@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Axios from "axios";
+
 
 import { TelepathWords } from "../TelepathWords";
 import { ListItem } from "../components/ListItem";
@@ -8,8 +9,11 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import '../css/Telepath.css';
 
-export const Telepath = () => {
+import io from "socket.io-client";
 
+const socket = io.connect("http://localhost:3001");
+
+export const Telepath = () => {
     const generateNewWord = () => {
         return TelepathWords[Math.floor(Math.random() * TelepathWords.length)].toUpperCase();
     }
@@ -52,6 +56,10 @@ export const Telepath = () => {
         }
     }
 
+    const ReadyStatusIcon = (isReady) => {
+        return isReady ? <FaCheck className="h-full ml-4 mt-[2px] text-green-400"/> : <AiOutlineLoading3Quarters className="h-full ml-4 mt-[2px] animate-spin text-red-600"/>;
+    }
+
     const TeamScores = () => {
         return (
             <div className="w-full h-[25%] p-4 bg-slate-900/30 mb-1 rounded-2xl">
@@ -59,12 +67,12 @@ export const Telepath = () => {
                 <div className="flex w-full h-[75%]">
                     <div className="flex flex-col place-content-around items-start pl-4 w-[60%] h-full">
                         <div className="flex w-full h-[50%] items-center">
-                            <h2 className="text-xl">Player 1</h2>
-                            <FaCheck className="h-full ml-4 mt-[2px] text-green-400"/>
+                            <h2 className="text-xl">You</h2>
+                            { ReadyStatusIcon(didSendWords) }
                         </div>
                         <div className="flex w-full h-[50%] items-center">
-                            <h2 className="text-xl">Player 2</h2>
-                            <AiOutlineLoading3Quarters className="h-full ml-4 mt-[2px] animate-spin text-red-600"/>
+                            <h2 className="text-xl">Teammate</h2>
+                            { ReadyStatusIcon(didReceiveWords) }
                         </div>
                     </div>
                     <h2 className="text-3xl w-[40%] h-full place-content-center items-center">10</h2>
@@ -73,12 +81,18 @@ export const Telepath = () => {
         );
     }
 
-    const partnerWords = ["RED", "ORANGE", "BANANA", "LIME", "MANGO", "FRUIT"];
+    const [partnerWords, setPartnerWords] = useState(["RED", "ORANGE", "BANANA", "LIME", "MANGO", "FRUIT"]);
     const [sharedWords, setSharedWords] = useState([])
     const [shouldShowResults, setShouldShowResults] = useState(false);
+    const [didSendWords, setDidSendWords] = useState(false);
+    const [didReceiveWords, setDidReceiveWords] = useState(false);
     const submitEvent = () => {
+        sendMessage();
+        refreshShared();
+    }
+
+    const refreshShared = () => {
         const newSharedWords = [];
-        setShouldShowResults(true);
         myWords.forEach((word) => {
             if (partnerWords.includes(word)) {
                 newSharedWords.push(word);
@@ -92,13 +106,15 @@ export const Telepath = () => {
         setPrompt(generateNewWord);
         setWordLimit(generateWordLimit);
         setShouldShowResults(false);
-        setMyWords([])
+        setMyWords([]);
+        setDidSendWords(false);
+        setDidReceiveWords(false);
     }
 
     const MiddleInputTitle = () => {
         return (
             shouldShowResults ?
-            <div className="wordlistTitle">Your words</div>
+            <div className="wordlistTitle">You</div>
             :
             <>
                 <input className="telepathInput"
@@ -116,13 +132,29 @@ export const Telepath = () => {
         )   
     }
 
+    const sendMessage = () => {
+        socket.emit("send_message", { message: myWords});
+        setDidSendWords(true);
+    };
+
+    useEffect(() => {
+        socket.on("receive_message", (data) => {
+            console.log("Message Received");
+            setDidReceiveWords(true);
+            setPartnerWords(data.message);
+        })
+    }, [socket]);
+
+    if (didReceiveWords && didSendWords && !shouldShowResults) {
+        refreshShared();
+        setShouldShowResults(true);
+    }
+
     return (
         <div className="telepathPage entirePage">
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="flex place-content-evenly w-full h-full">
                 <div className="leftContainer">
-                    {TeamScores()}
-                    {TeamScores()}
                     {TeamScores()}
                 </div>
                 <div className="middleContainer">
@@ -146,7 +178,7 @@ export const Telepath = () => {
                     {
                     shouldShowResults ?
                     <>
-                        <div className="wordlistTitle">Teammate's words</div>
+                        <div className="wordlistTitle">Teammate</div>
                                     
                         <div className="list">
                             {partnerWords.map((word) => {

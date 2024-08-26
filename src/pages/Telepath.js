@@ -1,15 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import Axios from "axios";
 
-
 import { TelepathWords } from "../TelepathWords";
 import { ListItem } from "../components/ListItem";
-import { FaCheck } from "react-icons/fa6";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { TelepathTeamScores } from "../components/TelepathTeamScores";
 
 import '../css/Telepath.css';
 
 import io from "socket.io-client";
+
+// TODO
+// - Keep proper track of points
+// - Make the word limit really a limit
+// - Make both players see the same word
+// - Sort the list of words so correct words are at the top
+// - Create a room so that multiple teams can play
+// - Let it toggle so see other people's scores
+// - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 
 const socket = io.connect("http://localhost:3001");
 
@@ -37,13 +44,14 @@ export const Telepath = () => {
 
     const addWord = () => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
-        if (typedWord === "" || myWords.includes(typedWord.toUpperCase(), 0)) {
+        const reformattedWord = typedWord.toUpperCase().trim()
+        if (reformattedWord === "" || myWords.includes(reformattedWord)) {
             return
         }
 
         fName.current.value = "";
         setTypedWord("");
-        setMyWords([...myWords, typedWord.toUpperCase()]);
+        setMyWords([...myWords, reformattedWord.toUpperCase()]);
     }
 
     const removeItem = (chosenWord) => {
@@ -54,31 +62,6 @@ export const Telepath = () => {
         if (event.key === "Enter") {
             addWord();
         }
-    }
-
-    const ReadyStatusIcon = (isReady) => {
-        return isReady ? <FaCheck className="h-full ml-4 mt-[2px] text-green-400"/> : <AiOutlineLoading3Quarters className="h-full ml-4 mt-[2px] animate-spin text-red-600"/>;
-    }
-
-    const TeamScores = () => {
-        return (
-            <div className="w-full h-[25%] p-4 bg-slate-900/30 mb-1 rounded-2xl">
-                <h2 className="text-3xl">Team 1</h2>
-                <div className="flex w-full h-[75%]">
-                    <div className="flex flex-col place-content-around items-start pl-4 w-[60%] h-full">
-                        <div className="flex w-full h-[50%] items-center">
-                            <h2 className="text-xl">You</h2>
-                            { ReadyStatusIcon(selfReady) }
-                        </div>
-                        <div className="flex w-full h-[50%] items-center">
-                            <h2 className="text-xl">Teammate</h2>
-                            { ReadyStatusIcon(teamReady) }
-                        </div>
-                    </div>
-                    <h2 className="text-3xl w-[40%] h-full place-content-center items-center">10</h2>
-                </div>
-            </div>
-        );
     }
 
     const [partnerWords, setPartnerWords] = useState(["RED", "ORANGE", "BANANA", "LIME", "MANGO", "FRUIT"]);
@@ -166,7 +149,7 @@ export const Telepath = () => {
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="flex place-content-evenly w-full h-full">
                 <div className="leftContainer">
-                    {TeamScores()}
+                    <TelepathTeamScores selfReady={selfReady} teamReady={teamReady}/>
                 </div>
                 <div className="middleContainer">
                     <div className="inputContainer">

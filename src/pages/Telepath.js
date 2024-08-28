@@ -1,12 +1,11 @@
-import { useState, useRef, useEffect } from "react";
-import Axios from "axios";
-
-import { ListItem } from "../components/telepath/ListItem";
-import { TelepathTeamScores } from "../components/telepath/TelepathTeamScores";
+import { useState, useEffect, useRef } from "react";
 
 import '../css/Telepath.css';
 
 import getSocket from "../socket";
+import { TelepathInputBar } from "../components/telepath/TelepathInputBar";
+import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamScoresDisplay";
+import { TelepathList } from "../components/telepath/TelepathList";
 
 // TODO
 // - Keep proper track of points
@@ -26,45 +25,30 @@ export const Telepath = (props) => {
 
     // typedWord is the text in the input
     // pickedWords are the words added to the list
-    const [typedWord, setTypedWord] = useState(""); 
+
     const [myWords, setMyWords] = useState([]);
     const [prompt, setPrompt] = useState("");
     const [wordLimit, setWordLimit] = useState(0);
-    const [players, setPlayers] = useState([]);
 
-    const handleTextChange = (event) => {
-        setTypedWord(event.target.value);
-    }
-
-    const fName = useRef('');
-    const addWord = () => {
+    const addWord = (typedWord) => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
         const reformattedWord = typedWord.toUpperCase().trim()
         if (reformattedWord === "" || myWords.includes(reformattedWord)) {
-            return
+            return false;
         }
 
-        fName.current.value = "";
-        setTypedWord("");
         setMyWords([...myWords, reformattedWord.toUpperCase()]);
+        return true;
     }
 
-    const removeItem = (chosenWord) => {
-        setMyWords(myWords.filter((word) => word !== chosenWord));
-    }
-
-    const keyDownHandler = (event) => {
-        if (event.key === "Enter") {
-            addWord();
-        }
-    }
 
     const [partnerWords, setPartnerWords] = useState([]);
     const [sharedWords, setSharedWords] = useState([])
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [selfReady, setSelfReady] = useState(false);
     const [teamReady, setTeamReady] = useState(false);
-    const partners = {};
+    const [playersData, setPlayersData] = useState({});
+    const playersDataRef = useRef(playersData);
 
     const refreshShared = () => {
         const newSharedWords = [];
@@ -87,71 +71,63 @@ export const Telepath = (props) => {
             shouldShowResults ?
             <div className="wordlistTitle">You</div>
             :
-            <>
-                <input className="telepathInput"
-                        type='text' 
-                        ref={fName} 
-                        placeholder="Type a word..." 
-                        onChange={ handleTextChange } 
-                        onKeyDown={ keyDownHandler }>    
-                </input>
-                <button className="addButton"
-                        onClick={ addWord }>
-                    Enter
-                </button>
-            </>
+            <TelepathInputBar addWord={addWord}/>
         )   
     }
 
-    const submitEvent = () => {
-        sendWords();
-    }
-
     const sendWords = () => {
-        socket.emit("send_telepath_words", { message: myWords});
-        setSelfReady(true);
+        socket.emit("send_telepath_words", roomCode, myWords);
     };
 
     const sendReady = () => {
-        socket.emit("send_telepath_ready");
-        setSelfReady(true);
+        socket.emit("send_telepath_ready", roomCode);
     };
 
     useEffect(() => {
-        socket.on('receive_starting_players', (players) => {
-            setPlayers(players);
-            players.forEach((player, index) => {
-                if (index % 2 === 0) {
-                    partners[player] = players[index + 1];
-                } else {
-                    partners[player] = players[index - 1];
+        playersDataRef.current = playersData;
+    }, [playersData]);
+
+    useEffect(() => {
+        socket.on('receive_players_data', (playersData) => {
+            setPlayersData(playersData);
+        });
+
+        socket.on("update_player_data", (username, userData) => {
+            const playersData = playersDataRef.current;
+            console.log("playerData", playersData);
+            const newPlayersData = {...playersData, [username]: userData};
+            setPlayersData(newPlayersData);
+            console.log("newData", newPlayersData);
+        });
+
+        socket.on("receive_results_state", (shouldShowResults) => {
+            setShouldShowResults(shouldShowResults);
+            if (shouldShowResults) {
+
+                const playersData = playersDataRef.current;
+                console.log("ye", playersData, socket.id);
+                if (playersData[socket.id]) {
+                    const partner = playersData[socket.id].partner;
+                    setPartnerWords(playersData[partner].chosenWords);
+                    refreshShared();
                 }
-            });
-        });
-
-        socket.on("receive_telepath_words", (data) => {
-            setTeamReady(true);
-            setPartnerWords(data.message);
-        });
-
-        socket.on("receive_telepath_ready", () => {
-            setTeamReady(true);
+            } else {
+                getNextWord();
+            }
         });
 
         socket.on("receive_telepath_prompt", (data) => {
             setPrompt(data.prompt);
             setWordLimit(data.wordLimit);
-            console.log("Prompt has updated");
         });
 
-        socket.emit('get_starting_players', roomCode);
-        socket.emit('get_telepath_prompt', roomCode);
+        socket.emit('get_all_telepath_data', roomCode);
 
         return () => {
             socket.off('receive_telepath_words');
-            socket.off('receive_telepath_ready');
+            socket.off('receive_results_state');
             socket.off('receive_telepath_prompt');
-            socket.off('receive_starting_players');
+            socket.off('receive_players_data');
         };
     }, []);
 
@@ -168,25 +144,22 @@ export const Telepath = (props) => {
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="flex place-content-evenly w-full h-full">
                 <div className="leftContainer">
-                    {players.map((player, index) => {
-                        if (index % 2 === 1) {
-                            return <></>;
-                        }
-                        return <TelepathTeamScores teamNum={index / 2 + 1} player1={player.slice(0,10)} player2={players[index + 1].slice(0,10) ?? ""} firstReady={selfReady} secondReady={teamReady}/>;
-                    })}
+                    <TelepathTeamScoresDisplay playersData={playersData} shouldShowResults={shouldShowResults}/>
                 </div>
                 <div className="middleContainer">
                     <div className="inputContainer">
                         {MiddleInputTitle()}
                     </div>
                     <div className="list">
-                        {myWords.map((word) => {
-                            return <ListItem word={word} removeItem={removeItem} shouldShowResults={shouldShowResults} sharedWords={sharedWords}/>;
-                        })}
+                        <TelepathList wordList={myWords} 
+                                      setMyWords={setMyWords}
+                                      shouldShowResults={shouldShowResults}
+                                      sharedWords={sharedWords}
+                        />
                     </div>
                     <div className="flex flex-row place-content-center">
                         <button className="submitWords"
-                             onClick={shouldShowResults ? sendReady : submitEvent}
+                             onClick={shouldShowResults ? sendReady : sendWords}
                         >
                             <h2>{shouldShowResults ? "Next Word" : "Submit Words"}</h2>
                         </button>
@@ -199,9 +172,11 @@ export const Telepath = (props) => {
                         <div className="wordlistTitle">Teammate</div>
                                     
                         <div className="list">
-                            {partnerWords.map((word) => {
-                                return <ListItem word={word} shouldShowResults={shouldShowResults} sharedWords={sharedWords}/>;
-                            })}
+                            <TelepathList wordList={partnerWords} 
+                                        setMyWords={setMyWords}
+                                        shouldShowResults={shouldShowResults}
+                                        sharedWords={sharedWords}
+                            />
                         </div>
                     </>
                     :

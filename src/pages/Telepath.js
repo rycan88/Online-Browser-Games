@@ -50,7 +50,7 @@ export const Telepath = (props) => {
     const [playersData, setPlayersData] = useState({});
     const playersDataRef = useRef(playersData);
 
-    const refreshShared = () => {
+    const refreshShared = (myWords, partnerWords) => {
         const newSharedWords = [];
         myWords.forEach((word) => {
             if (partnerWords.includes(word)) {
@@ -84,12 +84,22 @@ export const Telepath = (props) => {
     };
 
     useEffect(() => {
+        refreshShared(myWords, partnerWords);
+    }, [myWords, partnerWords]);
+
+    useEffect(() => {
         playersDataRef.current = playersData;
-    }, [playersData]);
+        if (shouldShowResults && playersData[socket.id]) {
+            const partner = playersData[socket.id].partner;
+            setMyWords(playersData[socket.id].chosenWords);
+            setPartnerWords(playersData[partner].chosenWords);
+        }
+    }, [playersData, shouldShowResults]);
 
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData);
+
         });
 
         socket.on("update_player_data", (username, userData) => {
@@ -104,13 +114,7 @@ export const Telepath = (props) => {
             setShouldShowResults(shouldShowResults);
             if (shouldShowResults) {
 
-                const playersData = playersDataRef.current;
-                console.log("ye", playersData, socket.id);
-                if (playersData[socket.id]) {
-                    const partner = playersData[socket.id].partner;
-                    setPartnerWords(playersData[partner].chosenWords);
-                    refreshShared();
-                }
+                
             } else {
                 getNextWord();
             }
@@ -167,7 +171,7 @@ export const Telepath = (props) => {
                 </div>
                 <div className="rightContainer">
                     {
-                    shouldShowResults ?
+                    shouldShowResults &&
                     <>
                         <div className="wordlistTitle">Teammate</div>
                                     
@@ -177,10 +181,9 @@ export const Telepath = (props) => {
                                         shouldShowResults={shouldShowResults}
                                         sharedWords={sharedWords}
                             />
+                            {console.log("partner", partnerWords)}
                         </div>
                     </>
-                    :
-                    <></>
                     }
                 </div>
             </div>

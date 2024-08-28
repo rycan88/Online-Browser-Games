@@ -8,7 +8,6 @@ import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamSc
 import { TelepathList } from "../components/telepath/TelepathList";
 
 // TODO
-// - Keep proper track of points
 // - Make the word limit really a limit
 // - Sort the list of words so correct words are at the top
 // - Create a room so that multiple teams can play

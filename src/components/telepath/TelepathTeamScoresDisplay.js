@@ -25,14 +25,27 @@ export const TelepathTeamScoresDisplay = (props) => {
         const totalScore = userData.totalScore;
         const addedScore = userData.addedScore;
 
-        return <TelepathTeamScores teamNum={index / 2 + 1} 
-                                   player1={p1} 
-                                   player2={p2} 
-                                   firstReady={ready1} 
-                                   secondReady={ready2}
-                                   totalScore={totalScore}
-                                   addedScore={addedScore}
-                                   showAdded={shouldShowResults}
+        // Always display yourself first on the team
+        return partner === socket.id 
+            ?
+            <TelepathTeamScores teamNum={index / 2 + 1} 
+                                player1={p2} 
+                                player2={p1} 
+                                firstReady={ready2} 
+                                secondReady={ready1}
+                                totalScore={totalScore}
+                                addedScore={addedScore}
+                                showAdded={shouldShowResults}
+             />
+             :
+            <TelepathTeamScores teamNum={index / 2 + 1} 
+                                player1={p1} 
+                                player2={p2} 
+                                firstReady={ready1} 
+                                secondReady={ready2}
+                                totalScore={totalScore}
+                                addedScore={addedScore}
+                                showAdded={shouldShowResults}
         />;
     })
 }

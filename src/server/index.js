@@ -22,6 +22,13 @@ const telepathHelper = require("./telepathHelper");
 
 // Lobby Rooms
 const rooms = {};
+
+const getRoomLeader = (roomCode) => {
+    if (rooms[roomCode].players.length > 0) {
+        return rooms[roomCode].players[0];
+    }
+}
+
 io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
@@ -104,10 +111,13 @@ io.on("connection", (socket) => {
     })
 
     socket.on("get_telepath_prompt", (roomCode) => {
-        const prompt = telepathHelper.generateNewWord();
-        const wordLimit = telepathHelper.generateWordLimit();
-        console.log(prompt, wordLimit);
-        io.to(roomCode).emit('receive_telepath_prompt', {prompt: prompt, wordLimit: wordLimit});
+        const roomLeader = getRoomLeader(roomCode);
+        if (roomLeader === socket.id) {
+            const prompt = telepathHelper.generateNewWord();
+            const wordLimit = telepathHelper.generateWordLimit();
+            console.log(prompt, wordLimit);
+            io.to(roomCode).emit('receive_telepath_prompt', {prompt: prompt, wordLimit: wordLimit});
+        }
     });
 })
 

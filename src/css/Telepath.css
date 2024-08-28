@@ -3,63 +3,63 @@
 @tailwind utilities;
 
 @layer base {
-    .telepathPage {
-        @apply bg-galaxy items-center z-[-20] text-white;
+  .telepathPage {
+    @apply bg-galaxy items-center z-[-20] text-white;
 
-        .telepathPrompt {
-            @apply text-5xl my-4;
-        }
-
-        .leftContainer {
-            @apply flex flex-col place-content-around w-[400px] h-[90%];
-        }
-
-        .middleContainer {
-            @apply w-[400px] h-[90%];
-        }
-
-        .rightContainer {
-            @apply w-[400px] h-[90%];
-        }
-
-        .inputContainer {
-            @apply flex w-full;
-        }
-
-        .telepathInput {
-            @apply w-[80%] h-[50px] mb-4 pl-4 text-black;
-        }
-
-        .addButton {
-            @apply w-[20%] h-[50px] bg-sky-800;
-        }
-
-        .wordlistTitle {
-            @apply w-[100%] h-[50px] text-3xl mb-4 underline place-content-center;
-        }
-
-        .list {
-            @apply flex flex-col items-center w-full h-[60vh] overflow-auto;
-        }
-
-        .listItem {
-            @apply w-full h-[50px] pl-4 pr-2 flex items-center place-content-between;
-        }
-
-        .listItem h2 {
-            @apply text-left text-xl font-bold w-[80%] overflow-scroll;
-        }
-
-        .listItemDelete {
-            @apply w-[30px] h-[30px];
-        }
-
-        .listItemDelete:hover {
-            @apply cursor-pointer bg-red-600;
-        }
-
-        .submitWords {
-            @apply h-[80px] bg-sky-800 place-content-evenly px-4 text-2xl rounded-3xl;
-        }
+    .telepathPrompt {
+      @apply text-5xl my-4;
     }
+
+    .leftContainer {
+      @apply flex flex-col place-content-around w-[400px] h-[90%];
+    }
+
+    .middleContainer {
+      @apply w-[400px] h-[90%];
+    }
+
+    .rightContainer {
+      @apply w-[400px] h-[90%];
+    }
+
+    .inputContainer {
+      @apply flex w-full;
+    }
+
+    .telepathInput {
+      @apply w-[80%] h-[50px] mb-4 pl-4 text-black;
+    }
+
+    .addButton {
+      @apply w-[20%] h-[50px] bg-sky-800;
+    }
+
+    .wordlistTitle {
+      @apply w-[100%] h-[50px] text-3xl mb-4 place-content-center;
+    }
+
+    .list {
+      @apply flex flex-col items-center w-full h-[60vh] overflow-auto;
+    }
+
+    .listItem {
+      @apply w-full h-[50px] pl-4 pr-2 flex items-center place-content-between;
+    }
+
+    .listItem h2 {
+      @apply text-left text-xl font-bold w-[80%] overflow-scroll;
+    }
+
+    .listItemDelete {
+      @apply w-[30px] h-[30px];
+    }
+
+    .listItemDelete:hover {
+      @apply cursor-pointer bg-red-600;
+    }
+
+    .submitWords {
+      @apply h-[80px] bg-sky-800 place-content-evenly px-4 text-2xl rounded-3xl;
+    }
+  }
 }

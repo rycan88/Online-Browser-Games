@@ -18,7 +18,7 @@ const io = new Server(server, {
     },
 });
 
-const { generateNewWord, generateWordLimit } = require("./telepathHelper");
+const telepathHelper = require("./telepathHelper");
 const { telepathPlayerData } = require("./telepathPlayerData");
 
 // Lobby Rooms
@@ -64,7 +64,6 @@ io.on("connection", (socket) => {
                 delete rooms[roomCode];
             } else {
                 io.to(roomCode).emit('update_players', rooms[roomCode].players);
-                console.log(rooms[roomCode].players)
             }
         } else {
             console.log(`${socket.id} is not in ${roomCode}`);
@@ -81,7 +80,7 @@ io.on("connection", (socket) => {
                 const players = rooms[roomCode].players
                 players.forEach((player, index) => {
                     let partner = index % 2 === 0 ? players[index + 1] : players[index - 1];
-                    playersData[player] = telepathPlayerData(player, partner);
+                    playersData[player] = telepathPlayerData(player, partner, 0);
                 });
                 rooms[roomCode].playersData = playersData;
                 console.log("data", playersData);
@@ -122,28 +121,32 @@ io.on("connection", (socket) => {
     
 
     // Telepath
+
+    // Triggers when a player is ready to send their wordList
     socket.on("send_telepath_words", (roomCode, chosenWords) => {
         if (rooms[roomCode]) {
             const playersData = rooms[roomCode].playersData;
             playersData[socket.id].chosenWords = chosenWords; 
             playersData[socket.id].hasPickedWords = true;
 
-            io.to(roomCode).emit("receive_players_data", playersData);
+
             if (!Object.values(playersData).find((data) => data.hasPickedWords === false)) {
                 io.to(roomCode).emit("receive_results_state", true);    
+                telepathHelper.calculateScores(playersData);
             }
+            io.to(roomCode).emit("receive_players_data", playersData);
         }
     })
 
+    // Triggers when player is ready for a new word
     socket.on("send_telepath_ready", (roomCode) => {
         if (rooms[roomCode]) {
             let playersData = rooms[roomCode].playersData;
             playersData[socket.id].isReady = true;
 
-
             if (!Object.values(playersData).find((data) => data.isReady === false)) {
                 Object.values(playersData).forEach((userData) => {
-                    playersData[userData.username] = telepathPlayerData(userData.username, userData.partner);
+                    playersData[userData.username] = telepathPlayerData(userData.username, userData.partner, userData.totalScore);
                 })
                 io.to(roomCode).emit("receive_results_state", false);    
             }      
@@ -154,8 +157,8 @@ io.on("connection", (socket) => {
     socket.on("generate_telepath_prompt", (roomCode) => {
         const roomLeader = getRoomLeader(roomCode);
         if (rooms[roomCode] && roomLeader === socket.id) {
-            const prompt = generateNewWord();
-            const wordLimit = generateWordLimit();
+            const prompt = telepathHelper.generateNewWord();
+            const wordLimit = telepathHelper.generateWordLimit();
             rooms[roomCode].prompt = prompt;
             rooms[roomCode].wordLimit = wordLimit;
             console.log(prompt, wordLimit);
@@ -175,6 +178,9 @@ io.on("connection", (socket) => {
         if (rooms[roomCode]) {
             socket.emit('receive_telepath_prompt', rooms[roomCode]);
             socket.emit('receive_players_data', rooms[roomCode].playersData);
+            if (!Object.values(rooms[roomCode].playersData).find((data) => data.hasPickedWords === false)) {
+                io.to(roomCode).emit("receive_results_state", true);
+            }
         }
     });
 })

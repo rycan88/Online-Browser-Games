@@ -1,4 +1,7 @@
 import { TelepathTeamScores } from "./TelepathTeamScores";
+import getSocket from "../../socket";
+
+const socket = getSocket();
 
 //props
 // playersData: 
@@ -15,16 +18,21 @@ export const TelepathTeamScoresDisplay = (props) => {
         console.log(playersData);
         const partner = userData.partner;
 
-        const p1 = userData.username.slice(0, 10);
-        const p2 = partner.slice(0,10);
+        const p1 = socket.id === userData.username ? "You" : userData.username.slice(0, 10);
+        const p2 = socket.id === partner ? "You" :partner.slice(0,10);
         const ready1 = shouldShowResults ? userData.isReady : userData.hasPickedWords;
         const ready2 = shouldShowResults ? playersData[partner].isReady : playersData[partner].hasPickedWords;
+        const totalScore = userData.totalScore;
+        const addedScore = userData.addedScore;
 
         return <TelepathTeamScores teamNum={index / 2 + 1} 
                                    player1={p1} 
                                    player2={p2} 
                                    firstReady={ready1} 
                                    secondReady={ready2}
+                                   totalScore={totalScore}
+                                   addedScore={addedScore}
+                                   showAdded={shouldShowResults}
         />;
     })
 }

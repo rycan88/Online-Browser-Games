@@ -45,8 +45,6 @@ export const Telepath = (props) => {
     const [partnerWords, setPartnerWords] = useState([]);
     const [sharedWords, setSharedWords] = useState([])
     const [shouldShowResults, setShouldShowResults] = useState(false);
-    const [selfReady, setSelfReady] = useState(false);
-    const [teamReady, setTeamReady] = useState(false);
     const [playersData, setPlayersData] = useState({});
     const playersDataRef = useRef(playersData);
 
@@ -112,10 +110,7 @@ export const Telepath = (props) => {
 
         socket.on("receive_results_state", (shouldShowResults) => {
             setShouldShowResults(shouldShowResults);
-            if (shouldShowResults) {
-
-                
-            } else {
+            if (!shouldShowResults) {            
                 getNextWord();
             }
         });
@@ -128,20 +123,12 @@ export const Telepath = (props) => {
         socket.emit('get_all_telepath_data', roomCode);
 
         return () => {
-            socket.off('receive_telepath_words');
+            socket.off('update_player_data');
             socket.off('receive_results_state');
             socket.off('receive_telepath_prompt');
             socket.off('receive_players_data');
         };
     }, []);
-
-    if (selfReady && teamReady) {
-        shouldShowResults ? getNextWord() : refreshShared();
-
-        setShouldShowResults(!shouldShowResults);
-        setSelfReady(false);
-        setTeamReady(false);
-    }
 
     return (
         <div className="telepathPage entirePage">
@@ -173,7 +160,7 @@ export const Telepath = (props) => {
                     {
                     shouldShowResults &&
                     <>
-                        <div className="wordlistTitle">Teammate</div>
+                        <div className="wordlistTitle">{playersData[socket.id].partner.slice(0, 10)}</div>
                                     
                         <div className="list">
                             <TelepathList wordList={partnerWords} 

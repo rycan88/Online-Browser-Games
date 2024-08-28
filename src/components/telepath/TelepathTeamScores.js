@@ -9,6 +9,9 @@ import '../../css/Telepath.css';
 // player1: string
 // player2: string
 // teamNum: Int
+// totalScore: Int
+// addedScore: Int
+// showAdded: bool
 
 export const TelepathTeamScores = (props) => {
     const ReadyStatusIcon = (isReady) => {
@@ -29,7 +32,11 @@ export const TelepathTeamScores = (props) => {
                         { ReadyStatusIcon(props.secondReady) }
                     </div>
                 </div>
-                <h2 className="text-3xl w-[40%] h-full place-content-center items-center">10</h2>
+                <div className="flex flex-col w-[40%] h-full place-content-center items-center -mt-1">
+                    <div className="text-md relative left-3 text-green-500 h-4">{props.showAdded ?`+${props.addedScore}` : ""}</div>
+                    <h2 className="text-3xl -mt-2">{props.totalScore}</h2>
+
+                </div>
             </div>
         </div>
     );

@@ -64,12 +64,15 @@ export const Telepath = (props) => {
     }
 
     const MiddleInputTitle = () => {
-        return (
-            shouldShowResults ?
-            <div className="wordlistTitle">You</div>
-            :
-            <TelepathInputBar addWord={addWord}/>
-        )   
+        if (shouldShowResults) {
+            return <div className="wordlistTitle">You</div>
+        }
+
+        if (myWords.length >= wordLimit) {
+            return <div className="wordlistTitle">Word Limit Reached</div>
+        } else {
+            return <TelepathInputBar addWord={addWord}/>
+        }  
     }
 
     const sendWords = () => {

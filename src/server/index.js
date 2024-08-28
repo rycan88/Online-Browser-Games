@@ -75,6 +75,7 @@ io.on("connection", (socket) => {
         if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
             rooms[roomCode].gameStarted = true;
             io.to(roomCode).emit('game_started');
+            rooms[roomCode].startingPlayers = [...rooms[roomCode].players];
         }
     });
     
@@ -96,10 +97,18 @@ io.on("connection", (socket) => {
     });
 
     socket.on('get_all_players', (roomCode) => {
-        if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
+        if (rooms[roomCode]) {
             io.emit('update_players', rooms[roomCode].players);
         }
     });
+
+    socket.on('get_starting_players', (roomCode) => {
+        if (rooms[roomCode]) {
+            io.emit('receive_starting_players', rooms[roomCode].startingPlayers);
+            console.log("start", rooms[roomCode].startingPlayers);
+        }
+    });
+    
 
     // Telepath
     socket.on("send_telepath_words", (data) => {
@@ -110,13 +119,29 @@ io.on("connection", (socket) => {
         socket.broadcast.emit("receive_telepath_ready");
     })
 
-    socket.on("get_telepath_prompt", (roomCode) => {
+    socket.on("generate_telepath_prompt", (roomCode) => {
         const roomLeader = getRoomLeader(roomCode);
-        if (roomLeader === socket.id) {
+        if (rooms[roomCode] && roomLeader === socket.id) {
             const prompt = telepathHelper.generateNewWord();
             const wordLimit = telepathHelper.generateWordLimit();
+            rooms[roomCode].prompt = prompt;
+            rooms[roomCode].wordLimit = wordLimit;
             console.log(prompt, wordLimit);
             io.to(roomCode).emit('receive_telepath_prompt', {prompt: prompt, wordLimit: wordLimit});
+        }
+    });
+
+    socket.on("get_telepath_prompt", (roomCode) => {
+        if (rooms[roomCode]) {
+            const prompt = rooms[roomCode].prompt ?? "";
+            const wordLimit = rooms[roomCode].wordLimit ?? 0;
+            socket.emit('receive_telepath_prompt', {prompt: prompt, wordLimit: wordLimit});
+        }
+    });
+    
+    socket.on("get_all_telepath_data", (roomCode) => {
+        if (rooms[roomCode]) {
+            socket.emit('receive_all_telepath_info', rooms[roomCode]);
         }
     });
 })

@@ -4,8 +4,11 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import '../../css/Telepath.css';
 
 //props
-// selfReady: bool
-// teamReady: bool
+// firstReady: bool
+// secondReady: bool
+// player1: string
+// player2: string
+// teamNum: Int
 
 export const TelepathTeamScores = (props) => {
     const ReadyStatusIcon = (isReady) => {
@@ -14,16 +17,16 @@ export const TelepathTeamScores = (props) => {
 
     return (
         <div className="w-full h-[25%] p-4 bg-slate-900/30 mb-1 rounded-2xl">
-            <h2 className="text-3xl">Team 1</h2>
+            <h2 className="text-3xl">Team {props.teamNum}</h2>
             <div className="flex w-full h-[75%]">
                 <div className="flex flex-col place-content-around items-start pl-4 w-[60%] h-full">
                     <div className="flex w-full h-[50%] items-center">
-                        <h2 className="text-xl">You</h2>
-                        { ReadyStatusIcon(props.selfReady) }
+                        <h2 className="text-xl">{props.player1}</h2>
+                        { ReadyStatusIcon(props.firstReady) }
                     </div>
                     <div className="flex w-full h-[50%] items-center">
-                        <h2 className="text-xl">Teammate</h2>
-                        { ReadyStatusIcon(props.teamReady) }
+                        <h2 className="text-xl">{props.player2}</h2>
+                        { ReadyStatusIcon(props.secondReady) }
                     </div>
                 </div>
                 <h2 className="text-3xl w-[40%] h-full place-content-center items-center">10</h2>

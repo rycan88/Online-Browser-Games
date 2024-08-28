@@ -14,23 +14,30 @@ export const Room = (props) => {
     const location = useLocation();
     
     const [players, setPlayers] = useState([]);
-    
+    const gameName = props.gameName;
+    const roomCode = props.roomCode;
+
     useEffect(() => {
         socket.on('update_players', (players) => {
             setPlayers(players);
         });
 
         socket.on('game_started', () => {
-            navigate(`/${props.gameName}/${props.roomCode}`);
-            socket.emit('get_telepath_prompt', props.roomCode);
+            navigate(`/${gameName}/${roomCode}`);
+            socket.emit('generate_telepath_prompt', props.roomCode);
         });
 
         return () => {
             socket.off('update_players');
+            socket.off('game_started');
         };
     }, []);
 
     const startGame = () => {
+        if (gameName === "telepath" && players.length % 2 !== 0) {
+            alert("Needs even # of players");
+            return 
+        }
         socket.emit('start_game', props.roomCode);
     };
 

@@ -11,7 +11,6 @@ import getSocket from "../socket";
 // TODO
 // - Keep proper track of points
 // - Make the word limit really a limit
-// - Make both players see the same word
 // - Sort the list of words so correct words are at the top
 // - Create a room so that multiple teams can play
 // - Let it toggle so see other people's scores
@@ -19,24 +18,25 @@ import getSocket from "../socket";
 
 const socket = getSocket();
 
-
 // props
 // roomCode: string
 
 export const Telepath = (props) => {
+    const roomCode = props.roomCode;
+
     // typedWord is the text in the input
     // pickedWords are the words added to the list
     const [typedWord, setTypedWord] = useState(""); 
     const [myWords, setMyWords] = useState([]);
     const [prompt, setPrompt] = useState("");
     const [wordLimit, setWordLimit] = useState(0);
-
-    const fName = useRef('');
+    const [players, setPlayers] = useState([]);
 
     const handleTextChange = (event) => {
         setTypedWord(event.target.value);
     }
 
+    const fName = useRef('');
     const addWord = () => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
         const reformattedWord = typedWord.toUpperCase().trim()
@@ -64,6 +64,7 @@ export const Telepath = (props) => {
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [selfReady, setSelfReady] = useState(false);
     const [teamReady, setTeamReady] = useState(false);
+    const partners = {};
 
     const refreshShared = () => {
         const newSharedWords = [];
@@ -77,7 +78,7 @@ export const Telepath = (props) => {
     }
 
     const getNextWord = () => {
-        socket.emit('get_telepath_prompt', props.roomCode);
+        socket.emit('generate_telepath_prompt', roomCode);
         setMyWords([]);
     }
 
@@ -117,6 +118,17 @@ export const Telepath = (props) => {
     };
 
     useEffect(() => {
+        socket.on('receive_starting_players', (players) => {
+            setPlayers(players);
+            players.forEach((player, index) => {
+                if (index % 2 === 0) {
+                    partners[player] = players[index + 1];
+                } else {
+                    partners[player] = players[index - 1];
+                }
+            });
+        });
+
         socket.on("receive_telepath_words", (data) => {
             setTeamReady(true);
             setPartnerWords(data.message);
@@ -129,13 +141,17 @@ export const Telepath = (props) => {
         socket.on("receive_telepath_prompt", (data) => {
             setPrompt(data.prompt);
             setWordLimit(data.wordLimit);
-            console.log("FIRST");
+            console.log("Prompt has updated");
         });
+
+        socket.emit('get_starting_players', roomCode);
+        socket.emit('get_telepath_prompt', roomCode);
 
         return () => {
             socket.off('receive_telepath_words');
             socket.off('receive_telepath_ready');
             socket.off('receive_telepath_prompt');
+            socket.off('receive_starting_players');
         };
     }, []);
 
@@ -152,7 +168,12 @@ export const Telepath = (props) => {
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="flex place-content-evenly w-full h-full">
                 <div className="leftContainer">
-                    <TelepathTeamScores selfReady={selfReady} teamReady={teamReady}/>
+                    {players.map((player, index) => {
+                        if (index % 2 === 1) {
+                            return <></>;
+                        }
+                        return <TelepathTeamScores teamNum={index / 2 + 1} player1={player.slice(0,10)} player2={players[index + 1].slice(0,10) ?? ""} firstReady={selfReady} secondReady={teamReady}/>;
+                    })}
                 </div>
                 <div className="middleContainer">
                     <div className="inputContainer">

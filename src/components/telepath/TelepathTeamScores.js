@@ -1,6 +1,12 @@
 import { FaCheck } from "react-icons/fa6";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
+import '../../css/Telepath.css';
+
+//props
+// selfReady: bool
+// teamReady: bool
+
 export const TelepathTeamScores = (props) => {
     const ReadyStatusIcon = (isReady) => {
         return isReady ? <FaCheck className="h-full ml-4 mt-[2px] text-green-400"/> : <AiOutlineLoading3Quarters className="h-full ml-4 mt-[2px] animate-spin text-red-600"/>;

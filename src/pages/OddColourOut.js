@@ -1,6 +1,6 @@
 import { useState, createContext } from "react"
 
-import { OddColourOutGrid } from "../components/OddColourOutGrid";
+import { OddColourOutGrid } from "../components/oddColourOut/OddColourOutGrid";
 import { Overlay } from "../components/Overlay";
 
 import '../css/OddColourOut.css';
@@ -189,9 +189,9 @@ export const OddColourOut = () => {
                                 <div className="flex flex-col">
                                     {
                                         isShow ? 
-                                            <button className="bg-sky-900" onClick={showSolution}> Show </button>
+                                            <button className="bg-primary" onClick={showSolution}> Show </button>
                                             :
-                                            <button className="bg-sky-900" onClick={hideSolution}> Hide </button>
+                                            <button className="bg-primary" onClick={hideSolution}> Hide </button>
                                     }
                                     <button className="bg-red-800" onClick={restartAction}> Restart </button>
                                 </div>

@@ -26,6 +26,11 @@ export const SidebarData = [
         isMain: false,
     },
     {
+        title: "Telepath Lobby",
+        link: "/telepath/lobby",
+        isMain: false,
+    },
+    {
         title: "About",
         icon: <FaInfoCircle/>,
         link: "/about",

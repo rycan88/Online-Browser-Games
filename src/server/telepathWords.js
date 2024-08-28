@@ -1,4 +1,4 @@
-export const TelepathWords = [
+const telepathWords = [
     "Shoe",
     "Door",
     "Trash",	
@@ -57,3 +57,7 @@ export const TelepathWords = [
     "Cloud",
     "Orange"
 ]
+
+module.exports = {
+    telepathWords,
+}

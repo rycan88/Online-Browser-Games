@@ -1,6 +1,11 @@
 import { useContext } from "react";
-import { OddColourOutContext } from "../pages/OddColourOut";
-import '../css/OddColourOut.css';
+import { OddColourOutContext } from "../../pages/OddColourOut";
+import '../../css/OddColourOut.css';
+
+// props
+// gridSize: int
+// color: string
+// isOdd:  bool
 
 export const OddColourOutTile = (props) => {
     const { isGameRunning, correctAction, wrongAction } = useContext(OddColourOutContext);

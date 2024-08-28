@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import Axios from "axios";
 
-import { TelepathWords } from "../TelepathWords";
-import { ListItem } from "../components/ListItem";
-import { TelepathTeamScores } from "../components/TelepathTeamScores";
+import { ListItem } from "../components/telepath/ListItem";
+import { TelepathTeamScores } from "../components/telepath/TelepathTeamScores";
 
 import '../css/Telepath.css';
 
-import io from "socket.io-client";
+import getSocket from "../socket";
 
 // TODO
 // - Keep proper track of points
@@ -18,23 +17,19 @@ import io from "socket.io-client";
 // - Let it toggle so see other people's scores
 // - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 
-const socket = io.connect("http://localhost:3001");
+const socket = getSocket();
 
-export const Telepath = () => {
-    const generateNewWord = () => {
-        return TelepathWords[Math.floor(Math.random() * TelepathWords.length)].toUpperCase();
-    }
 
-    const generateWordLimit = () => {
-        return Math.floor(Math.random() * 5) + 5;
-    }
+// props
+// roomCode: string
 
+export const Telepath = (props) => {
     // typedWord is the text in the input
     // pickedWords are the words added to the list
     const [typedWord, setTypedWord] = useState(""); 
     const [myWords, setMyWords] = useState([]);
-    const [prompt, setPrompt] = useState(generateNewWord());
-    const [wordLimit, setWordLimit] = useState(generateWordLimit());
+    const [prompt, setPrompt] = useState("");
+    const [wordLimit, setWordLimit] = useState(0);
 
     const fName = useRef('');
 
@@ -64,7 +59,7 @@ export const Telepath = () => {
         }
     }
 
-    const [partnerWords, setPartnerWords] = useState(["RED", "ORANGE", "BANANA", "LIME", "MANGO", "FRUIT"]);
+    const [partnerWords, setPartnerWords] = useState([]);
     const [sharedWords, setSharedWords] = useState([])
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [selfReady, setSelfReady] = useState(false);
@@ -82,8 +77,7 @@ export const Telepath = () => {
     }
 
     const getNextWord = () => {
-        setPrompt(generateNewWord);
-        setWordLimit(generateWordLimit);
+        socket.emit('get_telepath_prompt', props.roomCode);
         setMyWords([]);
     }
 
@@ -117,24 +111,33 @@ export const Telepath = () => {
         setSelfReady(true);
     };
 
-    useEffect(() => {
-        socket.on("receive_telepath_words", (data) => {
-            setTeamReady(true);
-            setPartnerWords(data.message);
-        })
-    }, [socket]);
-
     const sendReady = () => {
-        socket.emit("send_telepath_ready", {});
+        socket.emit("send_telepath_ready");
         setSelfReady(true);
     };
 
     useEffect(() => {
-        socket.on("receive_telepath_ready", (data) => {
+        socket.on("receive_telepath_words", (data) => {
             setTeamReady(true);
-        })
-    }, [socket]);
+            setPartnerWords(data.message);
+        });
 
+        socket.on("receive_telepath_ready", () => {
+            setTeamReady(true);
+        });
+
+        socket.on("receive_telepath_prompt", (data) => {
+            setPrompt(data.prompt);
+            setWordLimit(data.wordLimit);
+            console.log("FIRST");
+        });
+
+        return () => {
+            socket.off('receive_telepath_words');
+            socket.off('receive_telepath_ready');
+            socket.off('receive_telepath_prompt');
+        };
+    }, []);
 
     if (selfReady && teamReady) {
         shouldShowResults ? getNextWord() : refreshShared();

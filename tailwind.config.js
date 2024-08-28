@@ -21,7 +21,7 @@ module.exports = {
     },
     extend: {
       colors: {
-
+        'primary': 'rgb(12 74 110)', // sky-900
       },
       height: {
         'navbar': "60px",

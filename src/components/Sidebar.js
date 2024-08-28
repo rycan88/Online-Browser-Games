@@ -3,11 +3,16 @@ import '../css/Sidebar.css';
 import { IoMdClose } from "react-icons/io";
 
 import { useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { SidebarData } from './SidebarData';
+
+// setSidebarWidth: React function
+// props.sidebarWidth: Int
 
 export const Sidebar = (props) => {
     let sidebarRef = useRef(null);
-
+    const navigate = useNavigate();
+    
     const closeSidebar = () => {
         props.setSidebarWidth(-300);
     }
@@ -40,7 +45,10 @@ export const Sidebar = (props) => {
                       <li key={key}>
                         <div className={`sidebarItem ${extraFormatting}`} 
                              id = {window.location.pathname === val.link ? "active" : ""}
-                             onClick={() => { window.location.pathname = val.link}}
+                             onClick={() => { 
+                                closeSidebar();
+                                navigate(val.link);
+                              }}
                         >
                           {val.icon && <div className="pr-2">{val.icon}</div>}
                           <h2>{val.title}</h2>

@@ -15,7 +15,7 @@ export const TelepathTeamScoresDisplay = (props) => {
         if (index % 2 === 1) {
             return <></>;
         }
-        console.log(playersData);
+        console.log("display", playersData);
         const partner = userData.partner;
 
         const p1 = socket.id === userData.username ? "You" : userData.username.slice(0, 10);

@@ -8,8 +8,7 @@ import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamSc
 import { TelepathList } from "../components/telepath/TelepathList";
 
 // TODO
-// - Sort the list of words so correct words are at the top
-// - Let it toggle so see other people's scores
+// - Let it toggle so see other people's lists
 // - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 
 const socket = getSocket();

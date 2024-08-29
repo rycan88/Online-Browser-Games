@@ -22,7 +22,6 @@ export const TelepathList = (props) => {
                 return !(sharedWords.includes(word));
             })
 
-        console.log(nonSharedList);
         const orderedWordList = [...sharedWords, ...nonSharedList];
         return orderedWordList.map((word) => {
             return <ListItem word={word} 

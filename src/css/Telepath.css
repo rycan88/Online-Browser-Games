@@ -62,4 +62,13 @@
       @apply h-[80px] w-[200px] bg-sky-800 place-content-evenly px-4 text-2xl rounded-3xl;
     }
   }
+
+  .telepathTeamScores {
+    @apply w-full h-[25%] p-4 bg-slate-900/30 mb-1 rounded-2xl;
+  }
+
+  /*
+  .telepathTeamScores:hover {
+    @apply bg-slate-800/30 cursor-pointer;
+  }*/
 }

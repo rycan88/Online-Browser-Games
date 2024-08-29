@@ -19,7 +19,7 @@ export const TelepathTeamScores = (props) => {
     }
 
     return (
-        <div className="w-full h-[25%] p-4 bg-slate-900/30 mb-1 rounded-2xl">
+        <div className="telepathTeamScores">
             <h2 className="text-3xl">Team {props.teamNum}</h2>
             <div className="flex w-full h-[75%]">
                 <div className="flex flex-col place-content-around items-start pl-4 w-[60%] h-full">

@@ -16,10 +16,27 @@ export const TelepathList = (props) => {
         setMyWords(wordList.filter((word) => word !== chosenWord));
     }
 
-    return wordList.map((word) => {
-        return <ListItem word={word} 
-                        removeItem={removeItem} 
-                        shouldShowResults={shouldShowResults} 
-                        sharedWords={sharedWords}/>;
-    })
+    if (shouldShowResults) {
+        const nonSharedList =  
+            wordList.filter((word) => {
+                return !(sharedWords.includes(word));
+            })
+
+        console.log(nonSharedList);
+        const orderedWordList = [...sharedWords, ...nonSharedList];
+        return orderedWordList.map((word) => {
+            return <ListItem word={word} 
+                            removeItem={removeItem} 
+                            shouldShowResults={shouldShowResults} 
+                            sharedWords={sharedWords}/>;
+        })
+    } else {
+        return wordList.map((word) => {
+            return <ListItem word={word} 
+                            removeItem={removeItem} 
+                            shouldShowResults={shouldShowResults} 
+                            sharedWords={sharedWords}/>;
+        })
+    }
+
 }

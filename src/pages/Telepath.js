@@ -9,7 +9,6 @@ import { TelepathList } from "../components/telepath/TelepathList";
 
 // TODO
 // - Sort the list of words so correct words are at the top
-// - Create a room so that multiple teams can play
 // - Let it toggle so see other people's scores
 // - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 
@@ -32,7 +31,7 @@ export const Telepath = (props) => {
     const addWord = (typedWord) => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
         const reformattedWord = typedWord.toUpperCase().trim()
-        if (reformattedWord === "" || myWords.includes(reformattedWord)) {
+        if (reformattedWord === "" || reformattedWord === prompt.toUpperCase() || myWords.includes(reformattedWord)) {
             return false;
         }
 

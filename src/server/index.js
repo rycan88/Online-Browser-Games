@@ -138,6 +138,15 @@ io.on("connection", (socket) => {
         }
     })
 
+    socket.on("unsend_telepath_words", (roomCode) => {
+        if (rooms[roomCode]) {
+            const playersData = rooms[roomCode].playersData;
+            playersData[socket.id].chosenWords = []; 
+            playersData[socket.id].hasPickedWords = false;
+            io.to(roomCode).emit("receive_players_data", playersData);
+        }
+    })
+
     // Triggers when player is ready for a new word
     socket.on("send_telepath_ready", (roomCode) => {
         if (rooms[roomCode]) {

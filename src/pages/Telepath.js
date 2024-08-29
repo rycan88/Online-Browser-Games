@@ -8,7 +8,6 @@ import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamSc
 import { TelepathList } from "../components/telepath/TelepathList";
 
 // TODO
-// - Make the word limit really a limit
 // - Sort the list of words so correct words are at the top
 // - Create a room so that multiple teams can play
 // - Let it toggle so see other people's scores
@@ -28,6 +27,7 @@ export const Telepath = (props) => {
     const [myWords, setMyWords] = useState([]);
     const [prompt, setPrompt] = useState("");
     const [wordLimit, setWordLimit] = useState(0);
+    const [hasPickedWords, setHasPickedWords] = useState(false);
 
     const addWord = (typedWord) => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
@@ -83,10 +83,51 @@ export const Telepath = (props) => {
         socket.emit("send_telepath_ready", roomCode);
     };
 
-    useEffect(() => {
-        refreshShared(myWords, partnerWords);
-    }, [myWords, partnerWords]);
+    const unsendWords = () => {
+        socket.emit("unsend_telepath_words", roomCode);
+    };
 
+    const submitAction = () => {
+        if (shouldShowResults) {
+            sendReady()
+        } else {
+            if (hasPickedWords) {
+                unsendWords()
+            } else {
+                sendWords()
+            }
+        }
+    }
+
+    const buttonLabel = () => {
+        let label = "Next Word";
+        if (!shouldShowResults) {
+            if (hasPickedWords) {
+                label = "Unsend Words";
+            } else {
+                label = "Send Words";
+            }
+        }
+
+        return <h2>{label}</h2>
+    }
+
+    // Unsend word when we change the wordList after sent
+    useEffect(() => {
+        if (hasPickedWords && !shouldShowResults) {
+            console.log("unsend");
+            unsendWords();
+        }
+    }, [myWords]);
+
+    // Refresh the words that are the same
+    useEffect(() => {
+        if (shouldShowResults) {
+            refreshShared(myWords, partnerWords);
+        }
+    }, [myWords, partnerWords, shouldShowResults]);
+
+    // Refresh wordLists when playersData changes
     useEffect(() => {
         playersDataRef.current = playersData;
         if (shouldShowResults && playersData[socket.id]) {
@@ -99,7 +140,7 @@ export const Telepath = (props) => {
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData);
-
+            setHasPickedWords(playersData[socket.id].hasPickedWords);
         });
 
         socket.on("update_player_data", (username, userData) => {
@@ -152,9 +193,9 @@ export const Telepath = (props) => {
                     </div>
                     <div className="flex flex-row place-content-center">
                         <button className="submitWords"
-                             onClick={shouldShowResults ? sendReady : sendWords}
+                             onClick={ submitAction }
                         >
-                            <h2>{shouldShowResults ? "Next Word" : "Submit Words"}</h2>
+                            {buttonLabel()}
                         </button>
                     </div>
                 </div>
@@ -170,7 +211,6 @@ export const Telepath = (props) => {
                                         shouldShowResults={shouldShowResults}
                                         sharedWords={sharedWords}
                             />
-                            {console.log("partner", partnerWords)}
                         </div>
                     </>
                     }

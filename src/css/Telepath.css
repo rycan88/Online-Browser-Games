@@ -59,7 +59,7 @@
     }
 
     .submitWords {
-      @apply h-[80px] bg-sky-800 place-content-evenly px-4 text-2xl rounded-3xl;
+      @apply h-[80px] w-[200px] bg-sky-800 place-content-evenly px-4 text-2xl rounded-3xl;
     }
   }
 }

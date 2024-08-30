@@ -18,8 +18,8 @@ const io = new Server(server, {
     },
 });
 
-const telepathHelper = require("./telepathHelper");
-const { telepathPlayerData } = require("./telepathPlayerData");
+const telepathHelper = require("./telepath/telepathHelper");
+const { telepathPlayerData } = require("./telepath/telepathPlayerData");
 
 // Lobby Rooms
 const rooms = {};

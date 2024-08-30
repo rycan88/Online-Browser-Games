@@ -30,9 +30,6 @@ export const Telepath = (props) => {
 
     // List to show in middle
     const [mainUser, setMainUser] = useState(socket.id);
-    
-    let p1Data = useRef({})
-    let p2Data = useRef({})
 
     const getNextWord = () => {
         socket.emit('generate_telepath_prompt', roomCode);
@@ -41,9 +38,7 @@ export const Telepath = (props) => {
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData);
-            p1Data.current = playersData[socket.id];
-            p2Data.current = playersData[playersData[socket.id].partner];
-            setDataInitialized(true);
+            playersData[socket.id] && setDataInitialized(true);
         });
 
         socket.on("receive_results_state", (shouldShowResults) => {

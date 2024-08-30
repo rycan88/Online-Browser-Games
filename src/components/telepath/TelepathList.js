@@ -23,15 +23,17 @@ export const TelepathList = (props) => {
             })
 
         const orderedWordList = [...sharedWords, ...nonSharedList];
-        return orderedWordList.map((word) => {
-            return <ListItem word={word} 
+        return orderedWordList.map((word, index) => {
+            return <ListItem key={index}  
+                            word={word} 
                             removeItem={removeItem} 
                             shouldShowResults={shouldShowResults} 
                             sharedWords={sharedWords}/>;
         })
     } else {
-        return wordList.map((word) => {
-            return <ListItem word={word} 
+        return wordList.map((word, index) => {
+            return <ListItem key={index}
+                            word={word} 
                             removeItem={removeItem} 
                             shouldShowResults={shouldShowResults} 
                             sharedWords={sharedWords}/>;

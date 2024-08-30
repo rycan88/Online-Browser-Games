@@ -50,7 +50,7 @@ export const Room = (props) => {
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="flex flex-col w-[500px] h-[80%] place-content-around items-center">
                 <h1>{props.gameName}</h1>
-                <h2>{props.roomCode}</h2>
+                <h2 className="text-[100px]">{props.roomCode}</h2>
                 <h2>Players</h2>
                 {players.map((player) => {
                     return <h2>{player}</h2>

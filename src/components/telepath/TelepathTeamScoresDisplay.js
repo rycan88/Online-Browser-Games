@@ -13,13 +13,13 @@ export const TelepathTeamScoresDisplay = (props) => {
     const shouldShowResults = props.shouldShowResults;
     const setMainUser = props.setMainUser;
 
+    console.log("display");
     return Object.values(playersData).map((userData, index) => {
         if (index % 2 === 1) {
             return <></>;
         }
-        console.log("display", playersData);
-        const partner = userData.partner;
 
+        const partner = userData.partner;
         const p1 = userData.username;
         const p2 = partner;
         const ready1 = shouldShowResults ? userData.isReady : userData.hasPickedWords;
@@ -30,7 +30,8 @@ export const TelepathTeamScoresDisplay = (props) => {
         // Always display yourself first on the team
         return partner === socket.id 
             ?
-            <TelepathTeamScores teamNum={index / 2 + 1} 
+            <TelepathTeamScores key={index}
+                                teamNum={index / 2 + 1} 
                                 player1={p2} 
                                 player2={p1} 
                                 firstReady={ready2} 
@@ -39,9 +40,11 @@ export const TelepathTeamScoresDisplay = (props) => {
                                 addedScore={addedScore}
                                 showAdded={shouldShowResults}
                                 setMainUser={setMainUser}
+                                
              />
              :
-            <TelepathTeamScores teamNum={index / 2 + 1} 
+            <TelepathTeamScores key={index}
+                                teamNum={index / 2 + 1} 
                                 player1={p1} 
                                 player2={p2} 
                                 firstReady={ready1} 

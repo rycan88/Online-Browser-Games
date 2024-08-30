@@ -24,9 +24,8 @@ export const TelepathListContainers = (props) => {
     const hasPickedWords = playersData[socket.id].hasPickedWords;
     const isReady = playersData[socket.id].isReady;
 
-
     const [myWords, setMyWords] = useState([]);
-    const [sharedWords, setSharedWords] = useState([])
+    const [sharedWords, setSharedWords] = useState([]);
 
     const addWord = (typedWord) => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
@@ -56,13 +55,16 @@ export const TelepathListContainers = (props) => {
     }
 
     const submitAction = () => {
-        if (shouldShowResults) {
-            sendReady()
-        } else {
+        if (!shouldShowResults) {
             if (hasPickedWords) {
-                unsendWords()
+                unsendWords();
             } else {
-                sendWords()
+                sendWords();
+            }
+
+        } else {
+            if (!isReady) {
+                sendReady();
             }
         }
     }
@@ -96,6 +98,7 @@ export const TelepathListContainers = (props) => {
 
         setSharedWords(newSharedWords)
     }
+    
     console.log("list refresh");
     // Refresh the words that are the same
     useEffect(() => {

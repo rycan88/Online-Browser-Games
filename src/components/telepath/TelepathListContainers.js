@@ -136,8 +136,9 @@ export const TelepathListContainers = (props) => {
         }
     }, [myWords]);
 
+    const p2Visible = shouldShowResults ? "block" : "hidden lg:block";
     return <>
-        <div className="middleContainer">
+        <div className="p1Container">
             <div className="inputContainer">
                 {MiddleInputTitle()}
             </div>
@@ -166,7 +167,7 @@ export const TelepathListContainers = (props) => {
                 </button>
             </div>
         </div>
-        <div className="rightContainer">
+        <div className={`p2Container ${p2Visible}`}>
             {
             shouldShowResults &&
             <>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import '../css/Telepath.css';
 
@@ -8,6 +8,10 @@ import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamSc
 import { TelepathListContainers } from "../components/telepath/TelepathListContainers";
 
 // TODO
+// QoL changes
+// - Finish resizing for smaller screens (double check big screen) 
+// - Let players join with the link instead of always typing the code
+// - Let players reconnect by saving them as a cookie
 // - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 
 const socket = getSocket();
@@ -71,20 +75,22 @@ export const Telepath = (props) => {
     return (
         <div className="telepathPage entirePage">
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
-            <div className="flex place-content-evenly w-full h-full">
-                <div className="leftContainer">
+            <div className="containerHolder">
+                <div className="scoreDisplayContainer">
                     <TelepathTeamScoresDisplay playersData={playersData} 
                                                shouldShowResults={shouldShowResults}
                                                setMainUser={setMainUser}
                     />
                 </div>
-                <TelepathListContainers shouldShowResults={shouldShowResults}
-                                        prompt={prompt}
-                                        wordLimit={wordLimit}
-                                        roomCode={roomCode}
-                                        playersData={playersData}
-                                        mainUser={mainUser}
-                />
+                <div className="listsContainer">
+                    <TelepathListContainers shouldShowResults={shouldShowResults}
+                                            prompt={prompt}
+                                            wordLimit={wordLimit}
+                                            roomCode={roomCode}
+                                            playersData={playersData}
+                                            mainUser={mainUser}
+                    />
+                </div>
             </div>
             <div className="entirePage bg-black/50 z-[-10]"></div>
         </div>

@@ -5,7 +5,7 @@
 @layer base {
   /* NAVIGATION BAR*/
   .navbar {
-    @apply bg-primary text-slate-200 w-full h-navbar items-center flex shadow-lg;
+    @apply bg-primary text-white w-full h-navbar items-center flex shadow-lg;
   }
 
   .sidebarDiv {

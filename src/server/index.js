@@ -49,6 +49,7 @@ io.on("connection", (socket) => {
     io.emit('update_rooms', Object.keys(rooms));
 
     socket.on('create_room', (gameName, roomCode) => {
+        leaveAllRooms(rooms, socket.id);
         rooms[roomCode] = { players: [], gameName: gameName, gameStarted: false, playersData: {}};
         socket.join(roomCode);
         rooms[roomCode].players.push(socket.id);

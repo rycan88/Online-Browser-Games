@@ -32,22 +32,22 @@ export const TelepathTeamScores = (props) => {
     }
 
     return (
-        <div className="telepathTeamScores" onClick={clickAction}>
-            <h2 className="text-3xl">Team {props.teamNum}</h2>
+        <div className="teamScores" onClick={clickAction}>
+            <h2>Team {props.teamNum}</h2>
             <div className="flex w-full h-[75%]">
                 <div className="flex flex-col place-content-around items-start pl-4 w-[60%] h-full">
                     <div className="flex w-full h-[50%] items-center">
-                        <h2 className="text-xl">{shortenedName(props.player1)}</h2>
+                        <h3>{shortenedName(props.player1)}</h3>
                         { ReadyStatusIcon(props.firstReady) }
                     </div>
                     <div className="flex w-full h-[50%] items-center">
-                        <h2 className="text-xl">{shortenedName(props.player2)}</h2>
+                        <h3>{shortenedName(props.player2)}</h3>
                         { ReadyStatusIcon(props.secondReady) }
                     </div>
                 </div>
                 <div className="flex flex-col w-[40%] h-full place-content-center items-center -mt-1">
-                    <div className="text-md relative left-3 text-green-500 h-4">{props.showAdded ?`+${props.addedScore}` : ""}</div>
-                    <h2 className="text-3xl -mt-2">{props.totalScore}</h2>
+                    <h4 className="relative left-3 text-green-500 h-4">{props.showAdded ?`+${props.addedScore}` : ""}</h4>
+                    <h2 className="-mt-2">{props.totalScore}</h2>
 
                 </div>
             </div>

@@ -27,6 +27,8 @@ export const Room = (props) => {
             socket.emit('generate_telepath_prompt', props.roomCode);
         });
 
+        socket.emit("get_all_players", roomCode);
+
         return () => {
             socket.off('update_players');
             socket.off('game_started');
@@ -43,7 +45,7 @@ export const Room = (props) => {
 
     const goBack = () => {
         socket.emit('leave_room', props.roomCode);
-        navigate(-1);
+        navigate(`/${gameName}/lobby`);
     }
 
     return (

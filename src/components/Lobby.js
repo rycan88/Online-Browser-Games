@@ -21,8 +21,11 @@ export const Lobby = (props) => {
 
     useEffect(() => {
         socket.on('update_rooms', (rooms) => {
+            console.log("Rooms updated");
             setRooms(rooms);
         });
+
+        socket.emit("get_all_rooms");
 
         return () => {
             socket.off('update_rooms');
@@ -31,9 +34,11 @@ export const Lobby = (props) => {
   
     const goToRoom = (gameName, roomCode) => {
         navigate(`/${gameName}/lobby/${roomCode}`);
+        console.log("MOVED");
     }
     const createRoom = (gameName, roomCode) => {
         socket.emit('create_room', gameName, roomCode);
+        setRooms([...rooms, roomCode]);
         goToRoom(gameName, roomCode);
     };
   
@@ -54,6 +59,15 @@ export const Lobby = (props) => {
         } 
     };
 
+    const generateRoomCode = () => {
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let code = "";
+        for (let i = 0; i < 4; i++) {
+            code += letters[Math.floor(Math.random() * letters.length)];
+        }
+        return code;
+    }
+
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="flex flex-col w-[500px] h-[80%] place-content-around items-center">
@@ -61,7 +75,8 @@ export const Lobby = (props) => {
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                 <p>{errorMessage}</p>
                 <button onClick={() => {
-                    createRoom("telepath", "ABCD");
+                    const roomCode = generateRoomCode();
+                    createRoom("telepath", roomCode);
                 }}>
                     Create<br/>Game
                 </button>

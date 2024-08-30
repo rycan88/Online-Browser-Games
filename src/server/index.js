@@ -30,6 +30,17 @@ const getRoomLeader = (roomCode) => {
     }
 }
 
+const leaveAllRooms = (rooms, userid) => {
+    Object.keys(rooms).forEach((roomCode) => {
+        rooms[roomCode].players = rooms[roomCode].players.filter(id => id !== userid);
+        if (rooms[roomCode].players.length === 0) {
+            delete rooms[roomCode];
+        } else {
+            io.to(roomCode).emit('update_players', rooms[roomCode].players);
+        }
+    });
+}
+
 io.on("connection", (socket) => {
     console.log(`User Connected: ${socket.id}`);
 
@@ -47,6 +58,7 @@ io.on("connection", (socket) => {
     
     socket.on('join_room', (roomCode) => {
         if (rooms[roomCode]) {
+            leaveAllRooms(rooms, socket.id);
             socket.join(roomCode);
             rooms[roomCode].players.push(socket.id);
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
@@ -92,14 +104,7 @@ io.on("connection", (socket) => {
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
         // Handle cleanup of lobbies and players
-        Object.keys(rooms).forEach((roomCode) => {
-            rooms[roomCode].players = rooms[roomCode].players.filter(id => id !== socket.id);
-            if (rooms[roomCode].players.length === 0) {
-                delete rooms[roomCode];
-            } else {
-                io.to(roomCode).emit('update_players', rooms[roomCode].players);
-            }
-        });
+        leaveAllRooms(rooms, socket.id);
     });
 
     socket.on('get_all_rooms', () => {
@@ -108,13 +113,13 @@ io.on("connection", (socket) => {
 
     socket.on('get_all_players', (roomCode) => {
         if (rooms[roomCode]) {
-            io.emit('update_players', rooms[roomCode].players);
+            io.to(roomCode).emit('update_players', rooms[roomCode].players);
         }
     });
 
     socket.on('get_players_data', (roomCode) => {
         if (rooms[roomCode]) {
-            io.emit('receive_players_data', rooms[roomCode].playersData);
+            io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
             console.log("start", rooms[roomCode].playersData);
         }
     });

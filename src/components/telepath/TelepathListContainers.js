@@ -10,12 +10,20 @@ const socket = getSocket();
 // shouldShowResults: bool
 export const TelepathListContainers = (props) => {
     const shouldShowResults = props.shouldShowResults;
-    const hasPickedWords = props.hasPickedWords;
+
     const wordLimit = props.wordLimit;
     const prompt = props.prompt;
     const roomCode = props.roomCode;
-    const p1Data = props.p1Data;
-    const p2Data = props.p2Data;
+
+    const playersData = props.playersData;
+    const mainUser = props.mainUser;
+
+    const p1Data = playersData[mainUser];    
+    const p2Data = playersData[playersData[mainUser].partner];
+
+    const hasPickedWords = playersData[socket.id].hasPickedWords;
+    const isReady = playersData[socket.id].isReady;
+
 
     const [myWords, setMyWords] = useState([]);
     const [sharedWords, setSharedWords] = useState([])
@@ -31,9 +39,13 @@ export const TelepathListContainers = (props) => {
         return true;
     }
 
+    const shortenedName = (name) => {
+        return name === socket.id ? "You" : name.slice(0, 10)
+    }
+
     const MiddleInputTitle = () => {
         if (shouldShowResults) {
-            return <div className="wordlistTitle">You</div>
+            return <div className="wordlistTitle">{shortenedName(mainUser)}</div>
         }
 
         if (myWords.length >= wordLimit) {
@@ -56,12 +68,18 @@ export const TelepathListContainers = (props) => {
     }
 
     const buttonLabel = () => {
-        let label = "Next Word";
+        let label = "";
         if (!shouldShowResults) {
             if (hasPickedWords) {
                 label = "Unsend Words";
             } else {
                 label = "Send Words";
+            }
+        } else {
+            if (isReady) {
+                label = "Waiting for others...";
+            } else {
+                label = "Next Word";
             }
         }
 
@@ -78,11 +96,11 @@ export const TelepathListContainers = (props) => {
 
         setSharedWords(newSharedWords)
     }
-
+    console.log("list refresh");
     // Refresh the words that are the same
     useEffect(() => {
         if (shouldShowResults) {
-            refreshShared(p1Data.chosenWords ?? [], p2Data.chosenWords ?? []);
+            refreshShared(p1Data.chosenWords, p2Data.chosenWords);
             console.log("data", p1Data, p2Data)
         }
     }, [shouldShowResults, p1Data, p2Data]);

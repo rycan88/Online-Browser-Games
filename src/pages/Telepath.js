@@ -8,7 +8,6 @@ import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamSc
 import { TelepathListContainers } from "../components/telepath/TelepathListContainers";
 
 // TODO
-// - Let it toggle so see other people's lists
 // - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 
 const socket = getSocket();
@@ -22,13 +21,15 @@ export const Telepath = (props) => {
     // typedWord is the text in the input
     // pickedWords are the words added to the list
 
-
+    const [dataInitialized, setDataInitialized] = useState(false)
     const [prompt, setPrompt] = useState("");
     const [wordLimit, setWordLimit] = useState(0);
-    const [hasPickedWords, setHasPickedWords] = useState(false);
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [playersData, setPlayersData] = useState({});
+
+    // List to show in middle
+    const [mainUser, setMainUser] = useState(socket.id);
     
     let p1Data = useRef({})
     let p2Data = useRef({})
@@ -40,9 +41,9 @@ export const Telepath = (props) => {
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData);
-            setHasPickedWords(playersData[socket.id].hasPickedWords);
             p1Data.current = playersData[socket.id];
             p2Data.current = playersData[playersData[socket.id].partner];
+            setDataInitialized(true);
         });
 
         socket.on("receive_results_state", (shouldShowResults) => {
@@ -67,7 +68,11 @@ export const Telepath = (props) => {
             socket.off('receive_players_data');
         };
     }, []);
-    console.log(playersData);
+
+    if (!dataInitialized) {
+        return <></>
+    }
+
     return (
         <div className="telepathPage entirePage">
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
@@ -75,16 +80,15 @@ export const Telepath = (props) => {
                 <div className="leftContainer">
                     <TelepathTeamScoresDisplay playersData={playersData} 
                                                shouldShowResults={shouldShowResults}
+                                               setMainUser={setMainUser}
                     />
                 </div>
                 <TelepathListContainers shouldShowResults={shouldShowResults}
-                                        hasPickedWords={hasPickedWords}
                                         prompt={prompt}
                                         wordLimit={wordLimit}
                                         roomCode={roomCode}
-                                        p1Data={p1Data.current}
-                                        p2Data={p2Data.current}
-
+                                        playersData={playersData}
+                                        mainUser={mainUser}
                 />
             </div>
             <div className="entirePage bg-black/50 z-[-10]"></div>

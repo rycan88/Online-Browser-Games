@@ -47,8 +47,6 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/telepath" element={<Telepath />} />
-
               <Route path="/telepath/lobby" element={<Lobby game="Telepath"/>} />
               {roomRoutes(gameName, rooms)}
               {gameRoutes(rooms)}

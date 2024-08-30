@@ -22,11 +22,6 @@ export const SidebarData = [
     },
     {
         title: "Telepath",
-        link: "/telepath",
-        isMain: false,
-    },
-    {
-        title: "Telepath Lobby",
         link: "/telepath/lobby",
         isMain: false,
     },

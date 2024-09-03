@@ -17,12 +17,14 @@ const socket = getSocket();
 // showAdded: bool
 
 export const TelepathTeamScores = (props) => {
+    const showAdded = props.showAdded;
+
     const ReadyStatusIcon = (isReady) => {
         return isReady ? <FaCheck className="icons text-green-400"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-600"/>;
     }
 
     const clickAction = () => {
-        if (props.showAdded) { 
+        if (showAdded) { 
             props.setMainUser(props.player1);
         }
     }
@@ -32,7 +34,7 @@ export const TelepathTeamScores = (props) => {
     }
 
     return (
-        <div className="teamScores" onClick={clickAction}>
+        <div className={`teamScores ${showAdded && "hover:bg-slate-800/40 cursor-pointer"}`} onClick={clickAction}>
             <div className="flex w-full">
                 <div className="flex flex-col place-content-around items-start h-full gap-2">
                     <div className="playerNameContainer">

@@ -63,7 +63,7 @@
     }
 
     .addButton {
-      @apply w-[20%] h-full bg-sky-800;
+      @apply w-[20%] h-full bg-sky-800 hover:bg-sky-700;
     }
 
     .wordlistTitle {
@@ -71,11 +71,12 @@
     }
 
     .list {
-      @apply flex flex-col items-center max-w-[calc(min(90vw,400px))] w-[95%] h-[90%] overflow-y-auto mt-2 md:mt-4 mx-auto border-slate-500/80 border-[1px];
+      @apply flex flex-col items-center max-w-[calc(min(90vw,400px))] w-[95%] h-[90%] overflow-y-auto mt-2 md:mt-4 mx-auto;
+      @apply border-slate-500/80 border-[1px] divide-y-[0.5px] divide-dashed divide-slate-500;
     }
 
     .listItem {
-      @apply w-full h-6 lg:h-[56px] pl-4 pr-2 flex items-center place-content-between  flex-shrink-0;
+      @apply w-full h-6 lg:h-[56px] pl-4 pr-2 flex items-center place-content-between flex-shrink-0;
     }
 
     .listItem h2 {
@@ -91,7 +92,7 @@
     }
 
     .submitWords {
-      @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] bg-sky-800/90 place-content-evenly px-4 text-2xl rounded-3xl;
+      @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] place-content-evenly px-4 text-2xl rounded-3xl;
     }
   }
 

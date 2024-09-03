@@ -136,7 +136,6 @@ export const TelepathListContainers = (props) => {
         }
     }, [myWords]);
 
-    const p2Visible = shouldShowResults ? "block" : "hidden lg:block";
     return <>
         <div className="p1Container">
             <div className="inputContainer">
@@ -160,14 +159,14 @@ export const TelepathListContainers = (props) => {
                 }
             </div>
             <div className="flex flex-row place-content-center">
-                <button className="submitWords"
+                <button className={`submitWords ${!(shouldShowResults && isReady) ? "hover:bg-sky-700 bg-sky-800" : "bg-sky-600/40 cursor-not-allowed"}`}
                     onClick={ submitAction }
                 >
                     {buttonLabel()}
                 </button>
             </div>
         </div>
-        <div className={`p2Container ${p2Visible}`}>
+        <div className={`p2Container ${shouldShowResults ? "block" : "hidden lg:block"}`}>
             {
             shouldShowResults &&
             <>

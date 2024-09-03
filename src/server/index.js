@@ -192,11 +192,17 @@ io.on("connection", (socket) => {
     
     socket.on("get_all_telepath_data", (roomCode) => {
         if (rooms[roomCode]) {
+            if (!(socket.id in rooms[roomCode].playersData)) {
+                socket.emit('room_error', `Game ${roomCode} has already started`);
+                return;
+            }
             socket.emit('receive_telepath_prompt', rooms[roomCode]);
             socket.emit('receive_players_data', rooms[roomCode].playersData);
             if (!Object.values(rooms[roomCode].playersData).find((data) => data.hasPickedWords === false)) {
                 io.to(roomCode).emit("receive_results_state", true);
             }
+        } else {
+            socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         }
     });
 })

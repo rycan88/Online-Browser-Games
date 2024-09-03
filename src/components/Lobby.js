@@ -41,7 +41,7 @@ export const Lobby = (props) => {
             const gameName = "telepath";
             goToRoom(gameName, roomCode);
         } else {
-            setErrorMessage("Room " + roomCode + " does not exist");
+            setErrorMessage("Lobby " + roomCode + " does not exist");
         }
     };
   

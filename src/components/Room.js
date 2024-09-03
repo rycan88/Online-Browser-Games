@@ -37,6 +37,7 @@ export const Room = (props) => {
         return () => {
             socket.off('update_players');
             socket.off('game_started');
+            socket.off('room_error');
         };
     }, []);
 

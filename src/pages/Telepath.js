@@ -6,6 +6,7 @@ import getSocket from "../socket";
 
 import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamScoresDisplay";
 import { TelepathListContainers } from "../components/telepath/TelepathListContainers";
+import { useNavigate } from "react-router-dom";
 
 // TODO
 // QoL changes
@@ -21,7 +22,7 @@ const socket = getSocket();
 
 export const Telepath = (props) => {
     const roomCode = props.roomCode;
-
+    const navigate = useNavigate();
     // typedWord is the text in the input
     // pickedWords are the words added to the list
 
@@ -59,12 +60,17 @@ export const Telepath = (props) => {
             setWordLimit(data.wordLimit);
         });
 
+        socket.on('room_error', (errorMessage) => {
+            navigate(`/telepath/lobby`, { state: {error: errorMessage}});
+        });
+
         socket.emit('get_all_telepath_data', roomCode);
 
         return () => {
             socket.off('receive_results_state');
             socket.off('receive_telepath_prompt');
             socket.off('receive_players_data');
+            socket.off('room_error');
         };
     }, []);
 

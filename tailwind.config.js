@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+const colors = require('tailwindcss/colors');
+
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -21,7 +24,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        'primary': 'rgb(12 74 110)', // sky-900
+        'primary': colors.sky['900'], 
       },
       height: {
         'navbar': "60px",

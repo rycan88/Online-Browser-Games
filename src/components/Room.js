@@ -27,6 +27,11 @@ export const Room = (props) => {
             socket.emit('generate_telepath_prompt', props.roomCode);
         });
 
+        socket.on('room_error', (errorMessage) => {
+            navigate(`/${gameName}/lobby`, { state: {error: errorMessage}});
+        });
+
+        socket.emit('join_room', roomCode);
         socket.emit("get_all_players", roomCode);
 
         return () => {

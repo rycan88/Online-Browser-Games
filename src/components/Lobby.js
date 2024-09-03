@@ -1,7 +1,7 @@
 import "../css/Lobby.css";
 
 import { useEffect, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import getSocket from "../socket";
 
 import { AppContext } from "../App";
@@ -9,28 +9,16 @@ import { AppContext } from "../App";
 const socket = getSocket();
 export const Lobby = (props) => {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { rooms, setRooms } = useContext(AppContext);
 
     const [typedCode, setTypedCode] = useState(""); 
-    const [errorMessage, setErrorMessage] = useState(""); 
+    const [errorMessage, setErrorMessage] = useState(location.state?.error); 
     const handleTextChange = (event) => {
         setErrorMessage("");
         setTypedCode(event.target.value);
     }
-
-    useEffect(() => {
-        socket.on('update_rooms', (rooms) => {
-            console.log("Rooms updated");
-            setRooms(rooms);
-        });
-
-        socket.emit("get_all_rooms");
-
-        return () => {
-            socket.off('update_rooms');
-        };
-    }, []);
   
     const goToRoom = (gameName, roomCode) => {
         navigate(`/${gameName}/lobby/${roomCode}`);
@@ -45,7 +33,6 @@ export const Lobby = (props) => {
     const joinRoom = (roomCode) => {
         console.log(rooms);
         if (rooms.includes(roomCode)) {
-            socket.emit('join_room', roomCode);
             const gameName = "telepath";
             goToRoom(gameName, roomCode);
         } else {
@@ -73,7 +60,7 @@ export const Lobby = (props) => {
             <div className="flex flex-col w-[500px] h-[80%] place-content-around items-center">
                 <h1>{props.game}</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <p>{errorMessage}</p>
+                <p className="text-red-500">{errorMessage}</p>
                 <button onClick={() => {
                     const roomCode = generateRoomCode();
                     createRoom("telepath", roomCode);

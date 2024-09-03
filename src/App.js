@@ -9,12 +9,17 @@ import { OddColourOut } from './pages/OddColourOut';
 import { Lobby } from "./components/Lobby";
 import { Room } from  "./components/Room";
 
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import getSocket from "./socket";
+
+
+
 
 export const AppContext = createContext();
+const socket = getSocket();
 
 function App() {
   const client = new QueryClient();
@@ -38,6 +43,19 @@ function App() {
                     element={<Telepath roomCode={roomCode} />} />
         }) 
   }
+
+  useEffect(() => {
+    socket.on('update_rooms', (rooms) => {
+        console.log("Rooms updated");
+        setRooms(rooms);
+    });
+
+    socket.emit("get_all_rooms");
+
+    return () => {
+        socket.off('update_rooms');
+    };
+  }, []);
 
   return (
     <div className="App">

@@ -58,14 +58,15 @@ io.on("connection", (socket) => {
       });
     
     socket.on('join_room', (roomCode) => {
-        if (rooms[roomCode]) {
+        if (!rooms[roomCode]) {
+            socket.emit('room_error', `Lobby ${roomCode} does not exist`);
+        } else if (rooms[roomCode].gameStarted) {
+            socket.emit('room_error', `Game ${roomCode} has already started`);
+        } else if (!rooms[roomCode].players.includes(socket.id)) {
             leaveAllRooms(rooms, socket.id);
             socket.join(roomCode);
             rooms[roomCode].players.push(socket.id);
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
-        } else {
-            console.log(`${roomCode} does not exist`);
-            socket.emit('room_error', 'Room does not exist');
         }
     });
 

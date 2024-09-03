@@ -17,7 +17,8 @@ export const Lobby = (props) => {
     const [errorMessage, setErrorMessage] = useState(location.state?.error); 
     const handleTextChange = (event) => {
         setErrorMessage("");
-        setTypedCode(event.target.value);
+        const inp = event.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+        setTypedCode(inp);
     }
   
     const goToRoom = (gameName, roomCode) => {
@@ -32,6 +33,10 @@ export const Lobby = (props) => {
   
     const joinRoom = (roomCode) => {
         console.log(rooms);
+        if (roomCode.length !== 4) {
+            setErrorMessage("Code must be exactly 4 characters long");
+            return;
+        }
         if (rooms.includes(roomCode)) {
             const gameName = "telepath";
             goToRoom(gameName, roomCode);
@@ -70,9 +75,11 @@ export const Lobby = (props) => {
                 <div className="flex place-content-around w-full items-center">
                     <input className="w-[50%] h-[50px]" 
                            type="text" 
+                           value={typedCode}
                            placeholder="Enter 4-letter code..."
                            onChange={ handleTextChange } 
                            onKeyDown={ keyDownHandler }
+                           maxLength="4"
                     ></input>
                     <button onClick={() => {
                         joinRoom(typedCode);

@@ -189,11 +189,11 @@ export const OddColourOut = () => {
                                 <div className="flex flex-col">
                                     {
                                         isShow ? 
-                                            <button className="bg-primary" onClick={showSolution}> Show </button>
+                                            <button className="gradientButton" onClick={showSolution}> Show </button>
                                             :
-                                            <button className="bg-primary" onClick={hideSolution}> Hide </button>
+                                            <button className="gradientButton" onClick={hideSolution}> Hide </button>
                                     }
-                                    <button className="bg-red-800" onClick={restartAction}> Restart </button>
+                                    <button className="redGradientButton" onClick={restartAction}> Restart </button>
                                 </div>
                                 }
                             </div>

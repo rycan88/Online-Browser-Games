@@ -4,8 +4,31 @@
 
 @layer base {
   .lobbyPage {
+    @apply bg-gradient-to-br from-slate-400 to-slate-600;
     button {
-      @apply bg-primary text-slate-200 w-[40%] text-3xl py-3 px-4 my-3 shadow-xl rounded-xl;
+      @apply text-slate-200 w-[40%] h-[100px] text-3xl py-3 px-4 my-3 shadow-xl rounded-xl;
+    }
+    .lobbyBox {
+      @apply relative flex flex-col w-[95%] max-w-[700px] h-[90%] p-6 items-center bg-gradient-to-br from-slate-200 to-slate-400 shadow-xl rounded-xl;
+    }
+
+    .gameTitle {
+      @apply text-5xl;
+    }
+    .rules {
+      @apply h-[45%] my-4 px-2 text-lg overflow-y-scroll;
+    }
+
+    input {
+      @apply w-[80%] h-[80px] text-center my-auto text-5xl focus:placeholder-transparent;
+    }
+
+    input::placeholder {
+      @apply absolute  top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 text-lg;
+    }
+
+    .errorText {
+      @apply text-red-600 h-6;
     }
   }
 }

@@ -159,7 +159,7 @@ export const TelepathListContainers = (props) => {
                 }
             </div>
             <div className="flex flex-row place-content-center">
-                <button className={`submitWords ${!(shouldShowResults && isReady) ? "hover:bg-sky-700 bg-sky-800" : "bg-sky-600/40 cursor-not-allowed"}`}
+                <button className={`submitWords ${!(shouldShowResults && isReady) ? "gradientButton" : "bg-sky-600/40 cursor-not-allowed"}`}
                     onClick={ submitAction }
                 >
                     {buttonLabel()}

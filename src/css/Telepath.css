@@ -63,7 +63,7 @@
     }
 
     .addButton {
-      @apply w-[20%] h-full bg-sky-800 hover:bg-sky-700;
+      @apply w-[20%] h-full;
     }
 
     .wordlistTitle {

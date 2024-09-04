@@ -35,7 +35,7 @@ export const Sidebar = (props) => {
             <div className="flex flex-col">
                 <div className="flex place-content-center items-center w-full h-[50px]">
                     <h1 className="text-lg">Cool Games Online</h1>
-                    <IoMdClose className="closeButton"
+                    <IoMdClose className="closeButton hover:redGradientButton"
                             onClick={closeSidebar}/>
                 </div>
                 <ul>

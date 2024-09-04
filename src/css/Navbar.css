@@ -5,7 +5,7 @@
 @layer base {
   /* NAVIGATION BAR*/
   .navbar {
-    @apply bg-primary text-white w-full h-navbar items-center flex shadow-lg text-sm md:text-base;
+    @apply bg-gradient-to-t from-sky-900 to-sky-600 text-white w-full h-navbar items-center flex shadow-lg text-sm md:text-base;
   }
 
   .sidebarDiv {

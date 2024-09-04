@@ -33,7 +33,7 @@ export const TelepathInputBar = (props) => {
                     onChange={ handleTextChange } 
                     onKeyDown={ keyDownHandler }>    
             </input>
-            <button className="addButton"
+            <button className="addButton gradientButton"
                     onClick={() => {
                         handleAddWord(typedWord);
                     }}>

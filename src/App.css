@@ -6,6 +6,22 @@
   .entirePage {
     @apply flex flex-col h-[calc(100vh-60px)] w-full bg-cover absolute;
   }
+
+  .gradientButton {
+    @apply bg-gradient-to-tr from-sky-950 to-sky-600;
+  }
+
+  .gradientButton:hover {
+    @apply bg-gradient-to-tr from-sky-900 to-sky-600;
+  }
+
+  .redGradientButton {
+    @apply bg-gradient-to-tr from-red-950 to-red-500;
+  }
+
+  .redGradientButton:hover {
+    @apply bg-gradient-to-tr from-red-900 to-red-500;
+  }
 }
 
 /* width */

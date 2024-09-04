@@ -56,16 +56,18 @@ export const Room = (props) => {
 
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
-            <div className="flex flex-col w-[500px] h-[80%] place-content-around items-center">
+            <div className="lobbyBox">
                 <h1>{props.gameName}</h1>
                 <h2 className="text-[100px]">{props.roomCode}</h2>
                 <h2>Players</h2>
-                {players.map((player) => {
-                    return <h2>{player}</h2>
-                })}
-                <div className="flex">
-                    <button onClick={goBack}>Back</button>
-                    <button onClick={startGame}>Start Game</button>
+                <div className="flex flex-col h-[45%] w-full overflow-y-scroll">
+                    {players.map((player) => {
+                        return <h2>{player}</h2>
+                    })}
+                </div>
+                <div className="flex flex-row w-full place-content-between">
+                    <button className="redGradientButton" onClick={goBack}>Leave</button>
+                    <button className="gradientButton" onClick={startGame}>Start Game</button>
                 </div>
 
             </div>

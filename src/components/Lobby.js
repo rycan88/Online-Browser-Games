@@ -62,31 +62,37 @@ export const Lobby = (props) => {
 
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
-            <div className="flex flex-col w-[500px] h-[80%] place-content-around items-center">
-                <h1>{props.game}</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                <p className="text-red-500">{errorMessage}</p>
-                <button onClick={() => {
-                    const roomCode = generateRoomCode();
-                    createRoom("telepath", roomCode);
-                }}>
-                    Create<br/>Game
-                </button>
+            <div className="lobbyBox">
+                <h1 className="gameTitle">{props.game}</h1>
+                <p className="rules">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p className="errorText">{errorMessage}</p>
+                <input type="text" 
+                        value={typedCode}
+                        placeholder="Enter 4-letter code..."
+                        onChange={ handleTextChange } 
+                        onKeyDown={ keyDownHandler }
+                        maxLength="4"
+                ></input>
                 <div className="flex place-content-around w-full items-center">
-                    <input className="w-[50%] h-[50px]" 
-                           type="text" 
-                           value={typedCode}
-                           placeholder="Enter 4-letter code..."
-                           onChange={ handleTextChange } 
-                           onKeyDown={ keyDownHandler }
-                           maxLength="4"
-                    ></input>
-                    <button onClick={() => {
+
+                    <button className="gradientButton" onClick={() => {
                         joinRoom(typedCode);
                     }}>
                         Join<br/>Game
                     </button>
+                    <button className="gradientButton" onClick={() => {
+                        let roomCode = generateRoomCode();
+                        // Makes sure room does not already exist
+                        while (rooms.includes(roomCode)) {
+                            roomCode = generateRoomCode();
+                        }
+                        createRoom("telepath", roomCode);
+                    }}>
+                        Create<br/>Game
+                    </button>
                 </div>
+
+ 
             </div>
         </div>
     )

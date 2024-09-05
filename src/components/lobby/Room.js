@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef, useContext } from "react";
-import getSocket from "../socket";
+import getSocket from "../../socket";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AppContext } from "../App";
+import { AppContext } from "../../App";
+import { TeamList } from "./TeamList";
 
 
 
@@ -46,26 +47,31 @@ export const Room = (props) => {
             alert("Needs even # of players");
             return 
         }
-        socket.emit('start_game', props.roomCode);
+        socket.emit('start_game', roomCode);
     };
 
     const goBack = () => {
-        socket.emit('leave_room', props.roomCode);
+        socket.emit('leave_room', roomCode);
         navigate(`/${gameName}/lobby`);
     }
 
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="lobbyBox">
-                <h1>{props.gameName}</h1>
-                <h2 className="text-[100px]">{props.roomCode}</h2>
-                <h2>Players</h2>
-                <div className="flex flex-col h-[45%] w-full overflow-y-scroll">
-                    {players.map((player) => {
+                <h1 className="text-3xl">{gameName.toUpperCase()}</h1>
+                <h2 className="text-8xl py-3 my-auto">{roomCode}</h2>
+                <div className="flex flex-col h-[45%] w-full overflow-y-auto">
+                    { gameName === "telepath" 
+                    ?
+                    <TeamList roomCode={roomCode}/>
+                    :
+                    players.map((player) => {
                         return <h2>{player}</h2>
-                    })}
+                    })
+                    }
                 </div>
-                <div className="flex flex-row w-full place-content-between">
+                <h2 className="errorText">Error</h2>
+                <div className="buttonsContainer">
                     <button className="redGradientButton" onClick={goBack}>Leave</button>
                     <button className="gradientButton" onClick={startGame}>Start Game</button>
                 </div>

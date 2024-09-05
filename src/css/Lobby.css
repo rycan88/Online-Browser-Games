@@ -4,19 +4,23 @@
 
 @layer base {
   .lobbyPage {
-    @apply bg-gradient-to-br from-slate-400 to-slate-600;
-    button {
-      @apply text-slate-200 w-[40%] h-[100px] text-3xl py-3 px-4 my-3 shadow-xl rounded-xl;
+    @apply bg-gradient-to-bl from-slate-300 to-slate-800;
+    .buttonsContainer {
+      @apply flex w-full items-center justify-around;
+      button {
+        @apply text-slate-200 w-[40%] h-[100px] text-3xl py-3 px-4 my-3 shadow-xl rounded-xl;
+      }
     }
+
     .lobbyBox {
-      @apply relative flex flex-col w-[95%] max-w-[700px] h-[90%] p-6 items-center bg-gradient-to-br from-slate-200 to-slate-400 shadow-xl rounded-xl;
+      @apply relative flex flex-col w-[95%] max-w-[700px] h-[90%] p-6 items-center bg-gradient-to-bl from-slate-200 to-slate-400 shadow-xl rounded-xl;
     }
 
     .gameTitle {
       @apply text-5xl;
     }
     .rules {
-      @apply h-[45%] my-4 px-2 text-lg overflow-y-scroll;
+      @apply h-[45%] my-4 px-2 text-lg overflow-y-auto;
     }
 
     input {
@@ -28,7 +32,25 @@
     }
 
     .errorText {
-      @apply text-red-600 h-6;
+      @apply text-red-600 text-lg my-auto;
+    }
+  }
+
+  .teamList {
+    .teamContainer {
+      @apply flex flex-col h-[96px] justify-center px-4;
+    }
+    .teamInfoContainer {
+      @apply flex items-center h-[64px];
+      .joinButton {
+        @apply h-6 w-[96px] text-white text-xl my-auto shadow-xl rounded-md;
+      }
+    }
+    .teamLabel {
+      @apply text-2xl my-auto;
+    }
+    .playerLabel {
+      @apply text-xl my-auto;
     }
   }
 }

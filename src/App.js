@@ -6,17 +6,14 @@ import { Telepath } from "./pages/Telepath";
 import { TailwindTest } from "./pages/TailwindTest";
 import { Navbar } from "./components/Navbar";
 import { OddColourOut } from './pages/OddColourOut';
-import { Lobby } from "./components/Lobby";
-import { Room } from  "./components/Room";
+import { Lobby } from "./components/lobby/Lobby";
+import { Room } from  "./components/lobby/Room";
 
 import { createContext, useState, useEffect } from "react";
 
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import getSocket from "./socket";
-
-
-
 
 export const AppContext = createContext();
 const socket = getSocket();

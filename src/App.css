@@ -15,6 +15,10 @@
     @apply bg-gradient-to-tr from-sky-900 to-sky-600;
   }
 
+  .gradientButton:disabled {
+    @apply bg-none bg-sky-700/30 cursor-not-allowed;
+  }
+
   .redGradientButton {
     @apply bg-gradient-to-tr from-red-950 to-red-500;
   }

@@ -32,7 +32,7 @@
     }
 
     .errorText {
-      @apply text-red-600 text-lg my-auto;
+      @apply text-red-600 text-lg my-auto h-5;
     }
   }
 
@@ -43,7 +43,7 @@
     .teamInfoContainer {
       @apply flex items-center h-[64px];
       .joinButton {
-        @apply h-6 w-[96px] text-white text-xl my-auto shadow-xl rounded-md;
+        @apply h-6 w-[96px] text-white text-xl my-auto shadow-lg rounded-md;
       }
     }
     .teamLabel {

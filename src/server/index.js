@@ -50,7 +50,7 @@ const addToTeamList = (rooms, roomCode, userid) => {
         }    
     }
     teamData.push([userid])
-    io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData, rooms[roomCode].players.length);
+    io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
 }
 
 const removeFromTeamList = (rooms, roomCode, userid, excludedIndex) => {
@@ -61,7 +61,7 @@ const removeFromTeamList = (rooms, roomCode, userid, excludedIndex) => {
             team.length === 1 
                 ? teamData.splice(index, 1)
                 : teamData[index] = teamData[index].filter(element => element !== userid);
-            io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData, rooms[roomCode].players.length);
+            io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
             return team.length === 1;
         }
    
@@ -82,9 +82,10 @@ io.on("connection", (socket) => {
         socket.join(roomCode);
         rooms[roomCode].players.push(socket.id);
         io.emit('update_rooms', Object.keys(rooms));
-        gameName === "telepath" 
-            ? addToTeamList(rooms, roomCode, socket.id)
-            : socket.emit('update_players', rooms[roomCode].players);
+        if (gameName === "telepath") {
+            addToTeamList(rooms, roomCode, socket.id)
+        } 
+        socket.emit('update_players', rooms[roomCode].players);
       });
     
     socket.on('join_room', (roomCode) => {
@@ -96,9 +97,10 @@ io.on("connection", (socket) => {
             leaveAllRooms(rooms, socket.id);
             socket.join(roomCode);
             rooms[roomCode].players.push(socket.id);
-            rooms[roomCode].gameName === "telepath" 
-                ? addToTeamList(rooms, roomCode, socket.id)
-                : io.to(roomCode).emit('update_players', rooms[roomCode].players);
+            if (rooms[roomCode].gameName === "telepath") {
+                addToTeamList(rooms, roomCode, socket.id)
+            } 
+            io.to(roomCode).emit('update_players', rooms[roomCode].players);
         }
     });
 
@@ -109,9 +111,10 @@ io.on("connection", (socket) => {
             if (rooms[roomCode].players.length === 0) {
                 delete rooms[roomCode];
             } else {
-                rooms[roomCode].gameName === "telepath" 
-                    ? removeFromTeamList(rooms, roomCode, socket.id, -1)
-                    : io.to(roomCode).emit('update_players', rooms[roomCode].players);
+                if (rooms[roomCode].gameName === "telepath") {
+                    removeFromTeamList(rooms, roomCode, socket.id, -1)
+                }    
+                io.to(roomCode).emit('update_players', rooms[roomCode].players);
             }
         } else {
             socket.emit('room_error', 'Player is not in this room');
@@ -120,19 +123,23 @@ io.on("connection", (socket) => {
     
     socket.on('start_game', (roomCode) => {
         if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
-            rooms[roomCode].gameStarted = true;
-            io.to(roomCode).emit('game_started');
             if (rooms[roomCode].gameName === "telepath") {
-                const playersData = {}
+                const teamData = rooms[roomCode].teamData
                 const players = rooms[roomCode].players
-                players.forEach((player, index) => {
-                    let partner = index % 2 === 0 ? players[index + 1] : players[index - 1];
-                    playersData[player] = telepathPlayerData(player, partner, 0);
+                if (teamData.length * 2 !== players.length) { 
+                    console.log("Shouldn't be able to start");
+                    return; 
+                }
+                
+                const playersData = {}
+                teamData.forEach((team) => {
+                    playersData[team[0]] = telepathPlayerData(team[0], team[1], 0);
+                    playersData[team[1]] = telepathPlayerData(team[1], team[0], 0);
                 });
                 rooms[roomCode].playersData = playersData;
-                console.log("data", playersData);
             }
-
+            rooms[roomCode].gameStarted = true;
+            io.to(roomCode).emit('game_started');
         }
     });
     
@@ -149,7 +156,7 @@ io.on("connection", (socket) => {
     socket.on('get_all_players', (roomCode) => {
         if (rooms[roomCode]) {
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
-            io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData, rooms[roomCode].players.length);
+            io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         }
     });
 
@@ -171,7 +178,7 @@ io.on("connection", (socket) => {
                 teamData[index - 1].push(userid);
             }
             removeFromTeamList(rooms, roomCode, userid, index - 1);
-            io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData, rooms[roomCode].players.length);
+            io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         }
     });
 

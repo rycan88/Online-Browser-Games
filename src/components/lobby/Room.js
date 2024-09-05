@@ -15,12 +15,17 @@ export const Room = (props) => {
     const location = useLocation();
     
     const [players, setPlayers] = useState([]);
+    const [teamData, setTeamData] = useState([]);
     const gameName = props.gameName;
     const roomCode = props.roomCode;
-
+    const canStart = teamData.length * 2 === players.length;
     useEffect(() => {
         socket.on('update_players', (players) => {
             setPlayers(players);
+        });
+
+        socket.on('update_team_data', (teamData) => {
+            setTeamData(teamData);
         });
 
         socket.on('game_started', () => {
@@ -37,16 +42,14 @@ export const Room = (props) => {
 
         return () => {
             socket.off('update_players');
+            socket.off('update_team_data');
             socket.off('game_started');
             socket.off('room_error');
+            socket.off('start_error');
         };
     }, []);
 
     const startGame = () => {
-        if (gameName === "telepath" && players.length % 2 !== 0) {
-            alert("Needs even # of players");
-            return 
-        }
         socket.emit('start_game', roomCode);
     };
 
@@ -63,17 +66,17 @@ export const Room = (props) => {
                 <div className="flex flex-col h-[45%] w-full overflow-y-auto">
                     { gameName === "telepath" 
                     ?
-                    <TeamList roomCode={roomCode}/>
+                    <TeamList roomCode={roomCode} teamData={teamData} canStart={canStart}/>
                     :
                     players.map((player) => {
                         return <h2>{player}</h2>
                     })
                     }
                 </div>
-                <h2 className="errorText">Error</h2>
+                <h2 className="errorText">{canStart ? "" : "Needs 2 players on each team"}</h2>
                 <div className="buttonsContainer">
                     <button className="redGradientButton" onClick={goBack}>Leave</button>
-                    <button className="gradientButton" onClick={startGame}>Start Game</button>
+                    <button className="gradientButton" onClick={startGame} disabled={!canStart}>Start Game</button>
                 </div>
 
             </div>

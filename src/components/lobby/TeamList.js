@@ -1,28 +1,15 @@
 
 import getSocket from "../../socket";
-import { useEffect, useState } from "react";
 
 const socket = getSocket();
 
 // props
-// players: [string]
+// roomCode: string
+// teamData
 export const TeamList = (props) => {
     const roomCode = props.roomCode;
-    const [teamData, setTeamData] = useState([]);
-    const [playerCount, setPlayerCount] = useState([]);
-    useEffect(() => {
-        socket.on('update_team_data', (teamData, playerCount) => {
-            console.log("updated!", teamData);
-            setTeamData(teamData);
-            setPlayerCount(playerCount);
-        });
-
-        socket.emit("get_all_players", roomCode);
-
-        return () => {
-            socket.off('update_team_data');
-        };
-    }, []);
+    const teamData = props.teamData;
+    const canStart = props.canStart;
 
     const joinAction = (event) => {
         const buttonId = event.target.id; 
@@ -54,7 +41,7 @@ export const TeamList = (props) => {
                     </div>
                 );
             })}
-            { ((teamData.length) * 2 === playerCount) &&
+            { canStart &&
                 <div className="teamContainer">
                     <h2 className="teamLabel">Team {teamData.length + 1}</h2>
                     <div className="teamInfoContainer justify-center">

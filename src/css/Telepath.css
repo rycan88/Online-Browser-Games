@@ -29,8 +29,8 @@
         @apply text-lg sm:text-xl lg:text-3xl;
       }
 
-      h3 {
-        @apply text-sm sm:text-base lg:text-xl;
+      .playerNames {
+        @apply w-[70px] sm:w-[100px] md:w-[150px] overflow-x-auto whitespace-nowrap text-sm sm:text-base lg:text-xl;
       }
 
       h4 {
@@ -80,7 +80,7 @@
     }
 
     .listItem h2 {
-      @apply text-left text-base sm:text-lg lg:text-xl font-bold w-[90%] overflow-x-scroll;
+      @apply text-left text-base sm:text-lg lg:text-xl font-bold w-[90%] overflow-x-scroll whitespace-nowrap;
     }
 
     .listItemDelete {

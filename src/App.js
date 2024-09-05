@@ -14,6 +14,7 @@ import { createContext, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import getSocket from "./socket";
+import { ErrorPage } from './pages/ErrorPage';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -68,7 +69,7 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
-              <Route path="*" element={<h1>PAGE NOT FOUND. YOU ARE AT THE WRONG LINK. FEELS BAD MAN.</h1>} />
+              <Route path="*" element={<ErrorPage/>} />
             </Routes>
           </Router>
         </QueryClientProvider>

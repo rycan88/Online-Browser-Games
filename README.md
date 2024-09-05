@@ -104,3 +104,6 @@ npm install --save-dev postcss postcss-nested
 Server Setup
 yarn add express cors nodemon socket.io (DO THIS IN SERVER FOLDER)
 yarn add socket.io-client
+
+Cookies
+npm install js-cookie

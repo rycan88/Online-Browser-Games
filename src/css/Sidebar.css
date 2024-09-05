@@ -4,7 +4,7 @@
 
 @layer base {
   .sidebar {
-    @apply h-full bg-gradient-to-l from-slate-950 to-slate-800 w-[300px] absolute top-[0] z-40 transition-all ease-in-out duration-500;
+    @apply h-full bg-gradient-to-b from-slate-950 to-slate-800 w-[300px] absolute top-[0] z-40 transition-all ease-in-out duration-500;
   }
 
   .closeButton {

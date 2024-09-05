@@ -10,8 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 // TODO
 // QoL changes
-// - Finish resizing for smaller screens (double check big screen) 
-// - Let players join with the link instead of always typing the code
 // - Let players reconnect by saving them as a cookie
 // - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 

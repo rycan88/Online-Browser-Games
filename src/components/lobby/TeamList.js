@@ -14,7 +14,7 @@ export const TeamList = (props) => {
     const joinAction = (event) => {
         const buttonId = event.target.id; 
         const index = parseInt(buttonId, 10);
-        socket.emit("join_diff_team", roomCode, socket.id, index);
+        socket.emit("join_diff_team", roomCode, index);
     }
 
     return (
@@ -29,12 +29,12 @@ export const TeamList = (props) => {
                     <div className="teamContainer">
                         <h2 className="teamLabel">Team {index + 1}</h2>
                         <div className="teamInfoContainer justify-between">
-                            <h2 className={`playerLabel ${socket.id === team[0] && "text-sky-700"}`}>{team[0]}</h2>
+                            <h2 className={`playerLabel ${socket.userId === team[0].userId && "text-sky-700"}`}>{team[0].nickname}</h2>
                             {team.length === 2 
-                                ? <h2 className={`playerLabel ${socket.id === team[1] && "text-sky-700"}`}>{team[1]}</h2>
+                                ? <h2 className={`playerLabel ${socket.userId === team[1].userId && "text-sky-700"}`}>{team[1].nickname}</h2>
                                 : <button className="joinButton gradientButton" 
                                             id={index + 1} 
-                                            disabled={socket.id === team[0]}
+                                            disabled={socket.userId === team[0].userId}
                                             onClick={joinAction}>Join</button>
                             }
                         </div>

@@ -31,6 +31,8 @@ const getSocket = () => {
         socket = io.connect("http://localhost:3001", {
             query: { userId, nickname }
         });
+        socket.userId = userId;
+        socket.nickname = nickname;
     }
     return socket;
 }

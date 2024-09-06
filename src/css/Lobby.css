@@ -38,7 +38,7 @@
 
   .teamList {
     .teamContainer {
-      @apply flex flex-col h-[96px] justify-center px-4;
+      @apply flex flex-col h-[96px] justify-center md:px-4;
     }
     .teamInfoContainer {
       @apply flex items-center h-[64px];

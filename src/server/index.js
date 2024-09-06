@@ -19,7 +19,7 @@ const io = new Server(server, {
 
 const telepathHelper = require("./telepath/telepathHelper");
 const { telepathPlayerData } = require("./telepath/telepathPlayerData");
-const { getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList, User } = require("./serverUtils");
+const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId} = require("./serverUtils");
 
 // Lobby Rooms
 const rooms = {};
@@ -29,6 +29,8 @@ io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
     const nickname = socket.handshake.query.nickname;
     const currentUser = new User(socket.id, userId, nickname);
+    socket.userId = userId;
+    socket.nickname = nickname;
     console.log(`User Connected: ${socket.id} ${userId} ${nickname} `);
 
     socket.emit('update_rooms', Object.keys(rooms))
@@ -37,12 +39,14 @@ io.on("connection", (socket) => {
 
     socket.on('create_room', (gameName, roomCode) => {
         leaveAllRooms(io, rooms, socket.id);
-        rooms[roomCode] = { players: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [] };
+        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [] };
         socket.join(roomCode);
-        rooms[roomCode].players.push(socket.id);
+        rooms[roomCode].players.push(currentUser);
+        rooms[roomCode].spectators.push(currentUser);
         io.emit('update_rooms', Object.keys(rooms));
         if (teamGames.includes(gameName)) {
-            addToTeamList(io, rooms, roomCode, socket.id)
+            addToTeamList(rooms, roomCode, currentUser);
+            io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         } 
         socket.emit('update_players', rooms[roomCode].players);
       });
@@ -52,26 +56,33 @@ io.on("connection", (socket) => {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         } else if (rooms[roomCode].gameStarted) {
             socket.emit('room_error', `Game ${roomCode} has already started`);
-        } else if (!rooms[roomCode].players.includes(socket.id)) {
-            leaveAllRooms(io, rooms, socket.id);
+        } else if (!containsSocketId(rooms[roomCode].players, socket.id)) {
+            socket.leaveAll();
+            leaveAllRooms(io, rooms, currentUser);
             socket.join(roomCode);
-            rooms[roomCode].players.push(socket.id);
-            if (rooms[roomCode].gameName === "telepath") {
-                addToTeamList(io, rooms, roomCode, socket.id)
+            rooms[roomCode].spectators.push(currentUser);
+            if (!containsUserId(rooms[roomCode].players, socket.userId)) {
+                rooms[roomCode].players.push(currentUser);
+            }
+            if (teamGames.includes(rooms[roomCode].gameName)) {
+                addToTeamList(rooms, roomCode, currentUser);
+                io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
             } 
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
         }
     });
 
     socket.on('leave_room', (roomCode) => {
-        if (rooms[roomCode] && rooms[roomCode].players.includes(socket.id)) {
+        if (rooms[roomCode] && containsSocketId(rooms[roomCode].players, socket.id)) {
             socket.leave(roomCode);
-            rooms[roomCode].players = rooms[roomCode].players.filter(id => id !== socket.id);
+            rooms[roomCode].players = rooms[roomCode].players.filter(user => user.socketId !== socket.id);
+            rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.userId !== socket.userId);
+
             if (rooms[roomCode].players.length === 0) {
                 delete rooms[roomCode];
             } else {
-                if (rooms[roomCode].gameName === "telepath") {
-                    removeFromTeamList(io, rooms, roomCode, socket.id, -1)
+                if (teamGames.includes(rooms[roomCode].gameName)) {
+                    removeFromTeamList(io, rooms, roomCode, currentUser, -1);
                 }    
                 io.to(roomCode).emit('update_players', rooms[roomCode].players);
             }
@@ -82,7 +93,7 @@ io.on("connection", (socket) => {
     
     socket.on('start_game', (roomCode) => {
         if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
-            if (rooms[roomCode].gameName === "telepath") {
+            if (teamGames.includes(rooms[roomCode].gameName)) {
                 const teamData = rooms[roomCode].teamData
                 const players = rooms[roomCode].players
                 if (teamData.length * 2 !== players.length) { 
@@ -92,8 +103,8 @@ io.on("connection", (socket) => {
                 
                 const playersData = {}
                 teamData.forEach((team) => {
-                    playersData[team[0]] = telepathPlayerData(team[0], team[1], 0);
-                    playersData[team[1]] = telepathPlayerData(team[1], team[0], 0);
+                    playersData[team[0].userId] = telepathPlayerData(team[0], team[1], 0);
+                    playersData[team[1].userId] = telepathPlayerData(team[1], team[0], 0);
                 });
                 rooms[roomCode].playersData = playersData;
             }
@@ -105,7 +116,8 @@ io.on("connection", (socket) => {
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
         // Handle cleanup of lobbies and players
-        leaveAllRooms(io, rooms, socket.id);
+        socket.leaveAll();
+        leaveAllRooms(io, rooms, currentUser);
     });
 
     socket.on('get_all_rooms', () => {
@@ -126,16 +138,16 @@ io.on("connection", (socket) => {
         }
     });
     
-    socket.on('join_diff_team', (roomCode, userid, index) => {
+    socket.on('join_diff_team', (roomCode, index) => {
         if (rooms[roomCode]) {
             const teamData = rooms[roomCode].teamData;
             const isLast = index - 1 === teamData.length; 
             if (isLast) {
-                teamData.push([userid]);
+                teamData.push([currentUser]);
             } else {
-                teamData[index - 1].push(userid);
+                teamData[index - 1].push(currentUser);
             }
-            removeFromTeamList(io, rooms, roomCode, userid, index - 1);
+            removeFromTeamList(io, rooms, roomCode, currentUser, index - 1);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         }
     });
@@ -185,7 +197,7 @@ io.on("connection", (socket) => {
 
     socket.on("generate_telepath_prompt", (roomCode) => {
         const roomLeader = getRoomLeader(rooms, roomCode);
-        if (rooms[roomCode] && roomLeader === socket.id) {
+        if (rooms[roomCode] && roomLeader.socketId === socket.id) {
             const prompt = telepathHelper.generateNewWord();
             const wordLimit = telepathHelper.generateWordLimit();
             rooms[roomCode].prompt = prompt;

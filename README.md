@@ -107,3 +107,5 @@ yarn add socket.io-client
 
 Cookies
 npm install js-cookie
+npm install cookie-parser
+npm install cookie

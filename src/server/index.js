@@ -25,6 +25,12 @@ const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,c
 const rooms = {};
 const teamGames = ["telepath"];
 
+// Our socket has a socketId, userId, and nickname
+// socketId changes per tab, while userId changes per browser
+
+// rooms[roomCode].players are the unique players in the lobby
+// rooms[roomCode].spectators can include the same userId more than once, but different socketId
+
 io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
     const nickname = socket.handshake.query.nickname;
@@ -158,8 +164,8 @@ io.on("connection", (socket) => {
     socket.on("send_telepath_words", (roomCode, chosenWords) => {
         if (rooms[roomCode]) {
             const playersData = rooms[roomCode].playersData;
-            playersData[socket.id].chosenWords = chosenWords; 
-            playersData[socket.id].hasPickedWords = true;
+            playersData[socket.userId].chosenWords = chosenWords; 
+            playersData[socket.userId].hasPickedWords = true;
 
 
             if (!Object.values(playersData).find((data) => data.hasPickedWords === false)) {
@@ -173,8 +179,8 @@ io.on("connection", (socket) => {
     socket.on("unsend_telepath_words", (roomCode) => {
         if (rooms[roomCode]) {
             const playersData = rooms[roomCode].playersData;
-            playersData[socket.id].chosenWords = []; 
-            playersData[socket.id].hasPickedWords = false;
+            playersData[socket.userId].chosenWords = []; 
+            playersData[socket.userId].hasPickedWords = false;
             io.to(roomCode).emit("receive_players_data", playersData);
         }
     })
@@ -183,11 +189,11 @@ io.on("connection", (socket) => {
     socket.on("send_telepath_ready", (roomCode) => {
         if (rooms[roomCode]) {
             let playersData = rooms[roomCode].playersData;
-            playersData[socket.id].isReady = true;
+            playersData[socket.userId].isReady = true;
 
             if (!Object.values(playersData).find((data) => data.isReady === false)) {
                 Object.values(playersData).forEach((userData) => {
-                    playersData[userData.username] = telepathPlayerData(userData.username, userData.partner, userData.totalScore);
+                    playersData[userData.nameData.userId] = telepathPlayerData(userData.nameData, userData.partner, userData.totalScore);
                 })
                 io.to(roomCode).emit("receive_results_state", false);    
             }      
@@ -217,7 +223,7 @@ io.on("connection", (socket) => {
     
     socket.on("get_all_telepath_data", (roomCode) => {
         if (rooms[roomCode]) {
-            if (!(socket.id in rooms[roomCode].playersData)) {
+            if (!(socket.userId in rooms[roomCode].playersData)) {
                 socket.emit('room_error', `Game ${roomCode} has already started`);
                 return;
             }

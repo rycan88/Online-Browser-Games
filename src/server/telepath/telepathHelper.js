@@ -13,7 +13,7 @@ const calculateScores = (playersData) => {
     Object.values(playersData).forEach((userData, index) => {
         if (index % 2 === 1) { return }
 
-        const partnerData = playersData[userData.partner];
+        const partnerData = playersData[userData.partner.userId];
         const myWords = userData.chosenWords;
         const partnerWords = partnerData.chosenWords;
 

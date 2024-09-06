@@ -1,7 +1,7 @@
 
-const telepathPlayerData = (username, partner, totalScore) => {    
+const telepathPlayerData = (nameData, partner, totalScore) => {    
     return {
-        username: username,
+        nameData: nameData,
         chosenWords: [],
         hasPickedWords: false,
         isReady: false,

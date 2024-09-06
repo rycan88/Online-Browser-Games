@@ -19,10 +19,10 @@ export const TelepathListContainers = (props) => {
     const mainUser = props.mainUser;
 
     const p1Data = playersData[mainUser];    
-    const p2Data = playersData[playersData[mainUser].partner];
+    const p2Data = playersData[playersData[mainUser].partner.userId];
 
-    const hasPickedWords = playersData[socket.id].hasPickedWords;
-    const isReady = playersData[socket.id].isReady;
+    const hasPickedWords = playersData[socket.userId].hasPickedWords;
+    const isReady = playersData[socket.userId].isReady;
 
     const [myWords, setMyWords] = useState([]);
     const [sharedWords, setSharedWords] = useState([]);
@@ -38,13 +38,9 @@ export const TelepathListContainers = (props) => {
         return true;
     }
 
-    const shortenedName = (name) => {
-        return name === socket.id ? "You" : name.slice(0, 10)
-    }
-
     const MiddleInputTitle = () => {
         if (shouldShowResults) {
-            return <div className="wordlistTitle">{shortenedName(mainUser)}</div>
+            return <div className="wordlistTitle">{p1Data.nameData.nickname}</div>
         }
 
         if (myWords.length >= wordLimit) {
@@ -171,7 +167,7 @@ export const TelepathListContainers = (props) => {
             {
             shouldShowResults &&
             <>
-                <div className="wordlistTitle">{p2Data.username.slice(0, 10)}</div>
+                <div className="wordlistTitle">{p2Data.nameData.nickname}</div>
                             
                 <div className="list">
                     <TelepathList wordList={p2Data.chosenWords} 

@@ -31,8 +31,14 @@ const calculateScores = (playersData) => {
     })
 }
 
+const setNewPrompt = (gameData) => {
+    gameData.prompt = generateNewWord()
+    gameData.wordLimit = generateWordLimit()
+}
+
 module.exports = {
     generateNewWord,
     generateWordLimit,
     calculateScores,
+    setNewPrompt,
 };

@@ -34,28 +34,16 @@ export const Telepath = (props) => {
     // List to show in middle
     const [mainUser, setMainUser] = useState(socket.userId);
 
-    const getNextWord = () => {
-        socket.emit('generate_telepath_prompt', roomCode);
-    }
-
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData);
             playersData[socket.userId] && setDataInitialized(true);
         });
 
-        socket.on("receive_results_state", (shouldShowResults) => {
-            setShouldShowResults(shouldShowResults);
-            if (shouldShowResults) {            
-
-            } else {
-                getNextWord();
-            }    
-        });
-
-        socket.on("receive_telepath_prompt", (data) => {
+        socket.on("receive_game_data", (data) => {
             setPrompt(data.prompt);
             setWordLimit(data.wordLimit);
+            setShouldShowResults(data.shouldShowResults);
         });
 
         socket.on('room_error', (errorMessage) => {
@@ -65,8 +53,7 @@ export const Telepath = (props) => {
         socket.emit('get_all_telepath_data', roomCode);
 
         return () => {
-            socket.off('receive_results_state');
-            socket.off('receive_telepath_prompt');
+            socket.off('receive_game_data');
             socket.off('receive_players_data');
             socket.off('room_error');
         };

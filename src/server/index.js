@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
 
     socket.on('create_room', (gameName, roomCode) => {
         leaveAllRooms(io, rooms, socket.id);
-        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [] };
+        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {} };
         socket.join(roomCode);
         rooms[roomCode].players.push(currentUser);
         rooms[roomCode].spectators.push(currentUser);
@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
     socket.on('join_room', (roomCode) => {
         if (!rooms[roomCode]) {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
-        } else if (rooms[roomCode].gameStarted) {
+        } else if (rooms[roomCode].gameStarted && !containsUserId(rooms[roomCode].spectators, socket.userId)) {
             socket.emit('room_error', `Game ${roomCode} has already started`);
         } else if (!containsSocketId(rooms[roomCode].players, socket.id)) {
             socket.leaveAll();
@@ -167,9 +167,10 @@ io.on("connection", (socket) => {
             playersData[socket.userId].chosenWords = chosenWords; 
             playersData[socket.userId].hasPickedWords = true;
 
-
             if (!Object.values(playersData).find((data) => data.hasPickedWords === false)) {
-                io.to(roomCode).emit("receive_results_state", true);    
+                const gameData = rooms[roomCode].gameData;
+                gameData.shouldShowResults = true; 
+                io.to(roomCode).emit("receive_game_data", gameData);    
                 telepathHelper.calculateScores(playersData);
             }
             io.to(roomCode).emit("receive_players_data", playersData);
@@ -195,7 +196,10 @@ io.on("connection", (socket) => {
                 Object.values(playersData).forEach((userData) => {
                     playersData[userData.nameData.userId] = telepathPlayerData(userData.nameData, userData.partner, userData.totalScore);
                 })
-                io.to(roomCode).emit("receive_results_state", false);    
+                const gameData = rooms[roomCode].gameData;
+                gameData.shouldShowResults = false;
+                telepathHelper.setNewPrompt(gameData);
+                io.to(roomCode).emit("receive_game_data", gameData);    
             }      
             io.to(roomCode).emit("receive_players_data", playersData); 
         }
@@ -204,20 +208,9 @@ io.on("connection", (socket) => {
     socket.on("generate_telepath_prompt", (roomCode) => {
         const roomLeader = getRoomLeader(rooms, roomCode);
         if (rooms[roomCode] && roomLeader.socketId === socket.id) {
-            const prompt = telepathHelper.generateNewWord();
-            const wordLimit = telepathHelper.generateWordLimit();
-            rooms[roomCode].prompt = prompt;
-            rooms[roomCode].wordLimit = wordLimit;
-            console.log(prompt, wordLimit);
-            io.to(roomCode).emit('receive_telepath_prompt', {prompt: prompt, wordLimit: wordLimit});
-        }
-    });
-
-    socket.on("get_telepath_prompt", (roomCode) => {
-        if (rooms[roomCode]) {
-            const prompt = rooms[roomCode].prompt ?? "";
-            const wordLimit = rooms[roomCode].wordLimit ?? 0;
-            socket.emit('receive_telepath_prompt', {prompt: prompt, wordLimit: wordLimit});
+            const gameData = rooms[roomCode].gameData
+            telepathHelper.setNewPrompt(gameData);
+            io.to(roomCode).emit('receive_game_data', gameData);
         }
     });
     
@@ -227,11 +220,14 @@ io.on("connection", (socket) => {
                 socket.emit('room_error', `Game ${roomCode} has already started`);
                 return;
             }
-            socket.emit('receive_telepath_prompt', rooms[roomCode]);
-            socket.emit('receive_players_data', rooms[roomCode].playersData);
-            if (!Object.values(rooms[roomCode].playersData).find((data) => data.hasPickedWords === false)) {
-                io.to(roomCode).emit("receive_results_state", true);
+            if (!(containsSocketId(rooms[roomCode].spectators, socket.id))) {
+                rooms[roomCode].spectators.push(currentUser);
+                socket.join(roomCode);
             }
+
+            socket.emit('receive_game_data', rooms[roomCode].gameData);
+
+            socket.emit('receive_players_data', rooms[roomCode].playersData);
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         }

@@ -18,7 +18,7 @@ export const TelepathTeamScoresDisplay = (props) => {
         if (index % 2 === 1) {
             return <></>;
         }
-        console.log("hi", userData)
+        
         const partner = userData.partner.userId;
         const p1 = userData;
         const p2 = playersData[partner];
@@ -26,9 +26,8 @@ export const TelepathTeamScoresDisplay = (props) => {
         const ready2 = shouldShowResults ? p2.isReady : p2.hasPickedWords;
         const totalScore = userData.totalScore;
         const addedScore = userData.addedScore;
-        console.log(partner, "YES")
         // Always display yourself first on the team
-        return partner === socket.id 
+        return partner === socket.userId 
             ?
             <TelepathTeamScores key={index}
                                 teamNum={index / 2 + 1} 

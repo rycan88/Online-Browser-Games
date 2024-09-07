@@ -101,16 +101,9 @@ export const TelepathListContainers = (props) => {
         if (shouldShowResults) {
             refreshShared(p1Data.chosenWords, p2Data.chosenWords);
             console.log("data", p1Data, p2Data)
+            setMyWords([]);
         }
-    }, [shouldShowResults, p1Data, p2Data]);
-
-    useEffect(() => {
-        socket.on("receive_results_state", (shouldShowResults) => {
-            if (!shouldShowResults) {            
-                setMyWords([]);
-            }
-        })
-    });      
+    }, [shouldShowResults, p1Data, p2Data]);     
 
     const sendWords = () => {
         socket.emit("send_telepath_words", roomCode, myWords);

@@ -2,8 +2,11 @@ import { io } from "socket.io-client";
 import { generateNickname } from "./utils";
 import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
-// socket Singleton so that we only connect to the socket once
+
+// USE_COOKIES makes it easy to toggle cookies on and off for testing
 const USE_COOKIES = true;
+
+// socket Singleton so that we only connect to the socket once
 let socket = null;
 
 const getUserId = () => {

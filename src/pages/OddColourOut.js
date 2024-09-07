@@ -1,5 +1,5 @@
-import { useState, createContext } from "react"
-
+import { useState, createContext, useEffect } from "react"
+import Cookies from "js-cookie";
 import { OddColourOutGrid } from "../components/oddColourOut/OddColourOutGrid";
 import { Overlay } from "../components/Overlay";
 
@@ -28,19 +28,27 @@ export const OddColourOut = () => {
         return [original_color, modified_color];
     }
 
+    const getBestScore = () => {
+        let bestScore = Cookies.get("bestOddColourOutScore");
+        if (!bestScore) {
+            bestScore = 0;
+            Cookies.set('bestOddColourOutScore', bestScore, { expires: 365});
+        }
+        return bestScore;
+    }
+
     const startValues = {
         bgColor: "rgb(226, 232, 240)",
         transition: "background-color 1s ease",
         level: 1,
         score: 0,
-        bestScore: 0,
         gridSize: 2,
         offset: 20,
     }
 
     const [level, setLevel] = useState(startValues.level);
     const [score, setScore] = useState(startValues.score);
-    const [bestScore, setBestScore] = useState(startValues.bestScore);
+    const [bestScore, setBestScore] = useState(getBestScore());
     const [colorTransition, setColorTransition] = useState(startValues.transition);
     const [isGameRunning, setIsGameRunning] = useState("true");
     const [isShow, setIsShow] = useState("false");
@@ -49,8 +57,6 @@ export const OddColourOut = () => {
     const [colors, setColors] = useState(generateRandomColours(startValues.offset));
     const [oddOne, setOddOne] = useState(Math.floor(Math.random() * (startValues.gridSize ** 2)));
     const [boxBgColor, setBoxBgColor] = useState(startValues.bgColor);
-
-
 
     const correctAction = () => {
         setIsGameRunning(true);
@@ -67,7 +73,8 @@ export const OddColourOut = () => {
             setGridSize(newGridSize);
             setOffset(newOffset);
         }
-        if (bestScore <= newScore) {
+        if (bestScore < newScore) {
+            Cookies.set('bestOddColourOutScore', newScore, { expires: 365});
             setBestScore(newScore);
         }
         reconfigureBoard(newOffset, newGridSize);

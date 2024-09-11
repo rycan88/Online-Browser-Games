@@ -35,6 +35,7 @@ module.exports = {
         'cog': "url(../images/cog-8-tooth.svg)",
         'info': "url(../images/info.svg)",
         'hamburger': "url(../images/hamburger-icon.svg)",
+        'cards': "url(../images/cards-bg.jpg)",
       }
 
     },

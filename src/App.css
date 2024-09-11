@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+@layer components {
   .entirePage {
     @apply flex flex-col h-[calc(100vh-60px)] w-full bg-cover absolute;
   }

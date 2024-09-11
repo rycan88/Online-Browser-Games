@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+@layer components {
   .lobbyPage {
     @apply bg-gradient-to-bl from-slate-300 to-slate-800;
     .buttonsContainer {

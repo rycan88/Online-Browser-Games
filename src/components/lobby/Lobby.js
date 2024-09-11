@@ -78,7 +78,7 @@ export const Lobby = (props) => {
                     <button className="gradientButton" onClick={() => {
                         joinRoom(typedCode);
                     }}>
-                        Join<br/>Lobby
+                        <h2>Join<br/>Lobby</h2>
                     </button>
                     <button className="gradientButton" onClick={() => {
                         let roomCode = generateRoomCode();
@@ -88,7 +88,7 @@ export const Lobby = (props) => {
                         }
                         createRoom("telepath", roomCode);
                     }}>
-                        Create<br/>Lobby
+                        <h2>Create<br/>Lobby</h2>
                     </button>
                 </div>
 

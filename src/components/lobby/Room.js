@@ -95,8 +95,8 @@ export const Room = (props) => {
                 </div>
                 <h2 className="errorText">{canStart ? "" : (teamMode ? "Needs 2 players on each team" : "Needs at least 2 players")}</h2>
                 <div className="buttonsContainer">
-                    <button className="redGradientButton" onClick={goBack}>Leave</button>
-                    <button className="gradientButton" onClick={startGame} disabled={!canStart}>Start Game</button>
+                    <button className="lobbyButton redGradientButton" onClick={goBack}>Leave</button>
+                    <button className="lobbyButton gradientButton" onClick={startGame} disabled={!canStart}>Start Game</button>
                 </div>
 
             </div>

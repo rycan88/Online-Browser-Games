@@ -5,15 +5,15 @@
 @layer components {
   .lobbyPage {
     @apply bg-gradient-to-bl from-slate-300 to-slate-800;
-    .buttonsContainer {
-      @apply flex w-full items-center justify-around;
-      button {
-        @apply text-slate-200 w-[45%] sm:w-[40%] h-[80px] sm:h-[100px] text-xl sm:text-3xl py-1 sm:py-3 px-4 my-3 shadow-xl rounded-xl bg-gradient-to-tr from-sky-950 to-sky-600;
-      }
-    }
-
     .lobbyBox {
       @apply relative flex flex-col w-[95%] max-w-[700px] h-[90%] p-6 items-center bg-gradient-to-bl from-slate-100 to-slate-400 shadow-xl rounded-xl;
+    }
+
+    .buttonsContainer {
+      @apply flex w-full items-center justify-around;
+      .lobbyButton {
+        @apply text-slate-200 w-[45%] sm:w-[40%] h-[80px] sm:h-[100px] text-xl sm:text-3xl py-1 sm:py-3 px-4 my-3 shadow-xl rounded-xl;
+      }
     }
 
     .gameTitle {

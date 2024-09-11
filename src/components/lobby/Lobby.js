@@ -75,12 +75,12 @@ export const Lobby = (props) => {
                 ></input>
                 <p className="errorText">{errorMessage}</p>
                 <div className="buttonsContainer">
-                    <button className="gradientButton" onClick={() => {
+                    <button className="lobbyButton gradientButton" onClick={() => {
                         joinRoom(typedCode);
                     }}>
                         <h2>Join<br/>Lobby</h2>
                     </button>
-                    <button className="gradientButton" onClick={() => {
+                    <button className="lobbyButton gradientButton" onClick={() => {
                         let roomCode = generateRoomCode();
                         // Makes sure room does not already exist
                         while (rooms.includes(roomCode)) {

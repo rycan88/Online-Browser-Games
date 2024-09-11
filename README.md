@@ -100,6 +100,7 @@ npm install react-icons
 
 PostCSS
 npm install --save-dev postcss postcss-nested
+npm install postcss-cli --save-dev
 
 Server Setup
 yarn add express cors nodemon socket.io (DO THIS IN SERVER FOLDER)

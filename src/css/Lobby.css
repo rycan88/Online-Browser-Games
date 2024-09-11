@@ -38,7 +38,6 @@
   }
 
   .teamList {
-    @apply w-full;
     .teamContainer {
       @apply flex flex-col w-full h-[96px] justify-center md:px-4;
     }

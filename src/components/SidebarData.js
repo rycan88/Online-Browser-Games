@@ -22,7 +22,7 @@ export const SidebarData = [
     },
     {
         title: "Telepath",
-        link: "/telepath",
+        link: "/telepath/lobby",
         isMain: false,
     },
     {

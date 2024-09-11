@@ -3,87 +3,88 @@
 @tailwind utilities;
 
 @layer components {
-    .page {
-        @apply flex flex-col h-[calc(100vh-60px)] text-slate-800 bg-wooden-table;
-    }
+    .oddColourPage {
+        @apply bg-wooden-table z-[-20];
+    
 
-    .topToolBar {
-        @apply absolute right-3 mt-2 cursor-pointer flex flex-row
-    }
+        .topToolBar {
+            @apply absolute right-3 mt-2 cursor-pointer flex flex-row;
+        }
+    
+        .topToolBar div {
+            @apply ml-2 h-[45px] w-[45px] lg:h-[55px] lg:w-[55px] cursor-pointer;
+        }
 
-    .topToolBar div {
-        @apply ml-2 h-[45px] w-[45px] lg:h-[55px] lg:w-[55px] cursor-pointer
-    }
+        .topToolBar div:hover {
+            @apply transition -translate-y-[0.125rem] translate-x-[0.125rem];
+        }
 
-    .topToolBar div:hover {
-        @apply transition -translate-y-[0.125rem] translate-x-[0.125rem]
-    }
+        .settingsIcon {
+            @apply bg-cog;
+        }
 
-    .settingsIcon {
-        @apply bg-cog;
-    }
+        .infoIcon {
+            @apply bg-info;
+        }
 
-    .infoIcon {
-        @apply bg-info;
-    }
+        .content {
+            @apply flex flex-col lg:flex-row items-center justify-center place-content-evenly h-full;
+        }
 
-    .content {
-        @apply flex flex-col lg:flex-row items-center justify-center place-content-evenly h-full;
-    }
+        .gridBox {
+            @apply bg-slate-200 shadow-2xl rounded-3xl;
+        }
 
-    .gridBox {
-        @apply bg-slate-200 shadow-2xl rounded-3xl;
-    }
+        .gridBox {
+            @apply max-w-[min(80vw,90vh)] max-h-[80vw] w-[500px] h-[500px] md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px] xl:w-[700px] xl:h-[700px];
+        }
 
-    .gridBox {
-        @apply max-w-[min(80vw,90vh)] max-h-[80vw] w-[500px] h-[500px] md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px] xl:w-[700px] xl:h-[700px];
-    }
+        .infoBoard {
+            @apply items-center justify-center;
+        }
 
-    .infoBoard {
-        @apply items-center justify-center;
-    }
+        .infoBoard {
+            @apply max-w-[90vw] w-[600px] h-[30vh] pt-[30px] lg:w-[450px] lg:h-[70vh] lg:p-[50px] lg:mr-[-100px] xl:w-[600px] xl:h-[90vh] xl:p-[100px];
+        }
 
-    .infoBoard {
-        @apply max-w-[90vw] w-[600px] h-[30vh] pt-[30px] lg:w-[450px] lg:h-[70vh] lg:p-[50px] lg:mr-[-100px] xl:w-[600px] xl:h-[90vh] xl:p-[100px];
-    }
+        .infoTexts {
+            @apply bg-slate-200 h-full flex lg:flex-col items-center place-content-evenly shadow-2xl rounded-3xl;
+        }
 
-    .infoTexts {
-        @apply bg-slate-200 h-full flex lg:flex-col items-center place-content-evenly shadow-2xl rounded-3xl;
-    }
+        .infoTexts h2 {
+            @apply text-lg md:text-xl lg:text-2xl xl:text-3xl py-1 lg:py-3;
+        }
 
-    .infoTexts h2 {
-        @apply text-lg md:text-xl lg:text-2xl xl:text-3xl py-1 lg:py-3;
-    }
+        .infoTexts button {
+            @apply text-slate-200 w-[100%] text-3xl py-3 px-4 my-3 shadow-xl rounded-xl;
+        }
 
-    .infoTexts button {
-        @apply text-slate-200 w-[100%] text-3xl py-3 px-4 my-3 shadow-xl rounded-xl ;
-    }
+        .infoTexts button:hover {
+            @apply transition -translate-y-[0.125rem] translate-x-[0.125rem];
+        }
 
-    .infoTexts button:hover {
-        @apply transition -translate-y-[0.125rem] translate-x-[0.125rem];
-    }
+        .grids {
+            @apply flex flex-row flex-wrap p-[5%] place-content-evenly h-full;
+        }
 
-    .grids {
-        @apply flex flex-row flex-wrap p-[5%] place-content-evenly h-full;
-    }
+        .tile {
+            @apply rounded-2xl;
+        }
 
-    .tile {
-        @apply rounded-2xl;
-    }
+        .tile:hover {
+            @apply cursor-pointer;
+        }
 
-    .tile:hover{
-        @apply cursor-pointer;
-    }
+        .timerClockIcon {
+            @apply bg-timer w-[100px] h-[100px] bg-cover;
+        }
 
-    .timerClockIcon {
-        @apply bg-timer w-[100px] h-[100px] bg-cover;
-    }
+        .timer {
+            @apply flex flex-row;
+        }
 
-    .oddColourOutTimer {
-        @apply flex flex-row;
-    }
-
-    .oddColourOutTimer h3 {
-        @apply text-8xl font-semibold -mt-2;
+        .timer h3 {
+            @apply text-8xl font-semibold -mt-2;
+        }
     }
 }

@@ -5,7 +5,7 @@
 @layer base {
   /* NAVIGATION BAR*/
   .navbar {
-    @apply bg-sky-900 text-slate-200 w-full h-navbar items-center flex shadow-lg;
+    @apply bg-gradient-to-t from-sky-900 to-sky-700 text-white w-full h-navbar items-center flex shadow-lg text-sm md:text-base;
   }
 
   .sidebarDiv {
@@ -13,11 +13,11 @@
   }
 
   .sidebarDiv div {
-    @apply bg-hamburger w-[30px] h-[30px];   
+    @apply bg-hamburger w-[30px] h-[30px];
   }
 
   .sidebarDiv:hover {
-    @apply bg-black/25;   
+    @apply bg-black/25;
   }
 
   .leftNavItems {
@@ -25,7 +25,7 @@
   }
 
   .leftNavItems a {
-    @apply px-5 hover:text-yellow-400 hover:underline; 
+    @apply px-5 hover:text-yellow-400 hover:underline;
   }
 
   .rightNavItems a {

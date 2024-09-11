@@ -1,59 +1,97 @@
-import { useState, useRef } from "react";
-import Axios from "axios";
+import { useState, useEffect } from "react";
 
-import { TelepathWords } from "../TelepathWords";
-import { ListItem } from "../components/ListItem";
+import '../css/Telepath.css';
 
-export const Telepath = () => {
+import getSocket from "../socket";
+
+import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamScoresDisplay";
+import { TelepathListContainers } from "../components/telepath/TelepathListContainers";
+import { useNavigate } from "react-router-dom";
+
+// TODO
+// QoL changes
+// - FREE FOR ALL MODE, COMPARE WITH EVERYONE
+
+const socket = getSocket();
+
+// props
+// roomCode: string
+
+export const Telepath = (props) => {
+    const roomCode = props.roomCode;
+    const navigate = useNavigate();
     // typedWord is the text in the input
     // pickedWords are the words added to the list
-    const [typedWord, setTypedWord] = useState(""); 
-    const [pickedWords, setPickedWords] = useState([]);
-    
-    /*
-    const fetchData = (excuseType) => {
-      Axios.get(`excuser.herokuapp.com/v1/excuse/${excuseType}/`).then((res) => {
-        setExcuse(res.data.excuse);
-      });
-    }*/
-  
-    const fName = useRef('');
 
-    const handleTextChange = (event) => {
-        setTypedWord(event.target.value);
+    const [dataInitialized, setDataInitialized] = useState(false)
+    const [prompt, setPrompt] = useState("");
+    const [wordLimit, setWordLimit] = useState(0);
+
+    const [shouldShowResults, setShouldShowResults] = useState(false);
+    const [playersData, setPlayersData] = useState({});
+    const [teamMode, setTeamMode] = useState(false);
+
+    // List to show in middle
+    const [mainUser, setMainUser] = useState({socketId:socket.id, userId:socket.userId, nickname:socket.nickname});
+
+    useEffect(() => {
+        socket.on('receive_players_data', (playersData) => {
+            setPlayersData(playersData);
+            playersData[socket.userId] && setDataInitialized(true);
+        });
+
+        socket.on("receive_game_data", (data) => {
+            setPrompt(data.prompt);
+            setWordLimit(data.wordLimit);
+            setShouldShowResults(data.shouldShowResults);
+        });
+
+        socket.on('room_error', (errorMessage) => {
+            navigate(`/telepath/lobby`, { state: {error: errorMessage}});
+        });
+
+        socket.on('update_team_mode', (teamMode) => {
+            setTeamMode(teamMode);                
+        });
+
+        socket.emit('get_all_telepath_data', roomCode);
+
+        return () => {
+            socket.off('receive_game_data');
+            socket.off('receive_players_data');
+            socket.off('room_error');
+        };
+    }, []);
+
+    if (!dataInitialized) {
+        return <></>
     }
 
-    const addWord = () => {
-        // We make the words uppercase to avoid repeated words and to make it look nicer
-        if (typedWord === "" || pickedWords.includes(typedWord.toUpperCase(), 0)) {
-            return
-        }
-
-        fName.current.value = "";
-        setTypedWord("");
-        setPickedWords([...pickedWords, typedWord.toUpperCase()]);
-    }
-
-    const removeItem = (chosenWord) => {
-        setPickedWords(pickedWords.filter((word) => word !== chosenWord));
-    }
-
-    const keyDownHandler = (event) => {
-        if (event.key === "Enter") {
-            addWord();
-        }
-    }
-
-    return <div className="telepathBox">
-        <h1>TELEPATH</h1>
-        <input type='text' ref={fName} placeholder="Type a word..." onChange={ handleTextChange } onKeyDown={ keyDownHandler }></input>
-        <button onClick={ addWord }>Add Word</button>
-        <div className="list">
-            {pickedWords.map((word) => {
-                return <ListItem word={word} removeItem={removeItem}/>;
-            })}
+    return (
+        <div className="telepathPage entirePage">
+            <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
+            <div className="containerHolder">
+                <div className="scoreDisplayContainer scrollbar-hide">
+                    <TelepathTeamScoresDisplay playersData={playersData} 
+                                               shouldShowResults={shouldShowResults}
+                                               setMainUser={setMainUser}
+                                               teamMode={teamMode}
+                    />
+                </div>
+                <div className="listsContainer">
+                    <TelepathListContainers shouldShowResults={shouldShowResults}
+                                            prompt={prompt}
+                                            wordLimit={wordLimit}
+                                            roomCode={roomCode}
+                                            playersData={playersData}
+                                            mainUser={mainUser}
+                                            teamMode={teamMode}
+                    />
+                </div>
+            </div>
+            <div className="entirePage bg-black/50 z-[-10]"></div>
         </div>
 
-    </div>
+    );
 }
 

@@ -1,6 +1,6 @@
-import { useState, createContext } from "react"
-
-import { OddColourOutGrid } from "../components/OddColourOutGrid";
+import { useState, createContext, useEffect } from "react"
+import Cookies from "js-cookie";
+import { OddColourOutGrid } from "../components/oddColourOut/OddColourOutGrid";
 import { Overlay } from "../components/Overlay";
 
 import '../css/OddColourOut.css';
@@ -22,11 +22,19 @@ export const OddColourOut = () => {
     
         const b_i = lst.indexOf(Math.max(r,g,b));
         lst[b_i] < offset ? lst[b_i] += offset : lst[b_i] -= offset;            
-        //const i = Math.floor(Math.random() * 3);
 
         const modified_color = `rgb(${lst[0]},${lst[1]},${lst[2]})`;
         
         return [original_color, modified_color];
+    }
+
+    const getBestScore = () => {
+        let bestScore = Cookies.get("bestOddColourOutScore");
+        if (!bestScore) {
+            bestScore = 0;
+            Cookies.set('bestOddColourOutScore', bestScore, { expires: 365});
+        }
+        return bestScore;
     }
 
     const startValues = {
@@ -34,14 +42,13 @@ export const OddColourOut = () => {
         transition: "background-color 1s ease",
         level: 1,
         score: 0,
-        bestScore: 0,
         gridSize: 2,
         offset: 20,
     }
 
     const [level, setLevel] = useState(startValues.level);
     const [score, setScore] = useState(startValues.score);
-    const [bestScore, setBestScore] = useState(startValues.bestScore);
+    const [bestScore, setBestScore] = useState(getBestScore());
     const [colorTransition, setColorTransition] = useState(startValues.transition);
     const [isGameRunning, setIsGameRunning] = useState("true");
     const [isShow, setIsShow] = useState("false");
@@ -50,8 +57,6 @@ export const OddColourOut = () => {
     const [colors, setColors] = useState(generateRandomColours(startValues.offset));
     const [oddOne, setOddOne] = useState(Math.floor(Math.random() * (startValues.gridSize ** 2)));
     const [boxBgColor, setBoxBgColor] = useState(startValues.bgColor);
-
-
 
     const correctAction = () => {
         setIsGameRunning(true);
@@ -68,7 +73,8 @@ export const OddColourOut = () => {
             setGridSize(newGridSize);
             setOffset(newOffset);
         }
-        if (bestScore <= newScore) {
+        if (bestScore < newScore) {
+            Cookies.set('bestOddColourOutScore', newScore, { expires: 365});
             setBestScore(newScore);
         }
         reconfigureBoard(newOffset, newGridSize);
@@ -144,7 +150,7 @@ export const OddColourOut = () => {
 
     const settingsOverlay = SettingsOverlay();
     const infoOverlay = InfoOverlay();
-    const [isOverlayOpen, setIsOverlayOpen] = useState(true);
+    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
     const [overlay, setOverlay] = useState(InfoOverlay);
 
     const toggleOverlay = () => {
@@ -153,7 +159,7 @@ export const OddColourOut = () => {
 
     return (
         <OddColourOutContext.Provider value={{ isGameRunning, correctAction, wrongAction}}>
-            <div className="page">
+            <div className="oddColourPage entirePage">
                 <div className="topToolBar">
                     <div className="infoIcon" 
                         onClick={() => {
@@ -182,7 +188,7 @@ export const OddColourOut = () => {
                             <div>
                                 { isGameRunning ?
                                     // TODO: Add timer
-                                    <div className="oddColourOutTimer">
+                                    <div className="timer">
                                         <div className="timerClockIcon"></div>
                                         <h3>&infin;</h3>
                                     </div>
@@ -190,18 +196,20 @@ export const OddColourOut = () => {
                                 <div className="flex flex-col">
                                     {
                                         isShow ? 
-                                            <button className="bg-sky-900" onClick={showSolution}> Show </button>
+                                            <button className="gradientButton" onClick={showSolution}> Show </button>
                                             :
-                                            <button className="bg-sky-900" onClick={hideSolution}> Hide </button>
+                                            <button className="gradientButton" onClick={hideSolution}> Hide </button>
                                     }
-                                    <button className="bg-red-800" onClick={restartAction}> Restart </button>
+                                    <button className="redGradientButton" onClick={restartAction}> Restart </button>
                                 </div>
                                 }
                             </div>
                         </div>
                     </div>
                 </div>
+                <div className="entirePage bg-black/40 z-[-10]"></div>
             </div>
+
             <Overlay
                     isOpen={isOverlayOpen}
                     onClose={() => setIsOverlayOpen(!isOverlayOpen)}

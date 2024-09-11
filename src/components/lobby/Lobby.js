@@ -88,7 +88,7 @@ export const Lobby = (props) => {
                         }
                         createRoom("telepath", roomCode);
                     }}>
-                        <h2>Create<br/>Lobby</h2>;
+                        <h2>Create<br/>Lobby</h2>
                     </button>
                 </div>
 

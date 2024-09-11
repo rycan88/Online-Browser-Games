@@ -16,16 +16,17 @@ export const TelepathListContainers = (props) => {
     const roomCode = props.roomCode;
 
     const playersData = props.playersData;
-    const mainUser = props.mainUser;
+    const teamMode = props.teamMode;
 
-    const p1Data = playersData[mainUser];    
-    const p2Data = playersData[playersData[mainUser].partner.userId];
+    const mainUser = props.mainUser;
+    const p1Data = playersData[mainUser.userId];
+        
+    const p2Data = playersData[playersData[mainUser.userId].partner.userId];
 
     const hasPickedWords = playersData[socket.userId].hasPickedWords;
     const isReady = playersData[socket.userId].isReady;
 
     const [myWords, setMyWords] = useState([]);
-    const [sharedWords, setSharedWords] = useState([]);
 
     const addWord = (typedWord) => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
@@ -83,27 +84,13 @@ export const TelepathListContainers = (props) => {
 
         return <h2>{label}</h2>
     }
-
-    const refreshShared = (myWords, partnerWords) => {
-        const newSharedWords = [];
-        myWords.forEach((word) => {
-            if (partnerWords.includes(word)) {
-                newSharedWords.push(word);
-            }
-        });
-
-        setSharedWords(newSharedWords)
-    }
     
-    console.log("list refresh");
     // Refresh the words that are the same
     useEffect(() => {
         if (shouldShowResults) {
-            refreshShared(p1Data.chosenWords, p2Data.chosenWords);
-            console.log("data", p1Data, p2Data)
             setMyWords([]);
         }
-    }, [shouldShowResults, p1Data, p2Data]);     
+    }, [shouldShowResults]);     
 
     const sendWords = () => {
         socket.emit("send_telepath_words", roomCode, myWords);
@@ -137,13 +124,16 @@ export const TelepathListContainers = (props) => {
                 <TelepathList wordList={p1Data.chosenWords} 
                     setMyWords={setMyWords}
                     shouldShowResults={shouldShowResults}
-                    sharedWords={sharedWords}
+                    sortedWords={p1Data.sortedWords}
+                    teamMode = {teamMode}
                 />
                 :
                 <TelepathList wordList={myWords} 
                             setMyWords={setMyWords}
                             shouldShowResults={shouldShowResults}
-                            sharedWords={sharedWords}
+                            sortedWords={p1Data.sortedWords}
+                            teamMode={teamMode}
+
                 />
                 }
             </div>
@@ -158,15 +148,18 @@ export const TelepathListContainers = (props) => {
         </div>
         <div className={`p2Container ${shouldShowResults ? "block" : "hidden lg:block"}`}>
             {
-            shouldShowResults &&
+            (shouldShowResults) &&
             <>
-                <div className="wordlistTitle">{p2Data.nameData.nickname}</div>
+                <div className="wordlistTitle">{teamMode ? p2Data.nameData.nickname : "Everyone"}</div>
                             
                 <div className="list">
                     <TelepathList wordList={p2Data.chosenWords} 
                                 setMyWords={setMyWords}
                                 shouldShowResults={shouldShowResults}
-                                sharedWords={sharedWords}
+                                sortedWords={p2Data.sortedWords}
+                                combinedShared={!teamMode && p1Data.combinedShared}
+                                isCombinedShared={!teamMode}
+                                teamMode={teamMode}
                     />
                 </div>
             </>

@@ -6,6 +6,7 @@ const telepathPlayerData = (nameData, partner, totalScore) => {
         hasPickedWords: false,
         isReady: false,
         partner: partner,
+        sharedWords: [],
         totalScore: totalScore,
         addedScore: 0,
     }

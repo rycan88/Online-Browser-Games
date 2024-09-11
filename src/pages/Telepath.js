@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 // TODO
 // QoL changes
-// - Let players reconnect by saving them as a cookie
 // - FREE FOR ALL MODE, COMPARE WITH EVERYONE
 
 const socket = getSocket();
@@ -30,9 +29,10 @@ export const Telepath = (props) => {
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [playersData, setPlayersData] = useState({});
+    const [teamMode, setTeamMode] = useState(false);
 
     // List to show in middle
-    const [mainUser, setMainUser] = useState(socket.userId);
+    const [mainUser, setMainUser] = useState({socketId:socket.id, userId:socket.userId, nickname:socket.nickname});
 
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
@@ -48,6 +48,10 @@ export const Telepath = (props) => {
 
         socket.on('room_error', (errorMessage) => {
             navigate(`/telepath/lobby`, { state: {error: errorMessage}});
+        });
+
+        socket.on('update_team_mode', (teamMode) => {
+            setTeamMode(teamMode);                
         });
 
         socket.emit('get_all_telepath_data', roomCode);
@@ -67,10 +71,11 @@ export const Telepath = (props) => {
         <div className="telepathPage entirePage">
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="containerHolder">
-                <div className="scoreDisplayContainer">
+                <div className="scoreDisplayContainer scrollbar-hide">
                     <TelepathTeamScoresDisplay playersData={playersData} 
                                                shouldShowResults={shouldShowResults}
                                                setMainUser={setMainUser}
+                                               teamMode={teamMode}
                     />
                 </div>
                 <div className="listsContainer">
@@ -80,6 +85,7 @@ export const Telepath = (props) => {
                                             roomCode={roomCode}
                                             playersData={playersData}
                                             mainUser={mainUser}
+                                            teamMode={teamMode}
                     />
                 </div>
             </div>

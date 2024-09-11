@@ -3,6 +3,7 @@ import "../../css/Lobby.css";
 import { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import getSocket from "../../socket";
+import { TelepathRules } from "../telepath/TelepathRules";
 
 import { AppContext } from "../../App";
 
@@ -64,7 +65,7 @@ export const Lobby = (props) => {
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="lobbyBox">
                 <h1 className="gameTitle">{props.game}</h1>
-                <p className="rules">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p className="rules"><TelepathRules /></p>
                 <input type="text" 
                         value={typedCode}
                         placeholder="Enter 4-letter code..."
@@ -77,7 +78,7 @@ export const Lobby = (props) => {
                     <button className="gradientButton" onClick={() => {
                         joinRoom(typedCode);
                     }}>
-                        Join<br/>Game
+                        Join<br/>Lobby
                     </button>
                     <button className="gradientButton" onClick={() => {
                         let roomCode = generateRoomCode();
@@ -87,7 +88,7 @@ export const Lobby = (props) => {
                         }
                         createRoom("telepath", roomCode);
                     }}>
-                        Create<br/>Game
+                        Create<br/>Lobby
                     </button>
                 </div>
 

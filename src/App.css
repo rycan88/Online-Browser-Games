@@ -28,6 +28,10 @@
   }
 }
 
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 2px;

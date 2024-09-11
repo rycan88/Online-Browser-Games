@@ -7,51 +7,47 @@ const socket = getSocket();
 // playersData: 
 // shouldShowResults: bool
 // setMainUsers: function
+// teamMode: bool
 
 export const TelepathTeamScoresDisplay = (props) => {
     const playersData = props.playersData;
     const shouldShowResults = props.shouldShowResults;
     const setMainUser = props.setMainUser;
-
+    const teamMode = props.teamMode;
+    console.log(playersData);
     console.log("display");
     return Object.values(playersData).map((userData, index) => {
+        const totalScore = userData.totalScore;
+        const addedScore = userData.addedScore;
+
+        if (!teamMode) {
+            return <TelepathTeamScores key={index}
+                player1={userData} 
+                totalScore={totalScore}
+                addedScore={addedScore}
+                showAdded={shouldShowResults}
+                setMainUser={setMainUser}     
+                teamMode={teamMode}                 
+            />;           
+        }
+
         if (index % 2 === 1) {
             return <></>;
         }
         
         const partner = userData.partner.userId;
-        const p1 = userData;
-        const p2 = playersData[partner];
-        const ready1 = shouldShowResults ? p1.isReady : p1.hasPickedWords;
-        const ready2 = shouldShowResults ? p2.isReady : p2.hasPickedWords;
-        const totalScore = userData.totalScore;
-        const addedScore = userData.addedScore;
+        const p1 = partner === socket.userId ? userData : playersData[partner];
+        const p2 = partner === socket.userId ? playersData[partner] : userData;
+        
         // Always display yourself first on the team
-        return partner === socket.userId 
-            ?
-            <TelepathTeamScores key={index}
-                                teamNum={index / 2 + 1} 
-                                player1={p2} 
-                                player2={p1} 
-                                firstReady={ready2} 
-                                secondReady={ready1}
-                                totalScore={totalScore}
-                                addedScore={addedScore}
-                                showAdded={shouldShowResults}
-                                setMainUser={setMainUser}
-                                
-             />
-             :
-            <TelepathTeamScores key={index}
-                                teamNum={index / 2 + 1} 
+        return <TelepathTeamScores key={index}
                                 player1={p1} 
                                 player2={p2} 
-                                firstReady={ready1} 
-                                secondReady={ready2}
                                 totalScore={totalScore}
                                 addedScore={addedScore}
                                 showAdded={shouldShowResults}
-                                setMainUser={setMainUser}
+                                setMainUser={setMainUser}    
+                                teamMode={teamMode}                  
         />;
     })
 }

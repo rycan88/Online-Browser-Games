@@ -10,33 +10,48 @@ export const TelepathList = (props) => {
     const wordList = props.wordList;
     const setMyWords = props.setMyWords;
     const shouldShowResults = props.shouldShowResults;
-    const sharedWords = props.sharedWords;
+    const sortedWords = props.sortedWords;
+    const teamMode= props.teamMode;
+    const combinedShared = props.combinedShared;
+    const isCombinedShared = props.isCombinedShared;
 
     const removeItem = (chosenWord) => {
         setMyWords(wordList.filter((word) => word !== chosenWord));
     }
 
     if (shouldShowResults) {
-        const nonSharedList =  
-            wordList.filter((word) => {
-                return !(sharedWords.includes(word));
-            })
-
-        const orderedWordList = [...sharedWords, ...nonSharedList];
-        return orderedWordList.map((word, index) => {
-            return <ListItem key={index}  
-                            word={word} 
-                            removeItem={removeItem} 
-                            shouldShowResults={shouldShowResults} 
-                            sharedWords={sharedWords}/>;
-        })
+        if (isCombinedShared) {
+            if (!combinedShared) {
+                return <></>
+            }
+            return combinedShared.map((tup, index) => {
+                return <ListItem key={index}
+                    word={tup} 
+                    removeItem={removeItem} 
+                    shouldShowResults={shouldShowResults} 
+                    teamMode={teamMode}
+                />;
+            });
+        }
+        if (!sortedWords) {
+            return <></>
+        }
+        return sortedWords.map((tup, index) => {
+            return <ListItem key={index} 
+                word={tup} 
+                removeItem={removeItem} 
+                shouldShowResults={shouldShowResults} 
+                teamMode={teamMode}
+            />;
+        });
     } else {
         return wordList.map((word, index) => {
             return <ListItem key={index}
-                            word={word} 
+                            word={[word, -1]} 
                             removeItem={removeItem} 
                             shouldShowResults={shouldShowResults} 
-                            sharedWords={sharedWords}/>;
+                            teamMode={teamMode}
+            />;
         })
     }
 

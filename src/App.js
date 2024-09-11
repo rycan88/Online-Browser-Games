@@ -15,6 +15,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import getSocket from "./socket";
 import { ErrorPage } from './pages/ErrorPage';
+import { Profile } from './pages/Profile';
+import { refreshPage } from './utils';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -25,7 +27,6 @@ function App() {
   const gameName = "telepath";
 
   const roomRoutes = (gameName, rooms) => {
-    console.log("Updated")
     return rooms.map((roomCode) => {
       return <Route key={roomCode} 
                     path={`/${gameName}/lobby/${roomCode}`} 
@@ -34,7 +35,6 @@ function App() {
   }
 
   const gameRoutes = (rooms) => {
-    console.log("Updated")
     return rooms.map((roomCode) => {
       return <Route key={roomCode} 
                     path={`/telepath/${roomCode}`} 
@@ -55,6 +55,20 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const channel = new BroadcastChannel('refresh_channel');
+
+    channel.onmessage = (event) => {
+      if (event.data === 'refresh') {
+        refreshPage();
+      }
+    };
+
+    return () => {
+      channel.close();
+    };
+  }, []);
+
   return (
     <div className="App">
       <AppContext.Provider value={{ rooms, setRooms }}>
@@ -66,7 +80,7 @@ function App() {
               <Route path="/telepath/lobby" element={<Lobby game="Telepath"/>} />
               {roomRoutes(gameName, rooms)}
               {gameRoutes(rooms)}
-              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
               <Route path="*" element={<ErrorPage/>} />

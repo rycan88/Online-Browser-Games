@@ -74,13 +74,13 @@ export const Lobby = (props) => {
                         maxLength="4"
                 ></input>
                 <p className="errorText">{errorMessage}</p>
-                <div className="buttonsContainer">
-                    <button className="lobbyButton gradientButton" onClick={() => {
+                <div className="buttonsContainer bg-red-900">
+                    <button className="lobbyButton gradientButton bg-yellow-700" onClick={() => {
                         joinRoom(typedCode);
                     }}>
                         <h2>Join<br/>Lobby</h2>
                     </button>
-                    <button className="lobbyButton gradientButton" onClick={() => {
+                    <button className="lobbyButton gradientButton bg-green-700" onClick={() => {
                         let roomCode = generateRoomCode();
                         // Makes sure room does not already exist
                         while (rooms.includes(roomCode)) {

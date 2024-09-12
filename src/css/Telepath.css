@@ -13,39 +13,40 @@
     .containerHolder {
       @apply flex flex-col-reverse lg:flex-row place-content-start lg:place-content-evenly w-full h-[85%];
     }
-
+    // Scores
     .scoreDisplayContainer {
       @apply flex flex-wrap lg:flex-col pt-2 lg:pt-[0px] basis-1/3 lg:basis-1/3 lg:place-content-evenly w-full lg:w-[300px] xl:w-[400px] h-[90%] overflow-y-auto;
     }
 
     .teamScores {
       @apply h-[80px] sm:h-[90px] lg:h-[100px] max-w-[400px] px-3 lg:px-4 py-2 lg:py-2 bg-slate-900/30 mx-auto my-auto rounded-2xl border-slate-500/50 border-[1px];
-
-      .icons {
-        @apply h-full mr-2 mt-[2px];
-      }
-
-      .playerNames {
-        @apply w-[70px] sm:w-[100px] md:w-[150px] overflow-x-auto whitespace-nowrap text-sm sm:text-base lg:text-xl;
-      }
-
-      .playerNameContainer {
-        @apply flex w-full items-center place-content-start;
-      }
-
-      .scoreNumberContainer {
-        @apply flex flex-col relative h-full justify-center text-center items-end pr-2 ml-4 mt-[0.5px];
-      }
-
-      .addedScore {
-        @apply absolute -right-[3px] top-[8px] text-green-500 h-full text-xs sm:text-sm lg:text-base;
-      }
-
-      .score {
-        @apply text-lg sm:text-xl lg:text-3xl;
-      }
     }
 
+    .icons {
+      @apply h-full mr-2 mt-[2px];
+    }
+
+    .playerNames {
+      @apply w-[70px] sm:w-[100px] md:w-[150px] overflow-x-auto whitespace-nowrap text-sm sm:text-base lg:text-xl;
+    }
+
+    .playerNameContainer {
+      @apply flex w-full items-center place-content-start;
+    }
+
+    .scoreNumberContainer {
+      @apply flex flex-col relative h-full justify-center text-center items-end pr-2 ml-4 mt-[0.5px];
+    }
+
+    .addedScore {
+      @apply absolute -right-[3px] top-[8px] text-green-500 h-full text-xs sm:text-sm lg:text-base;
+    }
+
+    .score {
+      @apply text-lg sm:text-xl lg:text-3xl;
+    }
+
+    // Lists
     .listsContainer {
       @apply flex flex-row w-full h-[20%] lg:h-[85%] basis-1/2 lg:basis-2/3 lg:place-content-evenly;
     }

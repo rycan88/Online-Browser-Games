@@ -5,6 +5,8 @@ import { AppContext } from "../../App";
 import { TeamList } from "./TeamList";
 import { ToggleSwitch } from "../ToggleSwitch";
 import { PlayerList } from "./PlayerList";
+import "../../css/Lobby.css";
+
 
 const socket = getSocket();
 

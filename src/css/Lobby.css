@@ -41,15 +41,19 @@
     .teamContainer {
       @apply flex flex-col w-full h-[96px] justify-center md:px-4;
     }
+
     .teamInfoContainer {
       @apply flex w-full items-center h-[64px];
-      .joinButton {
-        @apply h-6 w-[96px] text-white text-xl my-auto shadow-lg rounded-md;
-      }
     }
+
+    .joinButton {
+      @apply h-6 w-[96px] text-white text-xl my-auto shadow-lg rounded-md;
+    }
+
     .teamLabel {
       @apply text-2xl my-auto;
     }
+
     .playerLabel {
       @apply text-xl my-auto;
     }

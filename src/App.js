@@ -1,5 +1,5 @@
 import './App.css';
-import "../../css/Lobby.css";
+import "./css/Lobby.css";
 
 import { SignupPage } from './pages/SignupPage';
 import { Home } from "./pages/Home";

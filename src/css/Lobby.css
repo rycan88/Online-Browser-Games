@@ -43,11 +43,11 @@
     }
 
     .joinButton {
-      @apply h-6 w-[97px] text-white text-xl my-auto shadow-lg rounded-md;
+      @apply h-4 w-[108px] text-white text-xl my-auto shadow-lg rounded-md;
     }
 
     .teamInfoContainer {
-      @apply flex w-full items-center h-[64px];
+      @apply flex w-[100%] items-center h-[64px];
     }
 
     .teamLabel {

@@ -86,7 +86,7 @@ export const Room = (props) => {
                     <ToggleSwitch className="fixed right-1 top-1" onAction={onAction} offAction={offAction} isOn={teamMode}/>
                 </div>
                 <h1 className="text-3xl">{gameName.toUpperCase()}</h1>                    
-                <h2 className="text-8xl py-3 my-auto">{roomCode}</h2>
+                <h2 className="text-8xl py-3 my-auto bg-sky-400">{roomCode}</h2>
                 <div className="flex flex-col h-[45%] w-full overflow-y-auto">
                     { teamMode 
                     ?

@@ -7,9 +7,10 @@
     @apply bg-gradient-to-bl from-slate-300 to-slate-800;
     .buttonsContainer {
       @apply flex w-full items-center justify-around;
-      button {
-        @apply text-slate-200 w-[45%] sm:w-[40%] h-[80px] sm:h-[100px] text-xl sm:text-3xl py-1 sm:py-3 px-4 my-3 shadow-xl rounded-xl;
-      }
+    }
+
+    .buttonsContainer button {
+      @apply text-slate-200 w-[45%] sm:w-[40%] h-[80px] sm:h-[100px] text-xl sm:text-3xl py-1 sm:py-3 px-4 my-3 shadow-xl rounded-xl;
     }
 
     .lobbyBox {
@@ -42,10 +43,12 @@
     }
     .teamInfoContainer {
       @apply flex items-center h-[64px];
-      .joinButton {
-        @apply h-6 w-[96px] text-white text-xl my-auto shadow-lg rounded-md;
-      }
     }
+
+    .joinButton {
+      @apply h-6 w-[96px] text-white text-xl my-auto shadow-lg rounded-md;
+    }
+
     .teamLabel {
       @apply text-2xl my-auto;
     }

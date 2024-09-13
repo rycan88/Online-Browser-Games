@@ -3,56 +3,57 @@
 @tailwind utilities;
 
 @layer base {
+  .lobbyPage {
+    @apply bg-gradient-to-bl from-slate-300 to-slate-800;
+  }
+
   .lobbyPage .lobbyBox {
     @apply relative flex flex-col w-[95%] max-w-[700px] h-[90%] p-6 items-center bg-gradient-to-bl from-slate-100 to-slate-400 shadow-xl rounded-xl;
   }
-  .lobbyPage {
-    @apply bg-gradient-to-bl from-slate-300 to-slate-800;
-    .buttonsContainer {
-      @apply flex w-full items-center justify-around;
-    }
 
-    .buttonsContainer button {
-      @apply text-slate-200 w-[45%] sm:w-[40%] h-[80px] sm:h-[100px] text-xl sm:text-3xl py-1 sm:py-3 px-4 my-3 shadow-xl rounded-xl;
-    }
-
-    .gameTitle {
-      @apply text-5xl;
-    }
-    .rules {
-      @apply h-[45%] my-4 px-2 text-lg overflow-y-auto;
-    }
-
-    input {
-      @apply w-[80%] h-[80px] text-center my-auto text-5xl focus:placeholder-transparent;
-    }
-
-    input::placeholder {
-      @apply absolute  top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 text-lg;
-    }
-
-    .errorText {
-      @apply text-red-600 text-lg my-auto h-5;
-    }
+  .lobbyPage .buttonsContainer {
+    @apply flex w-full items-center justify-around;
   }
 
-  .teamList {
-    .teamContainer {
-      @apply flex flex-col h-[96px] justify-center md:px-4;
-    }
-    .teamInfoContainer {
-      @apply flex items-center h-[64px];
-    }
+  .lobbyPage .buttonsContainer button {
+    @apply text-slate-200 w-[45%] sm:w-[40%] h-[80px] sm:h-[100px] text-xl sm:text-3xl py-1 sm:py-3 px-4 my-3 shadow-xl rounded-xl;
+  }
 
-    .joinButton {
-      @apply h-6 w-[96px] text-white text-xl my-auto shadow-lg rounded-md;
-    }
+  .lobbyPage .gameTitle {
+    @apply text-5xl;
+  }
 
-    .teamLabel {
-      @apply text-2xl my-auto;
-    }
-    .playerLabel {
-      @apply text-xl my-auto;
-    }
+  .lobbyPage .rules {
+    @apply h-[45%] my-4 px-2 text-lg overflow-y-auto;
+  }
+
+  .lobbyPage input {
+    @apply w-[80%] h-[80px] text-center my-auto text-5xl focus:placeholder-transparent;
+  }
+
+  .lobbyPage input::placeholder {
+    @apply absolute  top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 text-lg;
+  }
+
+  .lobbyPage.errorText {
+    @apply text-red-600 text-lg my-auto h-5;
+  }
+
+  .lobbyPage .teamContainer {
+    @apply flex flex-col h-[96px] justify-center md:px-4;
+  }
+  .lobbyPage .teamInfoContainer {
+    @apply flex items-center h-[64px];
+  }
+
+  .lobbyPage .joinButton {
+    @apply h-6 w-[96px] text-white text-xl my-auto shadow-lg rounded-md;
+  }
+
+  .lobbyPage .teamLabel {
+    @apply text-2xl my-auto;
+  }
+  .lobbyPage .playerLabel {
+    @apply text-xl my-auto;
   }
 }

@@ -5,106 +5,99 @@
 @layer base {
   .telepathPage {
     @apply bg-galaxy items-center z-[-20] text-white;
-
-    .telepathPrompt {
-      @apply text-3xl sm:text-4xl md:text-5xl my-3 md:my-4;
-    }
-
-    .containerHolder {
-      @apply flex flex-col-reverse lg:flex-row place-content-start lg:place-content-evenly w-full h-[85%];
-    }
-
-    .scoreDisplayContainer {
-      @apply flex flex-wrap lg:flex-col pt-2 lg:pt-[0px] basis-1/3 lg:basis-1/3 lg:place-content-evenly w-full lg:w-[300px] xl:w-[400px] h-[90%] overflow-y-auto;
-    }
-
-    .teamScores {
-      @apply h-[80px] sm:h-[90px] lg:h-[100px] max-w-[400px] px-3 lg:px-4 py-2 lg:py-2 bg-slate-900/30 mx-auto my-auto rounded-2xl border-slate-500/50 border-[1px];
-
-      .icons {
-        @apply h-full mr-2 mt-[2px];
-      }
-
-      .playerNames {
-        @apply w-[70px] sm:w-[100px] md:w-[150px] overflow-x-auto whitespace-nowrap text-sm sm:text-base lg:text-xl;
-      }
-
-      .playerNameContainer {
-        @apply flex w-full items-center place-content-start;
-      }
-
-      .scoreNumberContainer {
-        @apply flex flex-col relative h-full justify-center text-center items-end pr-2 ml-4 mt-[0.5px];
-      }
-
-      .addedScore {
-        @apply absolute -right-[3px] top-[8px] text-green-500 h-full text-xs sm:text-sm lg:text-base;
-      }
-
-      .score {
-        @apply text-lg sm:text-xl lg:text-3xl;
-      }
-    }
-
-    .listsContainer {
-      @apply flex flex-row w-full h-[20%] lg:h-[85%] basis-1/2 lg:basis-2/3 lg:place-content-evenly;
-    }
-
-    .p1Container {
-      @apply w-full lg:w-[50%] h-[90%];
-    }
-
-    .p2Container {
-      @apply w-full lg:w-[50%] h-[90%];
-    }
-
-    .inputContainer {
-      @apply flex w-[95%] max-w-[calc(min(90vw,400px))] h-6 mx-auto;
-    }
-
-    .telepathInput {
-      @apply w-[80%] h-full mb-2 md:mb-4 pl-4 text-black;
-    }
-
-    .addButton {
-      @apply w-[20%] h-full;
-    }
-
-    .wordlistTitle {
-      @apply w-full h-6 text-xl sm:text-2xl md:text-3xl place-content-center;
-    }
-
-    .list {
-      @apply flex flex-col items-center max-w-[calc(min(90vw,400px))] w-[95%] h-[90%] overflow-y-auto mt-2 md:mt-4 mx-auto;
-      @apply border-slate-500/80 border-[1px] divide-y-[1px] divide-dashed divide-slate-500/80;
-    }
-
-    .listItem {
-      @apply w-full h-6 lg:h-[56px] pl-4 pr-2 flex items-center place-content-between flex-shrink-0;
-    }
-
-    .listItem h2 {
-      @apply text-left text-base sm:text-lg lg:text-xl font-bold w-[90%] overflow-x-scroll whitespace-nowrap;
-    }
-
-    .listItemDelete {
-      @apply w-[30px] h-[30px];
-    }
-
-    .listItemDelete:hover {
-      @apply cursor-pointer bg-red-600;
-    }
-
-    .submitWords {
-      @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] place-content-evenly px-4 text-2xl rounded-3xl;
-    }
-    .wordPoints {
-      @apply text-base sm:text-lg lg:text-xl text-right;
-    }
+  }
+  .telepathPage .telepathPrompt {
+    @apply text-3xl sm:text-4xl md:text-5xl my-3 md:my-4;
   }
 
-  /*
-  .telepathTeamScores:hover {
-    @apply bg-slate-800/30 cursor-pointer;
-  }*/
+  .telepathPage .containerHolder {
+    @apply flex flex-col-reverse lg:flex-row place-content-start lg:place-content-evenly w-full h-[85%];
+  }
+
+  .telepathPage .scoreDisplayContainer {
+    @apply flex flex-wrap lg:flex-col pt-2 lg:pt-[0px] basis-1/3 lg:basis-1/3 lg:place-content-evenly w-full lg:w-[300px] xl:w-[400px] h-[90%] overflow-y-auto;
+  }
+
+  .telepathPage .teamScores {
+    @apply h-[80px] sm:h-[90px] lg:h-[100px] max-w-[400px] px-3 lg:px-4 py-2 lg:py-2 bg-slate-900/30 mx-auto my-auto rounded-2xl border-slate-500/50 border-[1px];
+  }
+  .telepathPage .icons {
+    @apply h-full mr-2 mt-[2px];
+  }
+
+  .telepathPage .playerNames {
+    @apply w-[70px] sm:w-[100px] md:w-[150px] overflow-x-auto whitespace-nowrap text-sm sm:text-base lg:text-xl;
+  }
+
+  .telepathPage .playerNameContainer {
+    @apply flex w-full items-center place-content-start;
+  }
+
+  .telepathPage .scoreNumberContainer {
+    @apply flex flex-col relative h-full justify-center text-center items-end pr-2 ml-4 mt-[0.5px];
+  }
+
+  .telepathPage .addedScore {
+    @apply absolute -right-[3px] top-[8px] text-green-500 h-full text-xs sm:text-sm lg:text-base;
+  }
+
+  .telepathPage .score {
+    @apply text-lg sm:text-xl lg:text-3xl;
+  }
+
+  .telepathPage .listsContainer {
+    @apply flex flex-row w-full h-[20%] lg:h-[85%] basis-1/2 lg:basis-2/3 lg:place-content-evenly;
+  }
+
+  .telepathPage .p1Container {
+    @apply w-full lg:w-[50%] h-[90%];
+  }
+
+  .telepathPage .p2Container {
+    @apply w-full lg:w-[50%] h-[90%];
+  }
+
+  .telepathPage .inputContainer {
+    @apply flex w-[95%] max-w-[calc(min(90vw,400px))] h-6 mx-auto;
+  }
+
+  .telepathPage .telepathInput {
+    @apply w-[80%] h-full mb-2 md:mb-4 pl-4 text-black;
+  }
+
+  .telepathPage .addButton {
+    @apply w-[20%] h-full;
+  }
+
+  .telepathPage .wordlistTitle {
+    @apply w-full h-6 text-xl sm:text-2xl md:text-3xl place-content-center;
+  }
+
+  .telepathPage .list {
+    @apply flex flex-col items-center max-w-[calc(min(90vw,400px))] w-[95%] h-[90%] overflow-y-auto mt-2 md:mt-4 mx-auto;
+    @apply border-slate-500/80 border-[1px] divide-y-[1px] divide-dashed divide-slate-500/80;
+  }
+
+  .telepathPage .listItem {
+    @apply w-full h-6 lg:h-[56px] pl-4 pr-2 flex items-center place-content-between flex-shrink-0;
+  }
+
+  .telepathPage .listItem h2 {
+    @apply text-left text-base sm:text-lg lg:text-xl font-bold w-[90%] overflow-x-scroll whitespace-nowrap;
+  }
+
+  .telepathPage .listItemDelete {
+    @apply w-[30px] h-[30px];
+  }
+
+  .telepathPage .listItemDelete:hover {
+    @apply cursor-pointer bg-red-600;
+  }
+
+  .telepathPage .submitWords {
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] place-content-evenly px-4 text-2xl rounded-3xl;
+  }
+  .telepathPage .wordPoints {
+    @apply text-base sm:text-lg lg:text-xl text-right;
+  }
 }

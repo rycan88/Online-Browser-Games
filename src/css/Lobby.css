@@ -10,7 +10,7 @@
     }
 
     .buttonsContainer {
-      @apply flex w-full items-center justify-around;
+      @apply flex w-full items-center justify-around bg-red-900;
     }
 
     .lobbyButton {

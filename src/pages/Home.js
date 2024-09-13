@@ -22,6 +22,7 @@ export const Home = () => {
           
           <h2>{catData?.fact}</h2>
           <h2>Welcome {getNickname()}</h2>
+          <h2 className="text-xl text-blue-700">IT CHANGED!</h2>
       </div>
     );
 }

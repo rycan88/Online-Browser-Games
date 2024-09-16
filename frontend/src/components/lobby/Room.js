@@ -79,7 +79,7 @@ export const Room = (props) => {
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="lobbyBox">
-                <div className="absolute right-5 top-5 flex flex-col">
+                <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">
                     <h6 className="text-lg">Teams</h6>
                     <ToggleSwitch className="fixed right-1 top-1" onAction={onAction} offAction={offAction} isOn={teamMode}/>
                 </div>

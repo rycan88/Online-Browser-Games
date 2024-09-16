@@ -28,14 +28,14 @@
   }
 
   .lobbyPage input {
-    @apply w-[80%] h-[65px] sm:h-[80px] text-center my-auto text-5xl focus:placeholder-transparent;
+    @apply w-[80%] h-[65px] sm:h-[80px] text-center my-auto text-4xl sm:text-5xl focus:placeholder-transparent;
   }
 
   .lobbyPage input::placeholder {
     @apply absolute  top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 text-lg;
   }
 
-  .lobbyPage.errorText {
+  .lobbyPage .errorText {
     @apply text-red-600 text-lg my-auto h-5;
   }
 

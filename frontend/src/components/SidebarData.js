@@ -32,8 +32,8 @@ export const SidebarData = [
         isMain: true,
     },
     {
-        title: "Sign Up",
-        link: "/singup",
+        title: "Change Username",
+        link: "/profile",
         isMain: true,
     },
 ]

@@ -1,12 +1,29 @@
 const express = require("express");
 const { v4: uuidv4 } = require('uuid');
-
+const path = require("path");
 const app = express();
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 
 app.use(cors());
+
+// --------------------------deployment----------------------------------------
+
+const _dirname1 = path.resolve();
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(_dirname1, "frontend/build")));
+    app.get("*", (req, res) =>
+        res.sendFile(path.resolve(_dirname1, "frontend", "build", "index.html"))
+    );
+} else {
+    app.get("/", (req, res) => {
+        res.send("API is running..");
+    });
+}
+
+// --------------------------deployment----------------------------------------
+
 
 const server = http.createServer(app);
 

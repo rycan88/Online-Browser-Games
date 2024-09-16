@@ -23,13 +23,15 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // --------------------------deployment----------------------------------------
-
+const MY_WEBSITE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://rycan88-online-games.onrender.com'
+  : 'http://localhost:3000';
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: MY_WEBSITE_URL,
         methods: ["GET", "POST"],
     },
 });
@@ -298,6 +300,8 @@ io.on("connection", (socket) => {
     });
 })
 
-server.listen(3001, () => {
+const PORT = process.env.PORT || 3001;
+
+server.listen(PORT, () => {
     console.log("SERVER IS RUNNING");
 });

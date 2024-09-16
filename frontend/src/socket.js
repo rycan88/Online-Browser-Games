@@ -27,11 +27,18 @@ const getNickname = () => {
     return nickname;
 }
 
+
+const MY_WEBSITE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://rycan88-online-games.onrender.com'
+  : 'http://localhost';
+
+const PORT = process.env.PORT || 3001;
+
 const getSocket = () => {
     if (!socket) {
         const userId = getUserId();
         const nickname = getNickname();
-        socket = io.connect("http://localhost:3001", {
+        socket = io.connect(`${MY_WEBSITE_URL}:${PORT}`, {
             query: { userId, nickname }
         });
         socket.userId = userId;

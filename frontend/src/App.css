@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .entirePage {
+    @apply flex flex-col h-[calc(100vh-60px)] w-full bg-cover absolute;
+  }
+
+  .gradientButton {
+    @apply bg-gradient-to-tr from-sky-950 to-sky-600;
+  }
+
+  .gradientButton:hover {
+    @apply bg-gradient-to-tr from-sky-900 to-sky-600;
+  }
+
+  .gradientButton:disabled {
+    @apply bg-none bg-sky-700/30 cursor-not-allowed;
+  }
+
+  .redGradientButton {
+    @apply bg-gradient-to-tr from-red-950 to-red-500;
+  }
+
+  .redGradientButton:hover {
+    @apply bg-gradient-to-tr from-red-900 to-red-500;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+::-webkit-scrollbar:horizontal {
+  display: none;
+  width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.App {
+  text-align: center;
+}

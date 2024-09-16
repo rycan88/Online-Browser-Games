@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .gamesPage {
+    @apply z-[-20];
+  }
+  .gamesContainer {
+    @apply bg-cards z-[-20] min-h-[calc(100vh-60px)];
+  }
+  .gamesCard {
+    @apply flex flex-col items-center gap-4 w-[500px] h-[700px] p-6 bg-gradient-to-bl from-slate-100 to-slate-400 rounded-3xl cursor-pointer z-[0];
+  }
+}

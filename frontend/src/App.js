@@ -18,6 +18,7 @@ import { ErrorPage } from './pages/ErrorPage';
 import { Profile } from './pages/Profile';
 import { refreshPage } from './utils';
 import { Games } from './pages/Games';
+import { enterFullScreen } from './utils';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -50,6 +51,7 @@ function App() {
     });
 
     socket.emit("get_all_rooms");
+    enterFullScreen();
 
     return () => {
         socket.off('update_rooms');

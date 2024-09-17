@@ -43,7 +43,7 @@ export const OddColourOut = () => {
         level: 1,
         score: 0,
         gridSize: 2,
-        offset: 20,
+        offset: 22,
     }
 
     const [level, setLevel] = useState(startValues.level);

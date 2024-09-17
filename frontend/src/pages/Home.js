@@ -17,11 +17,14 @@ export const Home = () => {
     }
 
     return (
-      <div>
-          <h1>Here is a cat fact</h1>
-          
+      <div className="pt-6">
+          <h2 className="text-4xl">Welcome {getNickname()}</h2>
+          <br/>
+
+          <h1>Random Cat Fact</h1>
           <h2>{catData?.fact}</h2>
-          <h2>Welcome {getNickname()}</h2>
+          <br/>
+          <h2>(Home page in progress)</h2>
       </div>
     );
 }

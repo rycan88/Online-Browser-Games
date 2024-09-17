@@ -84,6 +84,6 @@
   }
 
   .oddColourPage .timer h3 {
-    @apply text-6xl sm:text-8xl font-semibold -mt-1 sm:-mt-2;
+    @apply text-6xl sm:text-8xl mt-[0] sm:-mt-2;
   }
 }

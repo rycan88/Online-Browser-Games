@@ -19,6 +19,7 @@ import { Profile } from './pages/Profile';
 import { refreshPage } from './utils';
 import { Games } from './pages/Games';
 import { enterFullScreen } from './utils';
+import { ThirtyOne } from './pages/ThirtyOne';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -51,7 +52,6 @@ function App() {
     });
 
     socket.emit("get_all_rooms");
-    enterFullScreen();
 
     return () => {
         socket.off('update_rooms');
@@ -87,6 +87,7 @@ function App() {
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
+              <Route path="/thirty_one" element={<ThirtyOne />} />
               <Route path="*" element={<ErrorPage/>} />
             </Routes>
           </Router>

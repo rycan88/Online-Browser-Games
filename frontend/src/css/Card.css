@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .standardCard {
+    @apply relative flex h-[300px] w-[200px] p-[4px] bg-slate-200 shadow-xl;
+  }
+  .standardCard .cardCornerContainer {
+    @apply flex flex-col items-center text-2xl w-[15%];
+  }
+  .standardCard .cardMiddleContainer {
+    @apply w-[70%] h-[80%];
+  }
+
+  .standardCard .grid-4 {
+    @apply grid grid-cols-2;
+  }
+
+  .standardCard .middleSuitIcon {
+    @apply text-5xl;
+  }
+}

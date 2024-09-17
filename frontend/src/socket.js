@@ -30,7 +30,7 @@ const getNickname = () => {
 
 const MY_WEBSITE_URL = process.env.NODE_ENV === 'production'
   ? 'https://rycan88-online-games.onrender.com'
-  : 'http://localhost:3001';
+  : 'http://localhost:5000';
 
 const getSocket = () => {
     if (!socket) {

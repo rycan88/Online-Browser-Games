@@ -95,7 +95,7 @@
   }
 
   .telepathPage .submitWords {
-    @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] place-content-evenly px-4 text-2xl rounded-3xl;
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] place-content-evenly px-4 text-xl sm:text-2xl rounded-xl sm:rounded-3xl;
   }
   .telepathPage .wordPoints {
     @apply text-base sm:text-lg lg:text-xl text-right;

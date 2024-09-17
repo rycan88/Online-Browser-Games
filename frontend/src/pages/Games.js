@@ -8,7 +8,7 @@ export const Games = () => {
     return (
         <div className="gamesPage entirePage">
             <div className="relative flex flex-col gamesContainer">
-                <div className="flex flex-wrap p-6 gap-6 place-content-evenly">
+                <div className="cardFlexContainer flex flex-wrap py-6 gap-6 place-content-evenly">
                     {
                         GamesData.map((gameData) => {
                             return (
@@ -19,7 +19,7 @@ export const Games = () => {
                                 >
                                     <h1 className="text-3xl">{gameData.title}</h1>
                                     {gameData.logoLink &&      
-                                        <div className="h-[300px] w-[300px] shadow-xl rounded-3xl">
+                                        <div className="logoContainer">
                                             <img className="h-full rounded-3xl" src={`${process.env.PUBLIC_URL}/images/${gameData.logoLink}`} alt="Odd Colour Out Logo" />
                                         </div>    
                                     }

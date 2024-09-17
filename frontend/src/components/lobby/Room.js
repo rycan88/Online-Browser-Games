@@ -79,12 +79,12 @@ export const Room = (props) => {
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="lobbyBox">
-                <div className="absolute right-5 top-5 flex flex-col">
+                <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">
                     <h6 className="text-lg">Teams</h6>
                     <ToggleSwitch className="fixed right-1 top-1" onAction={onAction} offAction={offAction} isOn={teamMode}/>
                 </div>
                 <h1 className="text-3xl">{gameName.toUpperCase()}</h1>                    
-                <h2 className="text-8xl py-3 my-auto">{roomCode}</h2>
+                <h2 className="text-7xl sm:text-8xl py-3 my-auto">{roomCode}</h2>
                 <div className="flex flex-col h-[45%] w-full overflow-y-auto">
                     { teamMode 
                     ?

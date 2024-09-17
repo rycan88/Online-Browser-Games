@@ -43,7 +43,7 @@ export const OddColourOut = () => {
         level: 1,
         score: 0,
         gridSize: 2,
-        offset: 20,
+        offset: 22,
     }
 
     const [level, setLevel] = useState(startValues.level);
@@ -183,7 +183,7 @@ export const OddColourOut = () => {
                             <div>
                                 <h2>Level: {level}</h2>
                                 <h2>Score: {score}</h2>
-                                <h2>Personal Best: {bestScore}</h2>
+                                <h2>Best Score: {bestScore}</h2>
                             </div>
                             <div>
                                 { isGameRunning ?

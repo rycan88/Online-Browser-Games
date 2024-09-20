@@ -19,6 +19,7 @@ import { Profile } from './pages/Profile';
 import { refreshPage } from './utils';
 import { Games } from './pages/Games';
 import { enterFullScreen } from './utils';
+import LoadingScreen from './components/LoadingScreen';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -26,6 +27,7 @@ const socket = getSocket();
 function App() {
   const client = new QueryClient();
   const [rooms, setRooms] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const gameName = "telepath";
 
   const roomRoutes = (gameName, rooms) => {
@@ -48,6 +50,7 @@ function App() {
     socket.on('update_rooms', (rooms) => {
         console.log("Rooms updated");
         setRooms(rooms);
+        setIsDataLoaded(true);
     });
 
     socket.emit("get_all_rooms");
@@ -70,6 +73,10 @@ function App() {
       channel.close();
     };
   }, []);
+
+  if (!isDataLoaded) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="App">

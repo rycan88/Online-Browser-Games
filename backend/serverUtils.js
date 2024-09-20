@@ -21,7 +21,7 @@ const getRoomLeader = (rooms, roomCode) => {
 }
 
 // leaveAllRooms removes the current user's socket from all rooms, and replaces it with another socket with same socketid if found
-const leaveAllRooms = (io, rooms, currentUser) => {
+const leaveAllRooms = (io, rooms, deleteTimers, currentUser) => {
     Object.keys(rooms).forEach((roomCode) => {
         const currentIndex = rooms[roomCode].players.findIndex(user => user.socketId === currentUser.socketId);
         if (currentIndex === -1) { return; }
@@ -36,7 +36,9 @@ const leaveAllRooms = (io, rooms, currentUser) => {
         }
 
         if (rooms[roomCode].players.length === 0) {
-            delete rooms[roomCode];
+            if (!Object.keys(deleteTimers).includes(roomCode)) {
+                startDeleteTimer(rooms, deleteTimers, roomCode);
+            }
         } else {
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
             removeFromTeamList(io, rooms, roomCode, currentUser, -1);
@@ -79,8 +81,23 @@ const removeFromTeamList = (io, rooms, roomCode, currentUser, excludedIndex) => 
     return null;
 }
 
-
-
+const startDeleteTimer = (rooms, deleteTimers, roomCode) => {
+    deleteTimers[roomCode] = setTimeout(() => {
+      if (rooms[roomCode] && rooms[roomCode].players.length === 0) {
+        delete rooms[roomCode]; 
+        console.log(`Room ${roomCode} deleted after 5 minutes of inactivity.`);
+      }
+    }, 5 * 60 * 1000); // 5 minutes in milliseconds
+  };
+  
+  // Function to clear the delete timer if a player rejoins
+  const clearDeleteTimer = (deleteTimers, roomCode) => {
+    if (deleteTimers[roomCode]) {
+      clearTimeout(deleteTimers[roomCode]); // Cancel the deletion timer
+      delete deleteTimers[roomCode]; // Remove the timer reference
+      console.log(`Deletion timer for room ${roomCode} canceled.`);
+    }
+  };
 
 module.exports = {
     User,
@@ -90,4 +107,6 @@ module.exports = {
     removeFromTeamList,
     containsSocketId,
     containsUserId,
+    startDeleteTimer,
+    clearDeleteTimer,
 };

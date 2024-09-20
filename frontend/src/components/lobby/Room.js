@@ -87,8 +87,8 @@ export const Room = (props) => {
                 <div className="absolute left-1 top-3 sm:left-3 sm:top-3">
                     <CopyLinkButton/>
                 </div>
-                <h1 className="text-3xl">{gameName.toUpperCase()}</h1>                    
-                <h2 className="text-7xl sm:text-8xl py-3 my-auto">{roomCode}</h2>
+                <h1 className="text-2xl sm:text-3xl">{gameName.toUpperCase()}</h1>                    
+                <h2 className="text-6xl sm:text-8xl py-3 my-auto">{roomCode}</h2>
                 <div className="flex flex-col h-[45%] w-full overflow-y-auto">
                     { teamMode 
                     ?

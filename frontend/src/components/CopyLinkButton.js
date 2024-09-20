@@ -24,7 +24,7 @@ export const CopyLinkButton = () => {
       <div className="flex flex-col items-center mt-10">
         <button
           onClick={copyToClipboard}
-          className={`px-1 py-1 bg-slate-400 text-slate-200 rounded-lg hover:bg-slate-500 transition-colors duration-300 text-sm`}
+          className={`px-1 py-1 bg-slate-400 text-slate-200 rounded-lg hover:bg-slate-500 transition-colors duration-300 text-xs`}
         >
           <div className="flex gap-1 items-center">
             {copied ? <FaCheck className="text-green-400"/> : <IoCopyOutline />}

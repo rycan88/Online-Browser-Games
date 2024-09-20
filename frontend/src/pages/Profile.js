@@ -35,7 +35,11 @@ export const Profile = () => {
     return (
         <div className="entirePage">
             <div className="flex flex-col h-full w-full items-center">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl py-6">Hello <br/> {getNickname()}!</h1>
+                <div className="flex flex-col gap-2 text-4xl sm:text-5xl md:text-6xl py-6">
+                    <h2>Hello </h2>
+                    <h2>{getNickname()}!</h2>
+                </div>
+
                 <div className="flex w-full h-[70px] justify-center">
                     <input className="w-[200px] sm:w-[300px] text-center" onChange={handleTextChange} onKeyDown={ keyDownHandler } ref={fName} maxLength="20"></input>
                     <button className="w-[100px] sm:w-[100px] gradientButton text-white" onClick={changeNickname}>Change Username</button>

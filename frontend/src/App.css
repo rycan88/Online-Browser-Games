@@ -26,6 +26,10 @@
   .redGradientButton:hover {
     @apply bg-gradient-to-tr from-red-900 to-red-500;
   }
+
+  button {
+    @apply select-none;
+  }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

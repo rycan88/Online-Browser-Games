@@ -20,6 +20,7 @@ import { refreshPage } from './utils';
 import { Games } from './pages/Games';
 import { enterFullScreen } from './utils';
 import { ThirtyOne } from './pages/ThirtyOne';
+import LoadingScreen from './components/LoadingScreen';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -27,6 +28,7 @@ const socket = getSocket();
 function App() {
   const client = new QueryClient();
   const [rooms, setRooms] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [gameNames, setGameNames] = useState({});
   const GameElement = (gameName, roomCode) => {
     if (gameName === "telepath") {
@@ -63,6 +65,7 @@ function App() {
           setGameNames(gameNames);
         }
         setRooms(rooms);
+        setIsDataLoaded(true);
     });
 
     socket.emit("get_all_rooms");
@@ -103,7 +106,7 @@ function App() {
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
               <Route path="/thirty_one" element={<ThirtyOne />} />
-              <Route path="*" element={<ErrorPage/>} />
+              <Route path="*" element={isDataLoaded ? <ErrorPage/> : <LoadingScreen />} />
             </Routes>
           </Router>
         </QueryClientProvider>

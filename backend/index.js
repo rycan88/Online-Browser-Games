@@ -38,13 +38,13 @@ const io = new Server(server, {
 
 const telepathHelper = require("./telepath/telepathHelper");
 const { telepathPlayerData } = require("./telepath/telepathPlayerData");
-const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId} = require("./serverUtils");
+const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer} = require("./serverUtils");
 
 // Lobby Rooms
 const rooms = {};
 const simplifiedRooms = {}
 const teamGames = ["telepath"];
-
+const deleteTimers = {};
 // Our socket has a socketId, userId, and nickname
 // socketId changes per tab, while userId changes per browser
 
@@ -114,11 +114,12 @@ io.on("connection", (socket) => {
     socket.on('join_room', (roomCode) => {
         if (!rooms[roomCode]) {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
-        } else if (rooms[roomCode].gameStarted && !containsUserId(rooms[roomCode].spectators, socket.userId)) {
+        } else if (rooms[roomCode].gameStarted && !Object.keys(rooms[roomCode].playersData).includes(socket.userId)) { // If they arent a player in the game that started
             socket.emit('room_error', `Game ${roomCode} has already started`);
-        } else if (!containsSocketId(rooms[roomCode].players, socket.id)) {
+        } else if (!containsSocketId(rooms[roomCode].players, socket.id)) { // If the socket is not already connected to the room
+            clearDeleteTimer(deleteTimers, roomCode);
             socket.leaveAll();
-            leaveAllRooms(io, rooms, currentUser);
+            leaveAllRooms(io, rooms, deleteTimers, currentUser);
             socket.join(roomCode);
             rooms[roomCode].spectators.push(currentUser);
             if (!containsUserId(rooms[roomCode].players, socket.userId)) {
@@ -139,7 +140,9 @@ io.on("connection", (socket) => {
             rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.userId !== socket.userId);
 
             if (rooms[roomCode].players.length === 0) {
-                delete rooms[roomCode];
+                if (!Object.keys(deleteTimers).includes(roomCode)) {
+                    startDeleteTimer(rooms, deleteTimers, roomCode);
+                }
             } else {
                 if (teamGames.includes(rooms[roomCode].gameName)) {
                     removeFromTeamList(io, rooms, roomCode, currentUser, -1);
@@ -186,7 +189,7 @@ io.on("connection", (socket) => {
         console.log('User disconnected:', socket.id);
         // Handle cleanup of lobbies and players
         socket.leaveAll();
-        leaveAllRooms(io, rooms, currentUser);
+        leaveAllRooms(io, rooms, deleteTimers, currentUser);
     });
 
     socket.on('set_team_mode', (roomCode, teamMode) => {

@@ -35,9 +35,10 @@ export const TelepathTeamScoresDisplay = (props) => {
         }
         
         const partner = userData.partner.userId;
-        const p1 = partner === socket.userId ? userData : playersData[partner];
-        const p2 = partner === socket.userId ? playersData[partner] : userData;
-        
+
+        const p1 = partner === socket.userId ? playersData[partner] : userData;
+        const p2 = partner === socket.userId ? userData : playersData[partner];
+
         // Always display yourself first on the team
         return <TelepathTeamScores key={index}
                                 player1={p1} 

@@ -51,7 +51,6 @@ function App() {
     });
 
     socket.emit("get_all_rooms");
-    enterFullScreen();
 
     return () => {
         socket.off('update_rooms');

@@ -54,6 +54,7 @@ export const Telepath = (props) => {
             setTeamMode(teamMode);                
         });
 
+        socket.emit('join_room', roomCode);
         socket.emit('get_all_telepath_data', roomCode);
 
         return () => {

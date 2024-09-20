@@ -22,6 +22,7 @@ const getRoomLeader = (rooms, roomCode) => {
 
 // leaveAllRooms removes the current user's socket from all rooms, and replaces it with another socket with same socketid if found
 const leaveAllRooms = (io, rooms, deleteTimers, currentUser) => {
+    if (!currentUser) { return; }
     Object.keys(rooms).forEach((roomCode) => {
         const currentIndex = rooms[roomCode].players.findIndex(user => user.socketId === currentUser.socketId);
         if (currentIndex === -1) { return; }
@@ -47,6 +48,7 @@ const leaveAllRooms = (io, rooms, deleteTimers, currentUser) => {
 }
 
 const addToTeamList = (rooms, roomCode, currentUser) => {
+    if (!currentUser) { return; }
     const teamData = rooms[roomCode].teamData;
     
     let firstEmptySpot = null;
@@ -66,6 +68,7 @@ const addToTeamList = (rooms, roomCode, currentUser) => {
 }
 
 const removeFromTeamList = (io, rooms, roomCode, currentUser, excludedIndex) => {
+    if (!currentUser) { return; }
     const teamData = rooms[roomCode].teamData;
     for (const [index, team] of teamData.entries()) {
         if (index === excludedIndex) { continue; }

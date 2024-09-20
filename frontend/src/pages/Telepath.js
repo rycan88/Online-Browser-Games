@@ -7,6 +7,7 @@ import getSocket from "../socket";
 import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamScoresDisplay";
 import { TelepathListContainers } from "../components/telepath/TelepathListContainers";
 import { useNavigate } from "react-router-dom";
+import LoadingScreen from "../components/LoadingScreen";
 
 // TODO
 // QoL changes
@@ -65,7 +66,7 @@ export const Telepath = (props) => {
     }, []);
 
     if (!dataInitialized) {
-        return <></>
+        return <LoadingScreen/>
     }
 
     return (

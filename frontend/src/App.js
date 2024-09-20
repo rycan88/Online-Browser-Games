@@ -74,10 +74,6 @@ function App() {
     };
   }, []);
 
-  if (!isDataLoaded) {
-    return <LoadingScreen />;
-  }
-
   return (
     <div className="App">
       <AppContext.Provider value={{ rooms, setRooms }}>
@@ -93,7 +89,7 @@ function App() {
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
-              <Route path="*" element={<ErrorPage/>} />
+              <Route path="*" element={isDataLoaded ? <ErrorPage/> : <LoadingScreen />} />
             </Routes>
           </Router>
         </QueryClientProvider>

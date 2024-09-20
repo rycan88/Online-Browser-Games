@@ -42,6 +42,7 @@ const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,c
 
 // Lobby Rooms
 const rooms = {};
+const simplifiedRooms = {}
 const teamGames = ["telepath"];
 
 // Our socket has a socketId, userId, and nickname
@@ -58,7 +59,7 @@ io.on("connection", (socket) => {
     socket.nickname = nickname;
     console.log(`User Connected: ${socket.id} ${userId} ${nickname} `);
 
-    socket.emit('update_rooms', Object.keys(rooms))
+    socket.emit('update_rooms', Object.keys(rooms), simplifiedRooms)
 
     socket.on('nickname_changed', (nickname) => {
         currentUser.nickname = nickname
@@ -93,11 +94,16 @@ io.on("connection", (socket) => {
 
     socket.on('create_room', (gameName, roomCode) => {
         leaveAllRooms(io, rooms, socket.id);
-        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: true };
+        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
+        if (gameName === "telepath") {
+            rooms[roomCode].teamMode = true;
+        }
+        simplifiedRooms[roomCode] = gameName;
         socket.join(roomCode);
         rooms[roomCode].players.push(currentUser);
         rooms[roomCode].spectators.push(currentUser);
-        io.emit('update_rooms', Object.keys(rooms));
+
+        io.emit('update_rooms', Object.keys(rooms), simplifiedRooms);
         if (teamGames.includes(gameName)) {
             addToTeamList(rooms, roomCode, currentUser);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
@@ -300,7 +306,7 @@ io.on("connection", (socket) => {
     });
 })
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
     console.log("SERVER IS RUNNING");

@@ -27,27 +27,42 @@ const socket = getSocket();
 function App() {
   const client = new QueryClient();
   const [rooms, setRooms] = useState([]);
-  const gameName = "telepath";
+  const [gameNames, setGameNames] = useState({});
+  const GameElement = (gameName, roomCode) => {
+    if (gameName === "telepath") {
+      return <Telepath roomCode={roomCode} />
+    } else if (gameName === "thirty_one") {
+      return <ThirtyOne roomCode={roomCode} />
+    }
+    return <></>
+  }
 
-  const roomRoutes = (gameName, rooms) => {
+  const roomRoutes = (gameNames, rooms) => {
     return rooms.map((roomCode) => {
+      const gameName = gameNames ? gameNames[roomCode] : "";
+
       return <Route key={roomCode} 
                     path={`/${gameName}/lobby/${roomCode}`} 
                     element={<Room key={roomCode} gameName={gameName} roomCode={roomCode}/>} />
         }) 
   }
 
-  const gameRoutes = (rooms) => {
+  const gameRoutes = (gameNames, rooms) => {
     return rooms.map((roomCode) => {
+      const gameName = gameNames ? gameNames[roomCode] : "";
+      console.log(gameNames, roomCode)
       return <Route key={roomCode} 
-                    path={`/telepath/${roomCode}`} 
-                    element={<Telepath roomCode={roomCode} />} />
+                    path={`/${gameName}/${roomCode}`} 
+                    element={GameElement(gameName, roomCode)} />
         }) 
   }
 
   useEffect(() => {
-    socket.on('update_rooms', (rooms) => {
+    socket.on('update_rooms', (rooms, gameNames) => {
         console.log("Rooms updated");
+        if (gameNames !== null) {
+          setGameNames(gameNames);
+        }
         setRooms(rooms);
     });
 
@@ -57,7 +72,7 @@ function App() {
         socket.off('update_rooms');
     };
   }, []);
-
+  console.log("YEE", rooms, gameNames)
   useEffect(() => {
     const channel = new BroadcastChannel('refresh_channel');
 
@@ -74,15 +89,16 @@ function App() {
 
   return (
     <div className="App">
-      <AppContext.Provider value={{ rooms, setRooms }}>
+      <AppContext.Provider value={{ rooms, setRooms, gameNames }}>
         <QueryClientProvider client={client}>
           <Router>
             <Navbar />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/telepath/lobby" element={<Lobby game="Telepath"/>} />
-              {roomRoutes(gameName, rooms)}
-              {gameRoutes(rooms)}
+              <Route path="/telepath/lobby" element={<Lobby game="telepath"/>} />
+              <Route path="/thirty_one/lobby" element={<Lobby game="thirty_one"/>} />
+              {roomRoutes(gameNames, rooms)}
+              {gameRoutes(gameNames, rooms)}
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />

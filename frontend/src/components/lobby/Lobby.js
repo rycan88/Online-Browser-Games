@@ -7,12 +7,15 @@ import { TelepathRules } from "../telepath/TelepathRules";
 
 import { AppContext } from "../../App";
 
+const Rules = {"telepath": <TelepathRules />, "thirty_one": "Get 31"}
+const Titles = {"telepath": "Telepath", "thirty_one": "31"}
+
 const socket = getSocket();
-export const Lobby = (props) => {
+export const Lobby = ({game}) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { rooms, setRooms } = useContext(AppContext);
+    const { rooms, setRooms, gameNames } = useContext(AppContext);
 
     const [typedCode, setTypedCode] = useState(""); 
     const [errorMessage, setErrorMessage] = useState(location.state?.error); 
@@ -24,7 +27,6 @@ export const Lobby = (props) => {
   
     const goToRoom = (gameName, roomCode) => {
         navigate(`/${gameName}/lobby/${roomCode}`);
-        console.log("MOVED");
     }
     const createRoom = (gameName, roomCode) => {
         socket.emit('create_room', gameName, roomCode);
@@ -33,14 +35,15 @@ export const Lobby = (props) => {
     };
   
     const joinRoom = (roomCode) => {
-        console.log(rooms);
         if (roomCode.length !== 4) {
             setErrorMessage("Code must be exactly 4 characters long");
             return;
         }
         if (rooms.includes(roomCode)) {
-            const gameName = "telepath";
-            goToRoom(gameName, roomCode);
+            if (gameNames && gameNames[roomCode]) {
+                const gameName = gameNames[roomCode];
+                goToRoom(gameName, roomCode);
+            }
         } else {
             setErrorMessage("Lobby " + roomCode + " does not exist");
         }
@@ -64,8 +67,8 @@ export const Lobby = (props) => {
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="lobbyBox">
-                <h1 className="gameTitle">{props.game}</h1>
-                <p className="rules"><TelepathRules /></p>
+                <h1 className="gameTitle">{Titles[game]}</h1>
+                <p className="rules">{Rules[game]}</p>
                 <input type="text" 
                         value={typedCode}
                         placeholder="Enter 4-letter code..."
@@ -86,7 +89,7 @@ export const Lobby = (props) => {
                         while (rooms.includes(roomCode)) {
                             roomCode = generateRoomCode();
                         }
-                        createRoom("telepath", roomCode);
+                        createRoom(game, roomCode);
                     }}>
                         <h2>Create</h2>
                     </button>

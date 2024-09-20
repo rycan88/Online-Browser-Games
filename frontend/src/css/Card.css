@@ -4,7 +4,7 @@
 
 @layer base {
   .standardCard {
-    @apply relative flex h-[300px] w-[200px] p-[4px] bg-slate-200 shadow-xl;
+    @apply relative flex h-[300px] w-[200px] p-[4px] bg-slate-200 shadow-md;
   }
   .standardCard .cardCornerContainer {
     @apply flex flex-col items-center text-2xl w-[15%];
@@ -19,5 +19,9 @@
 
   .standardCard .middleSuitIcon {
     @apply text-5xl;
+  }
+
+  .standardCard .faceCardContent svg {
+    @apply absolute w-[90%] h-full top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 object-fill;
   }
 }

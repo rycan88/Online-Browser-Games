@@ -14,8 +14,7 @@ export const TelepathTeamScoresDisplay = (props) => {
     const shouldShowResults = props.shouldShowResults;
     const setMainUser = props.setMainUser;
     const teamMode = props.teamMode;
-    console.log(playersData);
-    console.log("display");
+
     return Object.values(playersData).map((userData, index) => {
         const totalScore = userData.totalScore;
         const addedScore = userData.addedScore;

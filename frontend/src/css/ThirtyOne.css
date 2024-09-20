@@ -4,6 +4,38 @@
 
 @layer components {
   .thirtyOnePage {
-    @apply bg-poker-gradient;
+    @apply bg-poker-gradient flex flex-col items-center justify-center;
+  }
+
+  .thirtyOnePage .selfCards {
+    @apply flex absolute bottom-1 left-1/2 transform -translate-x-[calc(50%-45px)];
+  }
+
+  .thirtyOnePage .selfCards .standardCard {
+    @apply w-[175px] h-[262px] -ml-[90px];
+  }
+
+  .thirtyOnePage .hoverAnimation {
+    @apply transition ease-in-out -translate-y-4 cursor-pointer;
+  }
+
+  .thirtyOnePage .selfCards .middleSuitIcon {
+    @apply text-5xl;
+  }
+
+  .thirtyOnePage .selfCards .cardCornerContainer {
+    @apply text-2xl;
+  }
+
+  .thirtyOnePage .middleCards .standardCard {
+    @apply w-[150px] h-[225px];
+  }
+
+  .thirtyOnePage .middleCards .middleSuitIcon {
+    @apply text-4xl;
+  }
+
+  .thirtyOnePage .middleCards .cardCornerContainer {
+    @apply text-2xl;
   }
 }

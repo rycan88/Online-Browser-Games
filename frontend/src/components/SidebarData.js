@@ -37,6 +37,12 @@ export const SidebarData = [
         isMain: false,
     },
     {
+        title: "31 LOBBY",
+        icon: <GiCardAceSpades />,
+        link: "/thirty_one/lobby",
+        isMain: false,
+    },
+    {
         title: "About",
         icon: <FaInfoCircle/>,
         link: "/about",

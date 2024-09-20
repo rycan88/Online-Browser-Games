@@ -1,10 +1,12 @@
-
-export const CardMiddle = ({number, suitIcon}) => {
+import { suitIcons, cardChars } from "./CardUtils";
+import { CardFigureContent } from "./CardFigureContent";
+export const CardMiddle = ({number, suit}) => {
+    const suitIcon = suitIcons[suit];
     if (1 <= number && number <= 3) {
         return (
             <div className={`flex flex-col h-full items-center ${number === 1 ? "justify-center" : "justify-between"}`}>
                 {[...Array(Number(number))].map((_symb, index) => {
-                        return <div className={`middleSuitIcon ${index === 2 && "rotate-180"}`}>{suitIcon}</div>;  
+                        return <div className={`middleSuitIcon ${((number === 2 && index === 1) || index === 2) && "rotate-180"}`}>{suitIcon}</div>;  
                 })}
             </div>
         );
@@ -49,7 +51,13 @@ export const CardMiddle = ({number, suitIcon}) => {
             { number === 10 && <div className="absolute bottom-1/2 transform -translate-y-1/2 middleSuitIcon">{suitIcon}</div> }
             { number === 10 && <div className="absolute top-1/2 transform translate-y-1/2 middleSuitIcon rotate-180">{suitIcon}</div> }
         </div>
+    } else if (11 <= number <= 13) {
+        return (
+            <div className="faceCardContent">
+                <CardFigureContent number={number} suit={suit}/>
+            </div>
+        );
+    } else {
+        return <div></div>
     }
-
-    return <div className="text-5xl bg-blue-700">{suitIcon}</div>;
 }

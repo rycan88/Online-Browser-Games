@@ -38,7 +38,7 @@ const io = new Server(server, {
 
 const telepathHelper = require("./telepath/telepathHelper");
 const { telepathPlayerData } = require("./telepath/telepathPlayerData");
-const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer} = require("./serverUtils");
+const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms} = require("./serverUtils");
 
 // Lobby Rooms
 const rooms = {};
@@ -59,7 +59,7 @@ io.on("connection", (socket) => {
     socket.nickname = nickname;
     console.log(`User Connected: ${socket.id} ${userId} ${nickname} `);
 
-    socket.emit('update_rooms', Object.keys(rooms), simplifiedRooms)
+    socket.emit('update_rooms', getSimplifiedRooms(rooms))
 
     socket.on('nickname_changed', (nickname) => {
         currentUser.nickname = nickname
@@ -103,7 +103,7 @@ io.on("connection", (socket) => {
         rooms[roomCode].players.push(currentUser);
         rooms[roomCode].spectators.push(currentUser);
 
-        io.emit('update_rooms', Object.keys(rooms), simplifiedRooms);
+        io.emit('update_rooms', getSimplifiedRooms(rooms));
         if (teamGames.includes(gameName)) {
             addToTeamList(rooms, roomCode, currentUser);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
@@ -200,7 +200,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on('get_all_rooms', () => {
-        io.emit('update_rooms', Object.keys(rooms));
+        io.emit('update_rooms', getSimplifiedRooms(rooms));
     });
 
     socket.on('get_all_players', (roomCode) => {

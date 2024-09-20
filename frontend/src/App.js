@@ -27,9 +27,9 @@ const socket = getSocket();
 
 function App() {
   const client = new QueryClient();
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState({});
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const [gameNames, setGameNames] = useState({});
+
   const GameElement = (gameName, roomCode) => {
     if (gameName === "telepath") {
       return <Telepath roomCode={roomCode} />
@@ -39,9 +39,10 @@ function App() {
     return <></>
   }
 
-  const roomRoutes = (gameNames, rooms) => {
-    return rooms.map((roomCode) => {
-      const gameName = gameNames ? gameNames[roomCode] : "";
+  const roomRoutes = (rooms) => {
+    return Object.keys(rooms).map((roomCode) => {
+      const gameName = rooms[roomCode];
+      console.log(`/${gameName}/lobby/${roomCode}`)
 
       return <Route key={roomCode} 
                     path={`/${gameName}/lobby/${roomCode}`} 
@@ -49,9 +50,9 @@ function App() {
         }) 
   }
 
-  const gameRoutes = (gameNames, rooms) => {
-    return rooms.map((roomCode) => {
-      const gameName = gameNames ? gameNames[roomCode] : "";
+  const gameRoutes = (rooms) => {
+    return Object.keys(rooms).map((roomCode) => {
+      const gameName = rooms[roomCode];
       return <Route key={roomCode} 
                     path={`/${gameName}/${roomCode}`} 
                     element={GameElement(gameName, roomCode)} />
@@ -59,11 +60,8 @@ function App() {
   }
 
   useEffect(() => {
-    socket.on('update_rooms', (rooms, gameNames) => {
+    socket.on('update_rooms', (rooms) => {
         console.log("Rooms updated");
-        if (gameNames !== null) {
-          setGameNames(gameNames);
-        }
         setRooms(rooms);
         setIsDataLoaded(true);
     });
@@ -91,7 +89,7 @@ function App() {
 
   return (
     <div className="App">
-      <AppContext.Provider value={{ rooms, setRooms, gameNames }}>
+      <AppContext.Provider value={{ rooms, setRooms }}>
         <QueryClientProvider client={client}>
           <Router>
             <Navbar />
@@ -99,8 +97,8 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/telepath/lobby" element={<Lobby game="telepath"/>} />
               <Route path="/thirty_one/lobby" element={<Lobby game="thirty_one"/>} />
-              {roomRoutes(gameNames, rooms)}
-              {gameRoutes(gameNames, rooms)}
+              {roomRoutes(rooms)}
+              {gameRoutes(rooms)}
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />

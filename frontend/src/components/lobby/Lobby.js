@@ -15,7 +15,8 @@ export const Lobby = ({game}) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { rooms, setRooms, gameNames } = useContext(AppContext);
+    const { rooms } = useContext(AppContext);
+    const roomArray = Object.keys(rooms);
 
     const [typedCode, setTypedCode] = useState(""); 
     const [errorMessage, setErrorMessage] = useState(location.state?.error); 
@@ -30,7 +31,6 @@ export const Lobby = ({game}) => {
     }
     const createRoom = (gameName, roomCode) => {
         socket.emit('create_room', gameName, roomCode);
-        setRooms([...rooms, roomCode]);
         goToRoom(gameName, roomCode);
     };
   
@@ -39,11 +39,9 @@ export const Lobby = ({game}) => {
             setErrorMessage("Code must be exactly 4 characters long");
             return;
         }
-        if (rooms.includes(roomCode)) {
-            if (gameNames && gameNames[roomCode]) {
-                const gameName = gameNames[roomCode];
-                goToRoom(gameName, roomCode);
-            }
+        if (roomArray.includes(roomCode)) {
+            const gameName = rooms[roomCode];
+            goToRoom(gameName, roomCode);
         } else {
             setErrorMessage("Lobby " + roomCode + " does not exist");
         }
@@ -86,7 +84,7 @@ export const Lobby = ({game}) => {
                     <button className="gradientButton" onClick={() => {
                         let roomCode = generateRoomCode();
                         // Makes sure room does not already exist
-                        while (rooms.includes(roomCode)) {
+                        while (roomArray.includes(roomCode)) {
                             roomCode = generateRoomCode();
                         }
                         createRoom(game, roomCode);

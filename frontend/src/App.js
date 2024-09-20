@@ -50,7 +50,6 @@ function App() {
   const gameRoutes = (gameNames, rooms) => {
     return rooms.map((roomCode) => {
       const gameName = gameNames ? gameNames[roomCode] : "";
-      console.log(gameNames, roomCode)
       return <Route key={roomCode} 
                     path={`/${gameName}/${roomCode}`} 
                     element={GameElement(gameName, roomCode)} />
@@ -72,7 +71,7 @@ function App() {
         socket.off('update_rooms');
     };
   }, []);
-  console.log("YEE", rooms, gameNames)
+
   useEffect(() => {
     const channel = new BroadcastChannel('refresh_channel');
 

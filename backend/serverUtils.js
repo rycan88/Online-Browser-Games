@@ -20,6 +20,7 @@ const getRoomLeader = (rooms, roomCode) => {
     }
 }
 
+// leaveAllRooms removes the current user's socket from all rooms, and replaces it with another socket with same socketid if found
 const leaveAllRooms = (io, rooms, currentUser) => {
     Object.keys(rooms).forEach((roomCode) => {
         const currentIndex = rooms[roomCode].players.findIndex(user => user.socketId === currentUser.socketId);

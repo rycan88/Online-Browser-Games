@@ -108,9 +108,11 @@ io.on("connection", (socket) => {
     socket.on('join_room', (roomCode) => {
         if (!rooms[roomCode]) {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
-        } else if (rooms[roomCode].gameStarted && !containsUserId(rooms[roomCode].spectators, socket.userId)) {
+        } else if (rooms[roomCode].gameStarted && !Object.keys(rooms[roomCode].playersData).includes(socket.userId)) { // If they arent a player in the game that started
             socket.emit('room_error', `Game ${roomCode} has already started`);
-        } else if (!containsSocketId(rooms[roomCode].players, socket.id)) {
+        } else if (!containsSocketId(rooms[roomCode].players, socket.id)) { // If the socket is not already connected to the room
+            console.log("YAY", rooms[roomCode].players);
+            console.log("NO", rooms[roomCode]);
             socket.leaveAll();
             leaveAllRooms(io, rooms, currentUser);
             socket.join(roomCode);

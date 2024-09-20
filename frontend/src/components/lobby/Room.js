@@ -5,6 +5,7 @@ import { AppContext } from "../../App";
 import { TeamList } from "./TeamList";
 import { ToggleSwitch } from "../ToggleSwitch";
 import { PlayerList } from "./PlayerList";
+import { CopyLinkButton } from "../CopyLinkButton";
 
 const socket = getSocket();
 
@@ -82,6 +83,9 @@ export const Room = (props) => {
                 <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">
                     <h6 className="text-lg">Teams</h6>
                     <ToggleSwitch className="fixed right-1 top-1" onAction={onAction} offAction={offAction} isOn={teamMode}/>
+                </div>
+                <div className="absolute left-1 top-3 sm:left-3 sm:top-3">
+                    <CopyLinkButton/>
                 </div>
                 <h1 className="text-3xl">{gameName.toUpperCase()}</h1>                    
                 <h2 className="text-7xl sm:text-8xl py-3 my-auto">{roomCode}</h2>

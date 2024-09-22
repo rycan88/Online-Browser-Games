@@ -45,6 +45,7 @@ export const Telepath = (props) => {
             setPrompt(data.prompt);
             setWordLimit(data.wordLimit);
             setShouldShowResults(data.shouldShowResults);
+            !data.shouldShowResults && setMainUser({socketId:socket.id, userId:socket.userId, nickname:socket.nickname});
         });
 
         socket.on('room_error', (errorMessage) => {
@@ -77,6 +78,7 @@ export const Telepath = (props) => {
                     <TelepathTeamScoresDisplay playersData={playersData} 
                                                shouldShowResults={shouldShowResults}
                                                setMainUser={setMainUser}
+                                               mainUser={mainUser}
                                                teamMode={teamMode}
                     />
                 </div>

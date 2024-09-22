@@ -31,7 +31,7 @@ export const TelepathListContainers = (props) => {
     const addWord = (typedWord) => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
         const reformattedWord = typedWord.toUpperCase().trim()
-        if (reformattedWord === "" || reformattedWord === prompt.toUpperCase() || myWords.includes(reformattedWord)) {
+        if (reformattedWord === "" || reformattedWord.includes(prompt.toUpperCase()) || prompt.toUpperCase().includes(reformattedWord) || myWords.includes(reformattedWord)) {
             return false;
         }
 

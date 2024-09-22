@@ -45,8 +45,10 @@ export const TelepathList = (props) => {
             />;
         });
     } else {
-        return wordList.map((word, index) => {
+        const length = wordList.length;
+        return wordList.slice().reverse().map((word, index) => {
             return <ListItem key={index}
+                            listNum={length - index}
                             word={[word, -1]} 
                             removeItem={removeItem} 
                             shouldShowResults={shouldShowResults} 

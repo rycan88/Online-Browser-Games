@@ -12,10 +12,10 @@ const socket = getSocket();
 export const TelepathTeamScoresDisplay = (props) => {
     const playersData = props.playersData;
     const shouldShowResults = props.shouldShowResults;
+    const mainUser = props.mainUser;
     const setMainUser = props.setMainUser;
     const teamMode = props.teamMode;
-    console.log(playersData);
-    console.log("display");
+
     return Object.values(playersData).map((userData, index) => {
         const totalScore = userData.totalScore;
         const addedScore = userData.addedScore;
@@ -26,6 +26,7 @@ export const TelepathTeamScoresDisplay = (props) => {
                 totalScore={totalScore}
                 addedScore={addedScore}
                 showAdded={shouldShowResults}
+                mainUser={mainUser}
                 setMainUser={setMainUser}     
                 teamMode={teamMode}                 
             />;           
@@ -47,6 +48,7 @@ export const TelepathTeamScoresDisplay = (props) => {
                                 totalScore={totalScore}
                                 addedScore={addedScore}
                                 showAdded={shouldShowResults}
+                                mainUser={mainUser}
                                 setMainUser={setMainUser}    
                                 teamMode={teamMode}                  
         />;

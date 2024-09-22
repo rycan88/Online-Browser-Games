@@ -10,6 +10,7 @@ export const ListItem = (props) => {
     const teamMode = props.teamMode;
     const word = props.word[0];
     const count = props.word[1];
+    const listNum = props.listNum;
 
     const deleteButton = <IoMdClose className="listItemDelete hover:redGradientButton" onClick={() => props.removeItem(word)}/>;
     let bg_color = "";
@@ -20,6 +21,7 @@ export const ListItem = (props) => {
     }
     return ( 
         <div className={`listItem ${bg_color}`}>
+            {!shouldShowResults && listNum && <h3 className="pr-2">{listNum}.</h3>}
             <h2>{word}</h2>
             {!shouldShowResults 
                 ? deleteButton 

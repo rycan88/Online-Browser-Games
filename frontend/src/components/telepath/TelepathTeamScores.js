@@ -20,6 +20,10 @@ export const TelepathTeamScores = (props) => {
     const player1 = props.player1;
     const nickname1 = player1.nameData.nickname;
     const firstReady = showAdded ? player1.isReady : player1.hasPickedWords;
+    const mainUser = props.mainUser;
+    const setMainUser = props.setMainUser;
+    const addedScore = props.addedScore;
+    const totalScore = props.totalScore;
 
     let nickname2 = "";
     let secondReady = null;
@@ -35,12 +39,14 @@ export const TelepathTeamScores = (props) => {
 
     const clickAction = () => {
         if (showAdded) { 
-            props.setMainUser(player1.nameData);
+            setMainUser(player1.nameData);
         }
     }
-
+    console.log(socket.userId, mainUser.userId)
     return (
-        <div className={`teamScores ${showAdded && "hover:bg-slate-800/40 cursor-pointer"}`} onClick={clickAction}>
+        <div className={`teamScores ${showAdded && "hover:scoresSelected cursor-pointer"} ${(showAdded && player1.nameData.userId === mainUser.userId) ? "scoresSelected" : "bg-slate-900/30 border-slate-500/50"}`} 
+                onClick={clickAction}
+        >
             <div className="flex h-full w-full">
                 <div className="flex flex-col justify-around items-start h-full gap-2">
                     <div className="playerNameContainer">
@@ -55,8 +61,12 @@ export const TelepathTeamScores = (props) => {
                     }
                 </div>
                 <div className="scoreNumberContainer">
-                    <h4 className="addedScore">{showAdded ?`+${props.addedScore}` : ""}</h4>
-                    <h2 className="score">{props.totalScore}</h2>
+                    {showAdded && 
+                        <h4 className="flex addedScore"> 
+                            {totalScore - addedScore} <span className="text-green-500">+{addedScore}</span>
+                        </h4>
+                    }
+                    <h2 className="score">{totalScore}</h2>
 
                 </div>
             </div>

@@ -1,8 +1,10 @@
 import { useState } from "react";
 import CardOutline from "../card/CardOutline";
 import CardBacking from "../card/CardBacking";
+import getSocket from "../../socket";
 
-export const ThirtyOneDeck = ({hasPicked, pickUpCard}) => {
+const socket = getSocket();
+export const ThirtyOneDeck = ({roomCode, hasPicked}) => {
 
     const getRandomCard = () => {
         const suits = ["spades", "hearts", "clubs", "diamonds"];
@@ -16,8 +18,7 @@ export const ThirtyOneDeck = ({hasPicked, pickUpCard}) => {
             <div className={`relative middleDeck ${!hasPicked && "hover:cursor-pointer"}`} 
             onClick={() => { 
                 if (!hasPicked) {
-                    const card = getRandomCard(); 
-                    pickUpCard(card);
+                    socket.emit("thirty_one_pick_up_deck_card", roomCode);
                     setRemainingCardCount(remainingCardCount - 1);
                 } 
             }}>

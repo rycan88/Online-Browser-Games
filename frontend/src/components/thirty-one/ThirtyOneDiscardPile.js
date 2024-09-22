@@ -1,15 +1,16 @@
+import getSocket from "../../socket";
 import { Card } from "../card/Card";
 import CardOutline from "../card/CardOutline";
 
-export const ThirtyOneDiscardPile = ({hasPicked, pickUpCard, discardPile, setDiscardPile}) => {
-    const discardPileTop = discardPile.at(-1);
+const socket = getSocket();
+export const ThirtyOneDiscardPile = ({roomCode, hasPicked, discardPile, setDiscardPile}) => {
     return (
             <div className={`discardPile relative ${!hasPicked && "hover:cursor-pointer"}`} 
             onClick={() => {
-            if (!hasPicked) {
-                pickUpCard(discardPileTop);
-                setDiscardPile(discardPile.slice(0, -1));
-            }
+                if (!hasPicked) {
+                    socket.emit("thirty_one_pick_up_discard_card", roomCode);
+                    //setDiscardPile(discardPile.slice(0, -1));
+                }
             }}>
         <CardOutline/>
         {  

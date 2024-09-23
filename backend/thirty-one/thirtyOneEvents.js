@@ -4,6 +4,8 @@ const thirtyOneEvents = (io, socket, rooms) => {
         if (rooms[roomCode]) {
             socket.emit('receive_game_data', rooms[roomCode].gameData);
             socket.emit('receive_discard_pile', rooms[roomCode].gameData.discardPile);
+            socket.emit('receive_player_turn', rooms[roomCode].gameData.turn);
+            socket.emit('receive_players', rooms[roomCode].gameData.currentPlayers);
             socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards);
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
@@ -41,7 +43,13 @@ const thirtyOneEvents = (io, socket, rooms) => {
         discardPile.push(discardedCard);
         const myCards = rooms[roomCode].playersData[socket.userId].cards;
         rooms[roomCode].playersData[socket.userId].cards = myCards.filter((card) => card.id === discardedCard.id);
+
+        const turn = rooms[roomCode].gameData.turn;
+        const players = rooms[roomCode].gameData.currentPlayers;
+
+        rooms[roomCode].gameData.turn = (turn + 1) % players.length;
         io.to(roomCode).emit('receive_discard_pile', rooms[roomCode].gameData.discardPile);
+        io.to(roomCode).emit('receive_player_turn', rooms[roomCode].gameData.turn);
     })
 }
 

@@ -63,8 +63,11 @@ const setUpGameData = (rooms, roomCode) => {
                 }
             }
             discardPile.push(deck.drawCard());
-            gameData.deck = deck;
-            gameData.discardPile = discardPile;
+
+            const currentPlayers = Object.values(rooms[roomCode].playersData).map((data) => {
+                return data.nameData;
+            });
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, turn: 0, currentPlayers: currentPlayers};
         }
     }
 }

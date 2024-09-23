@@ -25,6 +25,8 @@ export const ThirtyOne = ({roomCode}) => {
     const [movingCardIndex, setMovingCardIndex] = useState(0);
     const [shouldMove, setShouldMove] = useState(false);
     const [dataInitialized, setDataInitialized] = useState(false);
+    const [playerTurn, setPlayerTurn] = useState(0);
+    const [players, setPlayers] = useState([]);
 
     const playCard = (card) => {
         setMyCards(myCards.filter((item) => item !== card))
@@ -47,8 +49,12 @@ export const ThirtyOne = ({roomCode}) => {
             setHasPicked(true); 
         });
 
-        socket.on("receive_game_data", (data) => {
+        socket.on("receive_player_turn", (turn) => {
+            setPlayerTurn(turn);
+        });
 
+        socket.on("receive_players", (players) => {
+            setPlayers(players);
         });
 
         socket.on('room_error', (errorMessage) => {
@@ -61,6 +67,8 @@ export const ThirtyOne = ({roomCode}) => {
         return () => {
             socket.off('receive_own_cards');
             socket.off('receive_discard_pile');
+            socket.off('receive_player_turn');
+            socket.off('receive_players');
             socket.off('receive_picked_card');
             socket.off('receive_game_data');
             socket.off('receive_players_data');
@@ -72,22 +80,24 @@ export const ThirtyOne = ({roomCode}) => {
         return <LoadingScreen />;
     }
 
+    const isMyTurn = players && players[playerTurn].userId === socket.userId;
+
     return (
         <div className="thirtyOnePage entirePage">
 
             <div className="middleCards flex gap-6 h-[500px] w-[700px] justify-center">
-                <ThirtyOneDeck roomCode={roomCode} hasPicked={hasPicked} />
+                <ThirtyOneDeck roomCode={roomCode} canPick={isMyTurn && !hasPicked}/>
 
-                <ThirtyOneDiscardPile roomCode={roomCode} hasPicked={hasPicked} discardPile={discardPile} setDiscardPile={setDiscardPile}/>
+                <ThirtyOneDiscardPile roomCode={roomCode} canPick={isMyTurn && !hasPicked} discardPile={discardPile} setDiscardPile={setDiscardPile} />
     
             </div>
             <div className="selfCards">
                 {myCards.map((card, index) => {
                     return (
-                        <div className={`${hasPicked && "hover:hoverAnimation"} 
+                        <div className={`${isMyTurn && hasPicked && "hover:hoverAnimation"} 
                                         ${(shouldMove && index === movingCardIndex) ? "transition-all duration-500 ease-in-out absolute -top-[500px] left-[200px]" : "relative top-[0] left-[0]"}`} 
                             onClick={() => { 
-                                if (!hasPicked) { return; }
+                                if (!(isMyTurn && hasPicked)) { return; }
                                 setHasPicked(false);
                                 setMovingCardIndex(index);
                                 setShouldMove(true);

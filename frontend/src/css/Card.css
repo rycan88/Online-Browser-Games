@@ -4,7 +4,7 @@
 
 @layer base {
   .standardCard {
-    @apply relative flex h-[300px] w-[200px] p-[4px] bg-slate-200 shadow-md rounded-lg;
+    @apply relative flex h-[300px] w-[200px] p-[4px] bg-slate-200 shadow-md overflow-clip;
   }
   .standardCard .cardCornerContainer {
     @apply flex flex-col items-center text-2xl w-[15%];

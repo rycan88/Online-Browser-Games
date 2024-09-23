@@ -29,3 +29,15 @@ export const enterFullScreen = () => {
       document.documentElement.msRequestFullscreen();
     }
 }
+
+export const getPlayerCoords = (playerCount, width, height, centerX, centerY) => {
+    const positions = [];
+    for (let i = 0; i < playerCount; i++) {
+      const angle = (i / playerCount) * 2 * Math.PI + Math.PI / 2;
+      const x = centerX + (width / 2) * Math.cos(angle);
+      const y = centerY + (height / 2) * Math.sin(angle);
+      positions.push([x, y]);
+    }
+
+    return positions;
+}

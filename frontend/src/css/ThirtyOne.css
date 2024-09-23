@@ -4,7 +4,7 @@
 
 @layer components {
   .thirtyOnePage {
-    @apply bg-poker-gradient flex flex-col items-center justify-center;
+    @apply bg-poker-gradient;
   }
 
   .thirtyOnePage .selfCards {
@@ -12,7 +12,7 @@
   }
 
   .thirtyOnePage .selfCards .standardCard {
-    @apply w-[175px] h-[262px] -ml-[90px];
+    @apply w-[175px] h-[262px] -ml-[90px] rounded-lg;
   }
 
   .thirtyOnePage .hoverAnimation {
@@ -28,7 +28,7 @@
   }
 
   .thirtyOnePage .middleCards .standardCard {
-    @apply w-[150px] h-[225px];
+    @apply w-[150px] h-[225px] rounded-lg;
   }
 
   .thirtyOnePage .middleCards .middleSuitIcon {

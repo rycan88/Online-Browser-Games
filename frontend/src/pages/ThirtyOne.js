@@ -7,6 +7,8 @@ import { ThirtyOneDiscardPile } from "../components/thirty-one/ThirtyOneDiscardP
 import getSocket from "../socket";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../components/LoadingScreen";
+import { ThirtyOnePlayer } from "../components/thirty-one/ThirtyOnePlayer";
+import { ThirtyOnePlayerDisplay } from "../components/thirty-one/ThirtyOnePlayerDisplay";
 
 // TODO
 // Make good cards for face cards
@@ -19,14 +21,15 @@ const socket = getSocket();
 export const ThirtyOne = ({roomCode}) => {
     const navigate = useNavigate();
 
-    const [myCards, setMyCards] = useState([{id:-1, number:10, suit:"spades"}]);
+    const [myCards, setMyCards] = useState(null);
     const [hasPicked, setHasPicked] = useState(false);
     const [discardPile, setDiscardPile] = useState([]);
     const [movingCardIndex, setMovingCardIndex] = useState(0);
     const [shouldMove, setShouldMove] = useState(false);
     const [dataInitialized, setDataInitialized] = useState(false);
-    const [playerTurn, setPlayerTurn] = useState(0);
-    const [players, setPlayers] = useState([]);
+    const [turn, setTurn] = useState(0);
+    const [players, setPlayers] = useState(null);
+
 
     const playCard = (card) => {
         setMyCards(myCards.filter((item) => item !== card))
@@ -49,8 +52,8 @@ export const ThirtyOne = ({roomCode}) => {
             setHasPicked(true); 
         });
 
-        socket.on("receive_player_turn", (turn) => {
-            setPlayerTurn(turn);
+        socket.on("receive_turn", (turn) => {
+            setTurn(turn);
         });
 
         socket.on("receive_players", (players) => {
@@ -76,21 +79,31 @@ export const ThirtyOne = ({roomCode}) => {
         };
     }, []);
 
-    if (!dataInitialized) {
+    if (!dataInitialized || !players) {
         return <LoadingScreen />;
     }
 
-    const isMyTurn = players && players[playerTurn].userId === socket.userId;
+    const selfIndex = players.findIndex((player) => player.userId === socket.userId);
+    const playerTurn = turn % players.length;
+    const isMyTurn = playerTurn === selfIndex;
+    
 
     return (
         <div className="thirtyOnePage entirePage">
+            <ThirtyOnePlayerDisplay selfIndex={selfIndex} players={players} playerTurn={playerTurn}/>
 
-            <div className="middleCards flex gap-6 h-[500px] w-[700px] justify-center">
-                <ThirtyOneDeck roomCode={roomCode} canPick={isMyTurn && !hasPicked}/>
+            <div className="flex flex-col absolute bottom-[35%] items-center justify-center w-full gap-6">
+                <div className="text-white text-3xl">{players[playerTurn].nickname}'s turn</div>
 
-                <ThirtyOneDiscardPile roomCode={roomCode} canPick={isMyTurn && !hasPicked} discardPile={discardPile} setDiscardPile={setDiscardPile} />
-    
+                <div className="middleCards flex gap-6 w-full justify-center">
+                    <ThirtyOneDeck roomCode={roomCode} canPick={isMyTurn && !hasPicked}/>
+
+                    <ThirtyOneDiscardPile roomCode={roomCode} canPick={isMyTurn && !hasPicked} discardPile={discardPile} setDiscardPile={setDiscardPile} />
+        
+                </div>
+                <ThirtyOnePlayer name={socket.nickname} lives={3} isTurn={isMyTurn}/>
             </div>
+
             <div className="selfCards">
                 {myCards.map((card, index) => {
                     return (

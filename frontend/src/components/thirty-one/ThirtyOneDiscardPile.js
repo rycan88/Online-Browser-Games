@@ -3,7 +3,7 @@ import { Card } from "../card/Card";
 import CardOutline from "../card/CardOutline";
 
 const socket = getSocket();
-export const ThirtyOneDiscardPile = ({roomCode, canPick, discardPile, setDiscardPile}) => {
+export const ThirtyOneDiscardPile = ({roomCode, canPick, discardPile}) => {
     return (
             <div className={`discardPile relative ${canPick && "hover:cursor-pointer"}`} 
             onClick={() => {

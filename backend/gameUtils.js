@@ -2,6 +2,7 @@ const { telepathPlayerData } = require("./telepath/telepathPlayerData");
 const { thirtyOnePlayerData } = require("./thirty-one/thirtyOnePlayerData");
 const telepathHelper = require("./telepath/telepathHelper");
 const { Deck } = require("./cards/Deck");
+const { getCurrentPlayers } = require("./thirty-one/thirtyOneHelper");
 
 const setUpPlayerData = (rooms, roomCode) => {
     const gameName = rooms[roomCode].gameName;
@@ -64,10 +65,8 @@ const setUpGameData = (rooms, roomCode) => {
             }
             discardPile.push(deck.drawCard());
 
-            const currentPlayers = Object.values(rooms[roomCode].playersData).map((data) => {
-                return data.nameData;
-            });
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, turn: 0, currentPlayers: currentPlayers};
+            const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false};
         }
     }
 }

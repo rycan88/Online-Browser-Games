@@ -30,6 +30,10 @@
   button {
     @apply select-none;
   }
+
+  .tooltip {
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-slate-200 text-black text-xs px-2 py-1 rounded;
+  }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

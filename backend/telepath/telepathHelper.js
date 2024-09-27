@@ -34,8 +34,6 @@ const calculateScores = (playersData, teamMode) => {
     if (!teamMode) {
         const combinedShared = getCombinedShared(playersData);
         const combinedSharedMap = new Map(combinedShared);
-        console.log(combinedShared)
-        console.log(combinedSharedMap)
         Object.values(playersData).forEach((userData) => {
             const myWords = userData.chosenWords;
             let addedScore = 0;
@@ -49,7 +47,6 @@ const calculateScores = (playersData, teamMode) => {
             userData.totalScore += addedScore;
             userData.combinedShared = combinedShared; 
             userData.sortedWords = objectSort(sortedWords);
-            console.log(userData.sortedWords)
         });
         return; 
     }

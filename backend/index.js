@@ -193,7 +193,6 @@ io.on("connection", (socket) => {
     socket.on('get_players_data', (roomCode) => {
         if (rooms[roomCode]) {
             io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
-            console.log("start", rooms[roomCode].playersData);
         }
     });
     

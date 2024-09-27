@@ -8,34 +8,26 @@
   }
 
   .thirtyOnePage .selfCards {
-    @apply flex absolute bottom-1 left-1/2 transform -translate-x-[calc(50%-45px)];
+    @apply flex absolute bottom-1 left-1/2 transform -translate-x-[calc(50%-45px)] scale-[90%];
   }
 
   .thirtyOnePage .selfCards .standardCard {
-    @apply w-[175px] h-[262px] -ml-[90px] rounded-lg;
+    @apply -ml-[110px];
   }
 
   .thirtyOnePage .hoverAnimation {
     @apply transition ease-in-out -translate-y-4 cursor-pointer;
   }
 
-  .thirtyOnePage .selfCards .middleSuitIcon {
-    @apply text-5xl;
+  .thirtyOnePage .middleCards {
+    @apply transform scale-75;
   }
 
-  .thirtyOnePage .selfCards .cardCornerContainer {
-    @apply text-2xl;
+  .thirtyOnePage .knockButton {
+    @apply flex h-[150px] w-[150px] rounded-full items-center justify-center text-slate-100 text-6xl border-[2px] border-slate-900 shadow-xl;
   }
 
-  .thirtyOnePage .middleCards .standardCard {
-    @apply w-[150px] h-[225px] rounded-lg;
-  }
-
-  .thirtyOnePage .middleCards .middleSuitIcon {
-    @apply text-4xl;
-  }
-
-  .thirtyOnePage .middleCards .cardCornerContainer {
-    @apply text-2xl;
+  .thirtyOnePage .knockButton:disabled {
+    @apply border-slate-900/50 text-slate-100/50;
   }
 }

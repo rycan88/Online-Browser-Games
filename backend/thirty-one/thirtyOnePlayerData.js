@@ -3,8 +3,11 @@ const thirtyOnePlayerData = (nameData) => {
     return {
         nameData: nameData,
         cards: [],
-        strikes: 0,
+        lives: 3,
         score: 0,
+        gotStrike: false,
+        isReady: false,
+        ranking: 100
     }
 }
 

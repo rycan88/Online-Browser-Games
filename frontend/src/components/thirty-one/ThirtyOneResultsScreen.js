@@ -3,6 +3,7 @@ import { Card } from "../card/Card";
 import { FaCheck } from "react-icons/fa6";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosHeart } from "react-icons/io";
+import { FaSkull } from "react-icons/fa";
 
 const socket = getSocket();
 
@@ -17,15 +18,20 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                     Object.values(playersData).sort((a, b) => a.ranking - b.ranking).map((playerData) => {
                         const isOut = playerData.cards.length === 0;
                         return (
-                            <div className={`flex w-full items-center justify-center ${isOut ? "text-slate-400" : (playerData.gotStrike ? "text-red-600" : "text-green-400")}`}>
+                            <div className={`flex h-[200px] w-full items-center justify-center ${isOut ? "text-slate-400" : (playerData.gotStrike ? "text-red-600" : "text-green-400")}`}>
                                 <div className="w-[15%] flex gap-2 items-center justify-end">
                                     {playerData.nameData.nickname}
                                     <div className="flex items-center justify-center">
                                         <IoIosHeart/>
                                         {playerData.lives}
                                     </div>
-                                    { !isOut &&
-                                        playerData.isReady ? <FaCheck className="icons text-green-400"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-600"/>
+                                    { playerData.lives > 0 ?
+                                        <>
+                                            {playerData.isReady ? <FaCheck className="icons text-green-400"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-600"/>}
+                                        </>
+                                        :
+                                        <FaSkull className=""/>
+
                                     }
                                 </div>
                                 { !isOut ?
@@ -48,13 +54,13 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         );
                     })
                 }
-                <button className={"gradientButton text-white w-[200px] h-[100px] rounded-lg"} 
+                <button className={"gradientButton absolute bottom-4 left-1/2 -translate-x-1/2 text-white w-[200px] h-[75px] text-lg rounded-lg"} 
                         onClick={() => {
                             socket.emit("thirty_one_ready", roomCode);
                         }}
-                        disabled={playersData[socket.userId].isReady}
+                        disabled={playersData[socket.userId].isReady || playersData[socket.userId].lives === 0}
                 >
-                    {playersData[socket.userId].isReady ? "Waiting for others" : "Next Round"}
+                    {(playersData[socket.userId].isReady || playersData[socket.userId].lives === 0) ? "Waiting for others" : "Next Round"}
                 </button>
             </div>
         </div>

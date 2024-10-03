@@ -8,7 +8,7 @@
   }
 
   .thirtyOnePage .selfCards {
-    @apply flex absolute bottom-1 left-1/2 transform -translate-x-[calc(50%-45px)] scale-[90%];
+    @apply flex absolute bottom-1 left-1/2 transform -translate-x-[calc(50%-45px)];
   }
 
   .thirtyOnePage .selfCards .standardCard {
@@ -17,10 +17,6 @@
 
   .thirtyOnePage .hoverAnimation {
     @apply transition ease-in-out -translate-y-4 cursor-pointer;
-  }
-
-  .thirtyOnePage .middleCards {
-    @apply transform scale-75;
   }
 
   .thirtyOnePage .knockButton {

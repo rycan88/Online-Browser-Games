@@ -24,7 +24,7 @@ const calculateScore = (cards) => {
 }
 
 const calculateScores = (knockIndex, playersData, currentPlayers) => {
-    const knockPlayer = knockIndex ?? currentPlayers[knockIndex].nameData.userId;
+    const knockPlayer = knockIndex !== null ? currentPlayers[knockIndex].nameData.userId : null;
     const players = [];
     for (const player of currentPlayers) {
         const playerUserId = player.nameData.userId;
@@ -36,7 +36,12 @@ const calculateScores = (knockIndex, playersData, currentPlayers) => {
         players.push(playerData);
     }
 
-    players.sort((a, b) => a.score - b.score);
+    players.sort((a, b) => {
+        if (a.score === b.score) {
+            return a.lives - b.lives;
+        }
+        return a.score - b.score;
+    });
     const playerCount = players.length;
 
     const knockOutScore = players[Math.floor(playerCount / 2) - 1].score;
@@ -63,10 +68,11 @@ const setUpNewRound = (rooms, roomCode) => {
     const gameData = rooms[roomCode].gameData;
 
     for (const playerUserId of Object.keys(playersData)) {
-        playersData[playerUserId].cards = [];
-        playersData[playerUserId].score = 0;
-        playersData[playerUserId].isReady = false;
-        playersData[playerUserId].gotStrike = false;
+        const playerData = playersData[playerUserId];
+        playerData.cards = [];
+        playerData.score = 0;
+        playerData.isReady = false;
+        playerData.gotStrike = false;
     }
 
     const deck = new Deck();

@@ -1,30 +1,30 @@
 import "../css/ThirtyOne.css"
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaHandBackFist } from "react-icons/fa6";
 
 import getSocket from "../socket";
 
 import { Card } from "../components/card/Card";
-import { ThirtyOneDeck } from "../components/thirty-one/ThirtyOneDeck";
-import { ThirtyOneDiscardPile } from "../components/thirty-one/ThirtyOneDiscardPile";
 import LoadingScreen from "../components/LoadingScreen";
 import { ThirtyOnePlayer } from "../components/thirty-one/ThirtyOnePlayer";
 import { ThirtyOnePlayerDisplay } from "../components/thirty-one/ThirtyOnePlayerDisplay";
 import { ThirtyOneResultsScreen } from "../components/thirty-one/ThirtyOneResultsScreen";
-
-
+import { ThirtyOneMovingCard } from "../components/thirty-one/ThirtyOneMovingCard";
+import CardBacking from "../components/card/CardBacking";
+import { Pile } from "../components/thirty-one/Pile";
 
 
 // TODO
-// Calculate points and make results screen
 // Add animation for pick up and discard
 // Add jumping card animation when it is a players turn
 // Display current number of cards in deck
 // Bonus: Show cards being dealt, first card being flipped
 
 const socket = getSocket();
+
+const MIDDLE_CARD_WIDTH = 150;
 
 export const ThirtyOne = ({roomCode}) => {
     const navigate = useNavigate();
@@ -40,8 +40,12 @@ export const ThirtyOne = ({roomCode}) => {
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [playersData, setPlayersData] = useState({});
     const hasPicked = myCards.length === 4;
-    
+    const middleRef = useRef(null);
 
+    const [remainingCardCount, setRemainingCardCount] = useState(52);
+
+    const deckCount = 52;
+    
     const playCard = (card) => {
         setMyCards(myCards.filter((item) => item !== card))
         setDiscardPile([...discardPile, card])
@@ -151,22 +155,46 @@ export const ThirtyOne = ({roomCode}) => {
         <div className="thirtyOnePage entirePage">
             <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer}/>
 
-            <div className="flex flex-col absolute bottom-[35%] items-center justify-center w-full">
+            <div className="flex flex-col absolute top-[20%] items-center justify-center w-full gap-5">
                 <div className="text-white text-3xl">{isMyTurn ? (hasPicked ? "Discard a card" : `Draw a card ${canKnock ? "or knock" : ""}`) : `${currentPlayers[playerTurn].nameData.nickname}'s turn`}</div>
 
-                <div className="middleCards flex gap-6 w-full justify-center">
-                    <ThirtyOneDeck roomCode={roomCode} canPick={isMyTurn && !hasPicked}/>
+                <div ref={middleRef} className="middleCards flex gap-6 w-full justify-center">
+                    <Pile 
+                        name="thirtyOneDeck"
+                        pile={[...Array(Number(remainingCardCount))]}
+                        canPick={isMyTurn && !hasPicked}
+                        clickEvent={() => {                  
+                            socket.emit("thirty_one_pick_up_deck_card", roomCode);
+                            setRemainingCardCount(remainingCardCount - 1);
+                        }}
+                        pileElement={(card, index) => {
+                            return <CardBacking width={MIDDLE_CARD_WIDTH}/>
+                        }}
+                    />
 
-                    <ThirtyOneDiscardPile roomCode={roomCode} canPick={isMyTurn && !hasPicked} discardPile={discardPile} setDiscardPile={setDiscardPile} />
-        
+                    <Pile 
+                        name="thirtyOneDiscardPile"
+                        pile={discardPile}
+                        canPick={isMyTurn && !hasPicked}
+                        clickEvent={() => {                  
+                            socket.emit("thirty_one_pick_up_discard_card", roomCode);
+                        }}
+                        pileElement={(card, index) => {
+                            return <Card number={card.number} suit={card.suit} width={MIDDLE_CARD_WIDTH}/>
+                        }}
+                    />
                 </div>
+ 
+            </div>
+
+            <div className="flex absolute bottom-[35%] items-center justify-center w-full">
                 { selfIndex >= 0 &&
                     <ThirtyOnePlayer name={socket.nickname} lives={currentPlayers[selfIndex].lives} isTurn={isMyTurn} didKnock={selfIndex === knockPlayer}/>
-                }   
+                }                 
             </div>
             
             { isMyTurn && !hasPicked &&
-                <div className="absolute group bottom-6 right-[20%] rounded-full">
+                <div className="absolute group bottom-[60px] left-[75%] rounded-full">
                     <button className={`knockButton gradientButton`}
                             onClick={() => {
                                 knock();
@@ -180,31 +208,33 @@ export const ThirtyOne = ({roomCode}) => {
                 </div>
             }
 
-
             <div className="selfCards">
                 {myCards.map((card, index) => {
                     return (
-                        <div className={`${isMyTurn && hasPicked && "hover:hoverAnimation"} 
-                                        ${(shouldMove && index === movingCardIndex) ? "transition-all duration-500 ease-in-out absolute -top-[500px] left-[200px]" : "relative top-[0] left-[0]"}`} 
+                        <div className={`${isMyTurn && hasPicked && "hover:hoverAnimation"}`} 
                             onClick={() => { 
                                 if (!(isMyTurn && hasPicked)) { return; }
-                                setMovingCardIndex(index);
-                                setShouldMove(true);
                                 socket.emit("thirty_one_discard_card", roomCode, card);
-                            }} 
-                            onTransitionEnd={() => {
-                                if (!shouldMove || index !== movingCardIndex) { return; }
-                                setShouldMove(false);
                                 playCard(myCards[index]); 
-                            }}>
+                            }} 
+                        >
                             
                             <Card number={card.number} 
                                     suit={card.suit}
+                                    width={180}
                             />
                         </div>
                     );
                 })}
             </div>
+
+            <ThirtyOneMovingCard element={<CardBacking width={150}/>} 
+                                isMoving={hasPicked} 
+                                playerCount={playerCount} 
+                                index={0} selfIndex={selfIndex} 
+                                middleRef={middleRef} 
+            />
+            
         </div>
     );
 }

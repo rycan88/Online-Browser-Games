@@ -57,7 +57,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
         io.to(roomCode).emit('receive_turn', rooms[roomCode].gameData.turn);
 
         const myScore = calculateScore(rooms[roomCode].playersData[socket.userId].cards);
-        console.log(myCards, myScore)
+
         if (rooms[roomCode].gameData.turn === rooms[roomCode].gameData.roundEnd || myScore === 31) {
             const playerCount = rooms[roomCode].gameData.currentPlayers.length;
             const knockIndex = rooms[roomCode].gameData.roundEnd % playerCount

@@ -4,21 +4,17 @@
 
 @layer base {
   .standardCard {
-    @apply relative flex h-[300px] w-[200px] p-[4px] bg-slate-200 shadow-md overflow-clip rounded-xl select-none;
+    @apply relative flex h-[300px] w-[200px] p-[4px] text-[48px] bg-slate-200 shadow-md overflow-clip rounded-lg select-none;
   }
   .standardCard .cardCornerContainer {
-    @apply flex flex-col items-center text-2xl w-[15%];
+    @apply flex flex-col items-center text-[50%] w-[15%];
   }
   .standardCard .cardMiddleContainer {
     @apply w-[70%] h-[80%];
   }
 
-  .standardCard .grid-4 {
-    @apply grid grid-cols-2;
-  }
-
   .standardCard .middleSuitIcon {
-    @apply text-5xl;
+    @apply text-[100%];
   }
 
   .standardCard .faceCardContent svg {

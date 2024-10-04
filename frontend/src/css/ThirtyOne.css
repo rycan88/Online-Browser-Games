@@ -4,7 +4,7 @@
 
 @layer components {
   .thirtyOnePage {
-    @apply bg-poker-gradient;
+    @apply bg-poker-gradient overflow-hidden;
   }
 
   .thirtyOnePage .selfCards {

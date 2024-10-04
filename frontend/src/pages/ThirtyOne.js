@@ -13,7 +13,8 @@ import { ThirtyOnePlayerDisplay } from "../components/thirty-one/ThirtyOnePlayer
 import { ThirtyOneResultsScreen } from "../components/thirty-one/ThirtyOneResultsScreen";
 import { ThirtyOneMovingCard } from "../components/thirty-one/ThirtyOneMovingCard";
 import CardBacking from "../components/card/CardBacking";
-import { Pile } from "../components/thirty-one/Pile";
+import { Pile } from "../components/card/Pile";
+import { getLastElementPosition } from "../components/thirty-one/ThirtyOneUtils";
 
 
 // TODO
@@ -25,48 +26,47 @@ import { Pile } from "../components/thirty-one/Pile";
 const socket = getSocket();
 
 const MIDDLE_CARD_WIDTH = 150;
+const MY_CARD_WIDTH = 180;
 
 export const ThirtyOne = ({roomCode}) => {
     const navigate = useNavigate();
 
     const [myCards, setMyCards] = useState([]);
     const [discardPile, setDiscardPile] = useState([]);
-    const [movingCardIndex, setMovingCardIndex] = useState(0);
-    const [shouldMove, setShouldMove] = useState(false);
     const [dataInitialized, setDataInitialized] = useState(false);
     const [turn, setTurn] = useState(0);
     const [currentPlayers, setCurrentPlayers] = useState(null);
     const [knockPlayer, setKnockPlayer] = useState(null); // index of the player who knocked
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [playersData, setPlayersData] = useState({});
+    const [deckCount, setDeckCount] = useState(52);
+
+    // Card Animation
+    const [isMoving, setIsMoving] = useState(false);
+    const [animationPosition, setAnimationPosition] = useState({top: 0, left:0});
+    const [animationEndPosition, setAnimationEndPosition] = useState({top: 0, left:0});
+    const animationElement = useRef(null);
+    const animationEndCall = useRef(null);
+
     const hasPicked = myCards.length === 4;
-    const middleRef = useRef(null);
-
-    const [remainingCardCount, setRemainingCardCount] = useState(52);
-
-    const deckCount = 52;
     
-    const playCard = (card) => {
-        setMyCards(myCards.filter((item) => item !== card))
-        setDiscardPile([...discardPile, card])
-    }
-
     useEffect(() => {
         socket.on('receive_own_cards', (cardArray) => {
             setMyCards(cardArray);
             setDataInitialized(true);
         });
 
-        socket.on('receive_discard_pile', (discardPile) => {
+        socket.on('receive_discard_pile', (discardPile, id) => {
+            if (id && socket.id === id) {return; }
             setDiscardPile(discardPile);
-        });
-
-        socket.on('receive_picked_card', (newCard) => {
-            setMyCards((prevCards) => [...prevCards, newCard])
         });
 
         socket.on("receive_turn", (turn) => {
             setTurn(turn);
+        });
+
+        socket.on("receive_deck_count", (count) => {
+            setDeckCount(count);
         });
 
         socket.on("receive_players", (currentPlayers) => {
@@ -82,7 +82,6 @@ export const ThirtyOne = ({roomCode}) => {
         });
 
         socket.on("receive_should_show_results", (shouldShowResults) => {
-            console.log("SHOW", shouldShowResults);
             setShouldShowResults(shouldShowResults);
         });
 
@@ -106,6 +105,7 @@ export const ThirtyOne = ({roomCode}) => {
             socket.off('receive_discard_pile');
             socket.off('receive_player_turn');
             socket.off('receive_players');
+            socket.off('receive_deck_count');
             socket.off('receive_players_data');
             socket.off('receive_picked_card');
             socket.off('receive_roundEnd');
@@ -145,7 +145,7 @@ export const ThirtyOne = ({roomCode}) => {
         socket.emit('thirty_one_knock', roomCode);
     }
 
-    if (shouldShowResults && !shouldMove) {
+    if (shouldShowResults && !isMoving) {
         return <ThirtyOneResultsScreen roomCode={roomCode} playersData={playersData}/>
     }
 
@@ -158,14 +158,24 @@ export const ThirtyOne = ({roomCode}) => {
             <div className="flex flex-col absolute top-[20%] items-center justify-center w-full gap-5">
                 <div className="text-white text-3xl">{isMyTurn ? (hasPicked ? "Discard a card" : `Draw a card ${canKnock ? "or knock" : ""}`) : `${currentPlayers[playerTurn].nameData.nickname}'s turn`}</div>
 
-                <div ref={middleRef} className="middleCards flex gap-6 w-full justify-center">
+                <div className="middleCards flex gap-6 w-full justify-center">
                     <Pile 
                         name="thirtyOneDeck"
-                        pile={[...Array(Number(remainingCardCount))]}
+                        pile={deckCount > 0 ? [...Array(Number(deckCount))] : []}
                         canPick={isMyTurn && !hasPicked}
                         clickEvent={() => {                  
                             socket.emit("thirty_one_pick_up_deck_card", roomCode);
-                            setRemainingCardCount(remainingCardCount - 1);
+                            setDeckCount(deckCount - 1);
+
+                            setIsMoving(true);
+                            setAnimationPosition(getLastElementPosition(".thirtyOneDeck"));
+                            animationElement.current = <CardBacking width={MY_CARD_WIDTH}/>;
+                            setAnimationEndPosition(getLastElementPosition(".selfCards"));
+
+                            socket.emit('thirty_one_get_deck_count', roomCode);
+                            animationEndCall.current = () => {
+                                socket.emit('thirty_one_get_own_cards', roomCode);
+                            };
                         }}
                         pileElement={(card, index) => {
                             return <CardBacking width={MIDDLE_CARD_WIDTH}/>
@@ -178,6 +188,18 @@ export const ThirtyOne = ({roomCode}) => {
                         canPick={isMyTurn && !hasPicked}
                         clickEvent={() => {                  
                             socket.emit("thirty_one_pick_up_discard_card", roomCode);
+  
+                            setIsMoving(true);
+
+                            setAnimationPosition(getLastElementPosition(".thirtyOneDiscardPile"));
+                            const card = discardPile.at(-1);
+                            animationElement.current = <Card number={card.number} suit={card.suit} width={MY_CARD_WIDTH}/>;
+                            const selfCardsRect = getLastElementPosition(".selfCards")
+                            setAnimationEndPosition({left: selfCardsRect.left - 50, top: selfCardsRect.top});
+                            socket.emit('thirty_one_get_discard_pile', roomCode);
+                            animationEndCall.current = () => {
+                                socket.emit('thirty_one_get_own_cards', roomCode);
+                            };
                         }}
                         pileElement={(card, index) => {
                             return <Card number={card.number} suit={card.suit} width={MIDDLE_CARD_WIDTH}/>
@@ -212,29 +234,41 @@ export const ThirtyOne = ({roomCode}) => {
                 {myCards.map((card, index) => {
                     return (
                         <div className={`${isMyTurn && hasPicked && "hover:hoverAnimation"}`} 
-                            onClick={() => { 
+                            onClick={(e) => { 
                                 if (!(isMyTurn && hasPicked)) { return; }
                                 socket.emit("thirty_one_discard_card", roomCode, card);
-                                playCard(myCards[index]); 
+                                setIsMoving(true);
+                                const rect = e.target.getBoundingClientRect();
+                                setAnimationPosition({left: rect.left, top: rect.top});
+                                animationElement.current = <Card number={card.number} suit={card.suit} width={MIDDLE_CARD_WIDTH} />;
+                                setAnimationEndPosition(getLastElementPosition(".thirtyOneDiscardPile"));
+
+                                socket.emit('thirty_one_get_own_cards', roomCode);
+                                animationEndCall.current = () => {
+                                    socket.emit('thirty_one_get_discard_pile', roomCode);
+                                }; 
                             }} 
                         >
                             
                             <Card number={card.number} 
                                     suit={card.suit}
-                                    width={180}
+                                    width={MY_CARD_WIDTH}
                             />
                         </div>
                     );
                 })}
             </div>
-
-            <ThirtyOneMovingCard element={<CardBacking width={150}/>} 
-                                isMoving={hasPicked} 
-                                playerCount={playerCount} 
-                                index={0} selfIndex={selfIndex} 
-                                middleRef={middleRef} 
-            />
             
+            { isMoving &&
+                <ThirtyOneMovingCard element={animationElement} 
+                                    setIsMoving={setIsMoving}
+                                    position={animationPosition}
+                                    setPosition={setAnimationPosition}
+                                    animationEndPosition={animationEndPosition}
+                                    animationEndCall={animationEndCall}
+                                    
+                />
+            }
         </div>
     );
 }

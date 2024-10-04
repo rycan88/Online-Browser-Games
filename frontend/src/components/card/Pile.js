@@ -1,5 +1,5 @@
 
-import CardOutline from "../card/CardOutline";
+import CardOutline from "./CardOutline";
 import getSocket from "../../socket";
 
 const socket = getSocket();

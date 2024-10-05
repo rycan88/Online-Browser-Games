@@ -2,7 +2,7 @@ import { getPlayerCoords } from "../../utils";
 import { ThirtyOnePlayer } from "./ThirtyOnePlayer";
 
 const NAVBAR_HEIGHT = 60;
-export const ThirtyOnePlayerDisplay = ({selfIndex, currentPlayers, playerTurn, knockPlayer}) => {
+export const ThirtyOnePlayerDisplay = ({selfIndex, currentPlayers, playerTurn, knockPlayer, hasPicked}) => {
     if (!currentPlayers) { return <></> }
     const playerCount = currentPlayers.length;
     const viewportWidth = window.innerWidth;
@@ -30,6 +30,7 @@ export const ThirtyOnePlayerDisplay = ({selfIndex, currentPlayers, playerTurn, k
                                     lives={player.lives} 
                                     isTurn={index === playerTurn} 
                                     didKnock={index === knockPlayer}
+                                    hasPicked={hasPicked}
                 />
             </div>
         );

@@ -152,13 +152,13 @@ export const ThirtyOne = ({roomCode}) => {
                                             animationEndPosition={selfCardsPosition} 
                                             animationEndCall={() => {
                                                 socket.emit('thirty_one_get_own_cards', roomCode);
-
+                                                !isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
                                             }}
                                             removeMovingElement={removeMovingElement}
                                             transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}/>
             addMovingElement(element);
             socket.emit('thirty_one_get_deck_count', roomCode);
-            socket.emit('thirty_one_get_turn', roomCode);
+            isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
         });
 
         socket.on("discard_pile_pick_up", (card) => {
@@ -171,12 +171,13 @@ export const ThirtyOne = ({roomCode}) => {
                                             animationEndPosition={selfCardsPosition} 
                                             animationEndCall={() => {
                                                 socket.emit('thirty_one_get_own_cards', roomCode);
+                                                !isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
                                             }}
                                             removeMovingElement={removeMovingElement}
                                             transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}/>
             addMovingElement(element);
             socket.emit('thirty_one_get_discard_pile', roomCode);
-            socket.emit('thirty_one_get_turn', roomCode);
+            isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
         });
 
         socket.on("card_discarded", (card) => {
@@ -241,7 +242,7 @@ export const ThirtyOne = ({roomCode}) => {
 
     return (
         <div className="thirtyOnePage entirePage">
-            <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer}/>
+            <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer} hasPicked={hasPicked}/>
 
             <div className="flex flex-col absolute top-[20%] items-center justify-center w-full gap-5">
                 <div className="text-white text-3xl">{isMyTurn ? (hasPicked ? "Discard a card" : `Draw a card ${canKnock ? "or knock" : ""}`) : `${currentPlayers[playerTurn].nameData.nickname}'s turn`}</div>
@@ -278,7 +279,7 @@ export const ThirtyOne = ({roomCode}) => {
 
             <div className="flex absolute bottom-[35%] items-center justify-center w-full">
                 { selfIndex >= 0 &&
-                    <ThirtyOnePlayer name={socket.nickname} lives={currentPlayers[selfIndex].lives} isTurn={isMyTurn} didKnock={selfIndex === knockPlayer}/>
+                    <ThirtyOnePlayer name={socket.nickname} lives={currentPlayers[selfIndex].lives} isTurn={isMyTurn} didKnock={selfIndex === knockPlayer} hasPicked={hasPicked}/>
                 }                 
             </div>
             

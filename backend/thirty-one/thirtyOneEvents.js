@@ -47,19 +47,19 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
         const newCard = deck.drawCard();
         rooms[roomCode].playersData[socket.userId].cards.push(newCard);
-        //socket.emit('receive_picked_card', newCard);
+        io.to(roomCode).emit('deck_pick_up', socket.id, rooms[roomCode].gameData.currentPlayers, rooms[roomCode].gameData.turn);
     })
 
     // Pick up from discard pile
     socket.on("thirty_one_pick_up_discard_card", (roomCode) => {
         if (!rooms[roomCode]) { return; }
         const discardPile = rooms[roomCode].gameData.discardPile;
-        if (discardPile.length === 0) { return; }
+        if (discardPile.length === 0 ||  rooms[roomCode].playersData[socket.userId].cards.length > 3) { return; }
         const newCard = discardPile.pop();
   
         rooms[roomCode].playersData[socket.userId].cards.push(newCard);
         //socket.emit('receive_picked_card', newCard);
-        socket.to(roomCode).emit('receive_discard_pile', rooms[roomCode].gameData.discardPile);
+        io.to(roomCode).emit('discard_pile_pick_up', newCard);
     })
 
     socket.on("thirty_one_discard_card", (roomCode, discardedCard) => {
@@ -72,8 +72,8 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
         rooms[roomCode].gameData.turn += 1;
 
-        io.to(roomCode).emit('receive_turn', rooms[roomCode].gameData.turn);
-        io.to(roomCode).emit('receive_discard_pile', discardPile, socket.id);
+ 
+        socket.to(roomCode).emit('card_discarded', discardedCard, socket.id);
 
         const myScore = calculateScore(rooms[roomCode].playersData[socket.userId].cards);
 
@@ -87,7 +87,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
             io.to(roomCode).emit('receive_should_show_results', rooms[roomCode].gameData.shouldShowResults);
 
         }
-
+        io.to(roomCode).emit('receive_turn', rooms[roomCode].gameData.turn);
     })
 
     socket.on("thirty_one_knock", (roomCode) => {

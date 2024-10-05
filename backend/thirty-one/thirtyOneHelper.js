@@ -1,4 +1,5 @@
 const { Deck } = require("../cards/Deck");
+const { thirtyOnePlayerData } = require("./thirtyOnePlayerData");
 
 
 const calculateScore = (cards) => {
@@ -23,8 +24,7 @@ const calculateScore = (cards) => {
     return allSame ? 30.5 : score;
 }
 
-const calculateScores = (knockIndex, playersData, currentPlayers) => {
-    const knockPlayer = knockIndex !== null ? currentPlayers[knockIndex].nameData.userId : null;
+const calculateScores = (playersData, currentPlayers) => {
     const players = [];
     for (const player of currentPlayers) {
         const playerUserId = player.nameData.userId;
@@ -49,8 +49,7 @@ const calculateScores = (knockIndex, playersData, currentPlayers) => {
     players.map((player, index) => {
         player.ranking = playerCount - index;
         if (player.score <= knockOutScore) {
-            console.log(player)
-            if (player.nameData.userId === knockPlayer) {
+            if (player.didKnock) {
                 player.lives = Math.max(0, player.lives - 2);
             } else {
                 player.lives -= 1;
@@ -69,10 +68,7 @@ const setUpNewRound = (rooms, roomCode) => {
 
     for (const playerUserId of Object.keys(playersData)) {
         const playerData = playersData[playerUserId];
-        playerData.cards = [];
-        playerData.score = 0;
-        playerData.isReady = false;
-        playerData.gotStrike = false;
+        playersData[playerUserId] = thirtyOnePlayerData(playerData.nameData, playerData.lives, playerData.ranking)
     }
 
     const deck = new Deck();
@@ -88,12 +84,10 @@ const setUpNewRound = (rooms, roomCode) => {
     }
     discardPile.push(deck.drawCard());
 
-    gameData.currentPlayers = getCurrentPlayers(rooms[roomCode].playersData);
-    gameData.deck = deck;
-    gameData.discardPile = discardPile;
-    gameData.turn = 0;
-    gameData.roundEnd = null;
-    gameData.shouldShowResults = false;
+    const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData);
+    const newTurn = gameData.startTurn + 1;
+
+    rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: newTurn, turn: newTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false}
 }
 
 const getCurrentPlayers = (playersData) => {

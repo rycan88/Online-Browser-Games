@@ -4,12 +4,12 @@ import { FaCheck } from "react-icons/fa6";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { IoIosHeart } from "react-icons/io";
 import { FaSkull } from "react-icons/fa";
+import { FaHandBackFist } from "react-icons/fa6";
 
 const socket = getSocket();
 
 export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
     if (!playersData) {return <></>}
-    console.log(playersData)
 
     return (
         <div className="thirtyOnePage entirePage">
@@ -20,6 +20,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         return (
                             <div className={`flex h-[200px] w-full items-center justify-center ${isOut ? "text-slate-400" : (playerData.gotStrike ? "text-red-600" : "text-green-400")}`}>
                                 <div className="w-[15%] flex gap-2 items-center justify-end">
+                                    {playerData.didKnock && <FaHandBackFist />}
                                     {playerData.nameData.nickname}
                                     <div className="flex items-center justify-center">
                                         <IoIosHeart/>

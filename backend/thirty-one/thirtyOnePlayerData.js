@@ -1,13 +1,14 @@
 
-const thirtyOnePlayerData = (nameData) => {    
+const thirtyOnePlayerData = (nameData, lives=3, ranking=100) => {    
     return {
         nameData: nameData,
         cards: [],
-        lives: 3,
+        lives: lives,
         score: 0,
         gotStrike: false,
         isReady: false,
-        ranking: 100
+        didKnock: false,
+        ranking: ranking
     }
 }
 

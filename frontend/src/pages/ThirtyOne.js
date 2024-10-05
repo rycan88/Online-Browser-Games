@@ -27,6 +27,8 @@ const socket = getSocket();
 
 const MIDDLE_CARD_WIDTH = 150;
 const MY_CARD_WIDTH = 180;
+const PICK_UP_DURATION = 400;
+const DISCARD_DURATION = 600;
 
 export const ThirtyOne = ({roomCode}) => {
     const navigate = useNavigate();
@@ -35,7 +37,7 @@ export const ThirtyOne = ({roomCode}) => {
     const [discardPile, setDiscardPile] = useState([]);
     const [dataInitialized, setDataInitialized] = useState(false);
     const [turn, setTurn] = useState(0);
-    const [currentPlayers, setCurrentPlayers] = useState(null);
+    const [currentPlayers, setCurrentPlayers] = useState([]);
     const [knockPlayer, setKnockPlayer] = useState(null); // index of the player who knocked
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [playersData, setPlayersData] = useState({});
@@ -43,8 +45,11 @@ export const ThirtyOne = ({roomCode}) => {
 
     // Card Animation
     const [arrayOfElements, setArrayOfElements] = useState([]);
-
-    const hasPicked = myCards.length === 4;
+    const playerCount = currentPlayers.length;
+    const selfIndex = currentPlayers.findIndex((player) => player.nameData.userId === socket.userId);
+    const playerTurn = Math.floor(turn) % playerCount;
+    const isMyTurn = playerTurn === selfIndex;
+    const hasPicked = turn % 1 !== 0;
     
     const removeMovingElement = (id) => {
         setArrayOfElements((prevCards) => prevCards.filter((card) => card.props.id !== id));
@@ -56,10 +61,6 @@ export const ThirtyOne = ({roomCode}) => {
 
     const getSelfCardsPosition = (elementWidth, elementHeight) => {
         if (!currentPlayers) { return; }
-        const playerCount = currentPlayers.length;
-        const selfIndex = currentPlayers.findIndex((player) => player.nameData.userId === socket.userId);
-        const playerTurn = turn % playerCount;
-        const isMyTurn = playerTurn === selfIndex;
 
         let position = isMyTurn ? getLastElementPosition(".selfCards") : getPlayerCoord(playerCount, playerTurn, selfIndex);
         if (!isMyTurn) {
@@ -141,10 +142,6 @@ export const ThirtyOne = ({roomCode}) => {
 
     useEffect(() => {
         if (!currentPlayers) { return; }
-        const playerCount = currentPlayers.length;
-        const selfIndex = currentPlayers.findIndex((player) => player.nameData.userId === socket.userId);
-        const playerTurn = turn % playerCount;
-        const isMyTurn = playerTurn === selfIndex;
 
         socket.on("deck_pick_up", () => {
             const cardWidth = isMyTurn ? MY_CARD_WIDTH : 150;
@@ -155,10 +152,13 @@ export const ThirtyOne = ({roomCode}) => {
                                             animationEndPosition={selfCardsPosition} 
                                             animationEndCall={() => {
                                                 socket.emit('thirty_one_get_own_cards', roomCode);
+
                                             }}
-                                            removeMovingElement={removeMovingElement}/>
+                                            removeMovingElement={removeMovingElement}
+                                            transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}/>
             addMovingElement(element);
             socket.emit('thirty_one_get_deck_count', roomCode);
+            socket.emit('thirty_one_get_turn', roomCode);
         });
 
         socket.on("discard_pile_pick_up", (card) => {
@@ -172,9 +172,11 @@ export const ThirtyOne = ({roomCode}) => {
                                             animationEndCall={() => {
                                                 socket.emit('thirty_one_get_own_cards', roomCode);
                                             }}
-                                            removeMovingElement={removeMovingElement}/>
+                                            removeMovingElement={removeMovingElement}
+                                            transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}/>
             addMovingElement(element);
             socket.emit('thirty_one_get_discard_pile', roomCode);
+            socket.emit('thirty_one_get_turn', roomCode);
         });
 
         socket.on("card_discarded", (card) => {
@@ -188,8 +190,10 @@ export const ThirtyOne = ({roomCode}) => {
                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                             animationEndCall={() => {
                                                 socket.emit('thirty_one_get_discard_pile', roomCode);
+                                                socket.emit('thirty_one_get_turn', roomCode);
                                             }}
-                                            removeMovingElement={removeMovingElement}/>
+                                            removeMovingElement={removeMovingElement}
+                                            transitionDuration={DISCARD_DURATION}/>
             addMovingElement(element);
         });
 
@@ -200,14 +204,11 @@ export const ThirtyOne = ({roomCode}) => {
         };
     }, [arrayOfElements, roomCode, currentPlayers, turn]);
 
-    if (!dataInitialized || !currentPlayers) {
+    if (!dataInitialized || currentPlayers.length === 0) {
         return <LoadingScreen roomCode={roomCode} playersData={playersData}/>;
     }
 
-    const playerCount = currentPlayers.length;
-    const selfIndex = currentPlayers.findIndex((player) => player.nameData.userId === socket.userId);
-    const playerTurn = turn % playerCount;
-    const isMyTurn = playerTurn === selfIndex;
+
     
     const getTooltip = () => {
         let text = "";
@@ -314,9 +315,11 @@ export const ThirtyOne = ({roomCode}) => {
                                                                 animationEndCall={() => {
                                                                     socket.emit('thirty_one_get_discard_pile', roomCode);
                                                                 }}
-                                                                removeMovingElement={removeMovingElement}/>
+                                                                removeMovingElement={removeMovingElement}
+                                                                transitionDuration={DISCARD_DURATION}/>
                                 addMovingElement(element);
                                 socket.emit('thirty_one_get_own_cards', roomCode);
+                                socket.emit('thirty_one_get_turn', roomCode);
                             }} 
                         >
                             

@@ -37,7 +37,17 @@ module.exports = {
         'hamburger': "url(../images/hamburger-icon.svg)",
         'cards': "url(../images/cards-bg.jpg)",
         'poker-gradient': 'radial-gradient(circle at center, #006400, #013220)',
-      }
+      },
+      keyframes: {
+        bounceCard: {
+          '0%, 20%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
+          '50%': { transform: 'translateY(-10px)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
+          '80%, 100%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
+        },
+      },
+      animation: {
+        myBounce: 'bounceCard 2s infinite',
+      },
 
     },
   },

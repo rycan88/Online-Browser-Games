@@ -15,6 +15,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
                 socket.emit('receive_knock_player', null);               
             }
             rooms[roomCode].playersData[socket.userId] && socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards);
+            socket.emit('receive_deck_count', rooms[roomCode].gameData.deck.getCount());
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         }
@@ -38,13 +39,19 @@ const thirtyOneEvents = (io, socket, rooms) => {
         }
     });
 
+    socket.on("thirty_one_get_turn", (roomCode) => {
+        if (rooms[roomCode]) {
+            socket.emit('receive_turn', rooms[roomCode].gameData.turn);
+        }
+    });
+
     // Pick up from deck
     socket.on("thirty_one_pick_up_deck_card", (roomCode) => {
-        if (!rooms[roomCode]) { return; }
+        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { console.log(rooms[roomCode].gameData); return; }
         
         const deck = rooms[roomCode].gameData.deck;
         if (deck.getCount() === 0 ||  rooms[roomCode].playersData[socket.userId].cards.length > 3) { return; }
-
+        rooms[roomCode].gameData.turn += 0.5;
         const newCard = deck.drawCard();
         rooms[roomCode].playersData[socket.userId].cards.push(newCard);
         io.to(roomCode).emit('deck_pick_up', socket.id, rooms[roomCode].gameData.currentPlayers, rooms[roomCode].gameData.turn);
@@ -52,9 +59,10 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
     // Pick up from discard pile
     socket.on("thirty_one_pick_up_discard_card", (roomCode) => {
-        if (!rooms[roomCode]) { return; }
+        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { return; }
         const discardPile = rooms[roomCode].gameData.discardPile;
         if (discardPile.length === 0 ||  rooms[roomCode].playersData[socket.userId].cards.length > 3) { return; }
+        rooms[roomCode].gameData.turn += 0.5;
         const newCard = discardPile.pop();
   
         rooms[roomCode].playersData[socket.userId].cards.push(newCard);
@@ -63,14 +71,14 @@ const thirtyOneEvents = (io, socket, rooms) => {
     })
 
     socket.on("thirty_one_discard_card", (roomCode, discardedCard) => {
-        if (!rooms[roomCode]) { return; }
+        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 === 0) { return; }
 
         const discardPile = rooms[roomCode].gameData.discardPile;
         discardPile.push(discardedCard);
         const myCards = rooms[roomCode].playersData[socket.userId].cards;
         rooms[roomCode].playersData[socket.userId].cards = myCards.filter((card) => card.id !== discardedCard.id);
 
-        rooms[roomCode].gameData.turn += 1;
+        rooms[roomCode].gameData.turn += 0.5;
 
  
         socket.to(roomCode).emit('card_discarded', discardedCard, socket.id);
@@ -79,23 +87,22 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
         if (rooms[roomCode].gameData.turn === rooms[roomCode].gameData.roundEnd || myScore === 31 || rooms[roomCode].gameData.deck.getCount() === 0) {
             const playerCount = rooms[roomCode].gameData.currentPlayers.length;
-            const knockIndex = rooms[roomCode].gameData.roundEnd % playerCount
-            calculateScores(knockIndex, rooms[roomCode].playersData, rooms[roomCode].gameData.currentPlayers);
+            calculateScores(rooms[roomCode].playersData, rooms[roomCode].gameData.currentPlayers);
 
             rooms[roomCode].gameData.shouldShowResults = true;
             io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
             io.to(roomCode).emit('receive_should_show_results', rooms[roomCode].gameData.shouldShowResults);
 
         }
-        io.to(roomCode).emit('receive_turn', rooms[roomCode].gameData.turn);
     })
 
     socket.on("thirty_one_knock", (roomCode) => {
-        if (!rooms[roomCode]) { return; }
+        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { return; }
         const turn = rooms[roomCode].gameData.turn;
         const playerCount = rooms[roomCode].gameData.currentPlayers.length;
         rooms[roomCode].gameData.roundEnd = turn + playerCount;
         rooms[roomCode].gameData.turn += 1;
+        rooms[roomCode].playersData[socket.userId].didKnock = true;
         io.to(roomCode).emit('receive_turn', rooms[roomCode].gameData.turn);
         io.to(roomCode).emit('receive_knock_player', rooms[roomCode].gameData.roundEnd % playerCount);
         socket.to(roomCode).emit('player_knocked', socket.nickname);

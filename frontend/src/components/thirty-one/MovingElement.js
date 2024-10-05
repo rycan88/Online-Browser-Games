@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { getPlayerCoords } from "../../utils";
 
 const NAVBAR_HEIGHT = 60;
-export const MovingElement = ({id, element, startPosition, animationEndPosition={left:0, top:0}, animationEndCall, removeMovingElement}) => { 
+export const MovingElement = ({id, element, startPosition, animationEndPosition={left:0, top:0}, animationEndCall, removeMovingElement, transitionDuration=700}) => { 
     const [position, setPosition] = useState(null);
 
     useEffect(() => {
-
+        let endCalled = false;
         const startTimer = setTimeout(() => {
             setPosition({left: animationEndPosition.left, top: animationEndPosition.top - NAVBAR_HEIGHT / 2});
 
@@ -16,8 +16,17 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
             if (animationEndCall) {
                 animationEndCall();
             }
+            endCalled = true;
+        }, transitionDuration - 25);
 
-        }, 675);
+        const fallbackTimeout = setTimeout(() => {
+            if (!endCalled) {
+                animationEndCall();
+                removeMovingElement(id);
+            }
+
+        }, transitionDuration);
+
 
         return () => {
             clearTimeout(startTimer);
@@ -26,8 +35,8 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
     }, [])
 
     return (
-        <div className={`absolute transition-all duration-700 ease-out`}
-            style={{left: position ? position.left : startPosition.left, top: position ? position.top - NAVBAR_HEIGHT / 2 : startPosition.top}}
+        <div className={`absolute transition-all ease-out`}
+            style={{left: position ? position.left : startPosition.left, top: position ? position.top - NAVBAR_HEIGHT / 2 : startPosition.top, transitionDuration: `${transitionDuration}ms`}}
             onTransitionEnd={() => {
                 removeMovingElement(id)
             }}

@@ -3,7 +3,7 @@ import { ThirtyOnePlayer } from "./ThirtyOnePlayer";
 
 const NAVBAR_HEIGHT = 60;
 export const ThirtyOnePlayerDisplay = ({selfIndex, currentPlayers, playerTurn, knockPlayer}) => {
-
+    if (!currentPlayers) { return <></> }
     const playerCount = currentPlayers.length;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight - NAVBAR_HEIGHT;

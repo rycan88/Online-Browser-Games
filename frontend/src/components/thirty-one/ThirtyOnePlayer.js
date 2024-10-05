@@ -1,5 +1,6 @@
 import { IoIosHeart } from "react-icons/io";
 import { FaHandBackFist } from "react-icons/fa6";
+import { CardJumpAnimation } from "./CardJumpAnimation";
 
 export const ThirtyOnePlayer = ({name, lives, isTurn, didKnock}) => {
     return (
@@ -14,6 +15,11 @@ export const ThirtyOnePlayer = ({name, lives, isTurn, didKnock}) => {
             { didKnock &&
                 <div className="absolute -right-[50px] text-slate-200 text-4xl top-[50%] -translate-y-1/2">
                     <FaHandBackFist />
+                </div>
+            }
+            { isTurn && 
+                <div className="absolute -right-[50px] text-slate-200 text-4xl top-[50%] -translate-y-1/2">
+                    <CardJumpAnimation />
                 </div>
             }
         </div>

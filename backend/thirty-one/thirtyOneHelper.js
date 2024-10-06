@@ -50,7 +50,7 @@ const calculateScores = (playersData, currentPlayers) => {
         player.ranking = playerCount - index;
         if (player.score <= knockOutScore) {
             if (player.didKnock) {
-                player.lives = Math.max(0, player.lives - 2);
+                player.lives -= 2;
             } else {
                 player.lives -= 1;
             }
@@ -68,7 +68,7 @@ const setUpNewRound = (rooms, roomCode) => {
 
     for (const playerUserId of Object.keys(playersData)) {
         const playerData = playersData[playerUserId];
-        playersData[playerUserId] = thirtyOnePlayerData(playerData.nameData, playerData.lives, playerData.ranking)
+        playersData[playerUserId] = thirtyOnePlayerData(playerData.nameData, Math.max(0, playerData.lives), playerData.ranking)
     }
 
     const deck = new Deck();
@@ -87,7 +87,7 @@ const setUpNewRound = (rooms, roomCode) => {
     const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData);
     const newTurn = gameData.startTurn + 1;
 
-    rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: newTurn, turn: newTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false}
+    rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: newTurn, turn: newTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false}
 }
 
 const getCurrentPlayers = (playersData) => {

@@ -18,8 +18,6 @@ import { MovingElement } from "../components/thirty-one/MovingElement";
 
 
 // TODO
-// Add animation for pick up and discard
-// Add jumping card animation when it is a players turn
 // Display current number of cards in deck
 // Bonus: Show cards being dealt, first card being flipped
 

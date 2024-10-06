@@ -1,4 +1,5 @@
-const { calculateScores, setUpNewRound, calculateScore } = require("./thirtyOneHelper");
+const { setUpPlayerData, setUpGameData } = require("../gameUtils");
+const { calculateScores, setUpNewRound, calculateScore, getCurrentPlayers } = require("./thirtyOneHelper");
 
 const thirtyOneEvents = (io, socket, rooms) => {    
     socket.on("get_all_thirty_one_data", (roomCode) => {
@@ -85,10 +86,13 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
         const myScore = calculateScore(rooms[roomCode].playersData[socket.userId].cards);
 
-        if (rooms[roomCode].gameData.turn === rooms[roomCode].gameData.roundEnd || myScore === 31 || rooms[roomCode].gameData.deck.getCount() === 0) {
+        if (rooms[roomCode].gameData.turn === rooms[roomCode].gameData.roundEnd || myScore === 31 || rooms[roomCode].gameData.deck.getCount() === 0) { // Round ended
             const playerCount = rooms[roomCode].gameData.currentPlayers.length;
             calculateScores(rooms[roomCode].playersData, rooms[roomCode].gameData.currentPlayers);
-
+            const alivePlayers = getCurrentPlayers(rooms[roomCode].playersData);
+            if (alivePlayers.length <= 1) { // Only one player left so game has ended
+                rooms[roomCode].gameData.gameEnded = true;
+            }
             rooms[roomCode].gameData.shouldShowResults = true;
             io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
             io.to(roomCode).emit('receive_should_show_results', rooms[roomCode].gameData.shouldShowResults);
@@ -114,12 +118,19 @@ const thirtyOneEvents = (io, socket, rooms) => {
         const playersData = rooms[roomCode].playersData;
         playersData[socket.userId].isReady = true;
         io.to(roomCode).emit('receive_players_data', playersData);
-
-        if (!Object.values(playersData).find((data) => data.lives > 0 && data.isReady === false)) {
-            setUpNewRound(rooms, roomCode);
+        console.log(rooms[roomCode].gameData.gameEnded, "ENDED");
+        if (rooms[roomCode].gameData.gameEnded) {
+            if (!Object.values(playersData).find((data) => data.isReady === false)) {
+                setUpPlayerData(rooms, roomCode);
+                setUpGameData(rooms, roomCode);
+                io.to(roomCode).emit('start_new_round');
+            }
+        } else {
+            if (!Object.values(playersData).find((data) => data.lives > 0 && data.isReady === false)) {
+                setUpNewRound(rooms, roomCode);
+                io.to(roomCode).emit('start_new_round');
+            }
         }
-
-        io.to(roomCode).emit('start_new_round');
     });
 }
 

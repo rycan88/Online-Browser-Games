@@ -66,7 +66,7 @@ const setUpGameData = (rooms, roomCode) => {
             discardPile.push(deck.drawCard());
 
             const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false};
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
         }
     }
 }

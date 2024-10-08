@@ -24,6 +24,39 @@ const calculateScore = (cards) => {
     return allSame ? 30.5 : score;
 }
 
+const thirtyOneSortCards = (cards) => {
+    const suitPoints = {"spades": 0, "hearts": 0, "clubs": 0, "diamonds": 0}
+        
+    let allSame = cards.length > 0 && cards[0].number; // false if no cards 
+    for (const card of cards) {
+        const suit = card.suit;
+        const number = card.number;
+        if (allSame !== number) { allSame = false; }
+         
+        if (number === 1) {
+            suitPoints[suit] += 11;
+        } else if (number >= 10) {
+            suitPoints[suit] += 10;
+        } else {
+            suitPoints[suit] += number;
+        }
+    }
+
+    cards.sort((a, b) => {
+        if (suitPoints[b.suit] !== suitPoints[a.suit]) {
+          return suitPoints[b.suit] - suitPoints[a.suit];
+        }
+
+        if (a.number === 1) {
+            return -100;
+        } else if (b.number === 1) {
+            return 100;
+        }
+
+        return b.number - a.number;
+      });
+}
+
 const calculateScores = (playersData, currentPlayers) => {
     const players = [];
     for (const player of currentPlayers) {
@@ -32,7 +65,7 @@ const calculateScores = (playersData, currentPlayers) => {
         const cards = playerData.cards;
 
         playerData.score = calculateScore(cards);
-
+        thirtyOneSortCards(cards)
         players.push(playerData);
     }
 

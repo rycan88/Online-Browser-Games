@@ -12,7 +12,7 @@
   }
 
   .thirtyOnePage .selfCards .standardCard {
-    @apply -ml-[110px];
+    @apply -ml-[2em];
   }
 
   .thirtyOnePage .hoverAnimation {
@@ -20,10 +20,33 @@
   }
 
   .thirtyOnePage .knockButton {
-    @apply flex h-[150px] w-[150px] rounded-full items-center justify-center text-slate-100 text-6xl border-[2px] border-slate-900 shadow-xl;
+    @apply flex h-[15vh] w-[15vh] rounded-full items-center justify-center text-slate-100 text-[6vh] border-[0.2vh] border-slate-900 shadow-xl;
   }
 
   .thirtyOnePage .knockButton:disabled {
     @apply border-slate-900/50 text-slate-100/50;
+  }
+}
+
+@media (orientation: portrait) {
+  .landscape-only {
+    display: hidden;
+  }
+
+  .rotate-notice {
+    display: block;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.5rem;
+  }
+}
+
+@media (orientation: landscape) {
+  .landscape-only {
+    display: block;
+  }
+
+  .rotate-notice {
+    display: hidden;
   }
 }

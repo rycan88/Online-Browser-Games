@@ -8,15 +8,17 @@ const thirtyOneEvents = (io, socket, rooms) => {
             socket.emit('receive_turn', rooms[roomCode].gameData.turn);
             socket.emit('receive_players', rooms[roomCode].gameData.currentPlayers);
             socket.emit('receive_should_show_results', rooms[roomCode].gameData.shouldShowResults);
-
+            rooms[roomCode].gameData.shouldShowResults && socket.emit('receive_players_data', rooms[roomCode].playersData);
 
             if (rooms[roomCode].gameData.roundEnd) {
                 socket.emit('receive_knock_player', rooms[roomCode].gameData.roundEnd % rooms[roomCode].gameData.currentPlayers.length);
             } else {
                 socket.emit('receive_knock_player', null);               
             }
-            rooms[roomCode].playersData[socket.userId] && socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards);
             socket.emit('receive_deck_count', rooms[roomCode].gameData.deck.getCount());
+            socket.emit('receive_start_turn', rooms[roomCode].gameData.startTurn);
+            rooms[roomCode].playersData[socket.userId] && !rooms[roomCode].gameData.shouldShowResults && socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards);
+
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         }
@@ -30,7 +32,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
     socket.on("thirty_one_get_own_cards", (roomCode) => {
         if (rooms[roomCode]) {
-            rooms[roomCode].playersData[socket.userId] && socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards);
+            rooms[roomCode].playersData[socket.userId] && !rooms[roomCode].gameData.shouldShowResults && socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards);
         }
     });
 
@@ -48,7 +50,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
     // Pick up from deck
     socket.on("thirty_one_pick_up_deck_card", (roomCode) => {
-        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { console.log(rooms[roomCode].gameData); return; }
+        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { return; }
         
         const deck = rooms[roomCode].gameData.deck;
         if (deck.getCount() === 0 ||  rooms[roomCode].playersData[socket.userId].cards.length > 3) { return; }
@@ -118,7 +120,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
         const playersData = rooms[roomCode].playersData;
         playersData[socket.userId].isReady = true;
         io.to(roomCode).emit('receive_players_data', playersData);
-        console.log(rooms[roomCode].gameData.gameEnded, "ENDED");
+
         if (rooms[roomCode].gameData.gameEnded) {
             if (!Object.values(playersData).find((data) => data.isReady === false)) {
                 setUpPlayerData(rooms, roomCode);

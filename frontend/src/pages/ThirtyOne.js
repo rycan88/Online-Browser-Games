@@ -15,26 +15,34 @@ import CardBacking from "../components/card/CardBacking";
 import { Pile } from "../components/card/Pile";
 import { getLastElementPosition, getPlayerCoord } from "../components/thirty-one/ThirtyOneUtils";
 import { MovingElement } from "../components/thirty-one/MovingElement";
+import CardOutline from "../components/card/CardOutline";
 
 
 // TODO
-// Display current number of cards in deck
+// Add a divider in the results screen
+// Resize elements for smaller screens
+// Properly change starting turn
+// Add info button
+// Add settings to change #lives and rulesets such as starting turn 
 // Bonus: Show cards being dealt, first card being flipped
 
 const socket = getSocket();
 
-const MIDDLE_CARD_WIDTH = 150;
-const MY_CARD_WIDTH = 180;
-const PICK_UP_DURATION = 400;
-const DISCARD_DURATION = 600;
+
 
 export const ThirtyOne = ({roomCode}) => {
+    const MIDDLE_CARD_WIDTH = (window.innerHeight * 0.20) * (2/3);
+    const MY_CARD_WIDTH = (window.innerHeight * 0.25) * (2/3);
+    const PICK_UP_DURATION = 400;
+    const DISCARD_DURATION = 600;
+    
     const navigate = useNavigate();
 
     const [myCards, setMyCards] = useState([]);
     const [discardPile, setDiscardPile] = useState([]);
     const [dataInitialized, setDataInitialized] = useState(false);
     const [turn, setTurn] = useState(0);
+    const [startTurn, setStartTurn] = useState(0);
     const [currentPlayers, setCurrentPlayers] = useState([]);
     const [knockPlayer, setKnockPlayer] = useState(null); // index of the player who knocked
     const [shouldShowResults, setShouldShowResults] = useState(false);
@@ -49,6 +57,17 @@ export const ThirtyOne = ({roomCode}) => {
     const isMyTurn = playerTurn === selfIndex;
     const hasPicked = turn % 1 !== 0;
     
+    const [landscapeMode, setLandscapeMode] = useState(false);
+
+    function checkOrientation() {
+        if (window.innerHeight > window.innerWidth) {
+          // Device is in portrait mode
+          setLandscapeMode(false);
+        } else {
+            setLandscapeMode(true);
+        }
+    }
+
     const removeMovingElement = (id) => {
         setArrayOfElements((prevCards) => prevCards.filter((card) => card.props.id !== id));
     }
@@ -86,12 +105,17 @@ export const ThirtyOne = ({roomCode}) => {
             setTurn(turn);
         });
 
+        socket.on("receive_start_turn", (turn) => {
+            setStartTurn(turn);
+        });
+
         socket.on("receive_deck_count", (count) => {
             setDeckCount(count);
         });
 
         socket.on("receive_players", (currentPlayers) => {
             setCurrentPlayers(currentPlayers);
+            setDataInitialized(true);
         });
 
         socket.on("receive_knock_player", (knockPlayer) => {
@@ -120,11 +144,15 @@ export const ThirtyOne = ({roomCode}) => {
 
         socket.emit('join_room', roomCode);
         socket.emit('get_all_thirty_one_data', roomCode);
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('load', checkOrientation);
+        checkOrientation();
 
         return () => {
             socket.off('receive_own_cards');
             socket.off('receive_discard_pile');
-            socket.off('receive_player_turn');
+            socket.off('receive_turn');
+            socket.off('receive_start_turn');
             socket.off('receive_players');
             socket.off('receive_deck_count');
             socket.off('receive_players_data');
@@ -135,7 +163,7 @@ export const ThirtyOne = ({roomCode}) => {
             socket.off('player_picked_up');
             socket.off('room_error');
         };
-    }, []);
+    }, [shouldShowResults]);
 
 
     useEffect(() => {
@@ -203,7 +231,7 @@ export const ThirtyOne = ({roomCode}) => {
         };
     }, [arrayOfElements, roomCode, currentPlayers, turn]);
 
-    if (!dataInitialized || currentPlayers.length === 0) {
+    if (!dataInitialized || currentPlayers.length === 0 ) {
         return <LoadingScreen roomCode={roomCode} playersData={playersData}/>;
     }
 
@@ -230,22 +258,32 @@ export const ThirtyOne = ({roomCode}) => {
         socket.emit('thirty_one_knock', roomCode);
     }
 
-    if (shouldShowResults && arrayOfElements.length === 0) {
+    if (shouldShowResults && arrayOfElements.length === 0 && playersData) {
         return <ThirtyOneResultsScreen roomCode={roomCode} playersData={playersData}/>
     }
 
-    const canKnock = isMyTurn && !hasPicked && turn >= playerCount && knockPlayer === null;
+    const canKnock = isMyTurn && !hasPicked && turn - startTurn >= playerCount && knockPlayer === null;
 
 
+
+    if (!landscapeMode) {
+        return (
+            <div className="rotate-notice">
+                Please rotate your device to landscape mode.
+            </div>
+        );
+    }
 
     return (
         <div className="thirtyOnePage entirePage">
             <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer} hasPicked={hasPicked}/>
 
-            <div className="flex flex-col absolute top-[20%] items-center justify-center w-full gap-5">
-                <div className="text-white text-3xl">{isMyTurn ? (hasPicked ? "Discard a card" : `Draw a card ${canKnock ? "or knock" : ""}`) : `${currentPlayers[playerTurn].nameData.nickname}'s turn`}</div>
+            <div className="flex flex-col absolute bottom-[45%] items-center justify-center w-full gap-5">
+                <div className="text-white text-[3vh]">
+                    {isMyTurn ? (hasPicked ? "Discard a card" : `Draw a card ${canKnock ? "or knock" : ""}`) : `${currentPlayers[playerTurn].nameData.nickname}'s turn`}
+                </div>
 
-                <div className="middleCards flex gap-6 w-full justify-center">
+                <div className="middleCards flex gap-5 md:gap-6 w-full justify-center">
                     <Pile 
                         name="thirtyOneDeck"
                         pile={deckCount > 0 ? [...Array(Number(deckCount))] : []}
@@ -256,6 +294,8 @@ export const ThirtyOne = ({roomCode}) => {
                         pileElement={(card, index) => {
                             return <CardBacking width={MIDDLE_CARD_WIDTH}/>
                         }}
+                        cardOutline={<CardOutline width={MIDDLE_CARD_WIDTH}/>}
+                        width={MIDDLE_CARD_WIDTH}
                     />
 
                     <Pile 
@@ -270,19 +310,21 @@ export const ThirtyOne = ({roomCode}) => {
                         pileElement={(card, index) => {
                             return <Card number={card.number} suit={card.suit} width={MIDDLE_CARD_WIDTH}/>
                         }}
+                        cardOutline={<CardOutline width={MIDDLE_CARD_WIDTH}/>}
+                        width={MIDDLE_CARD_WIDTH}
                     />
                 </div>
  
             </div>
 
-            <div className="flex absolute bottom-[35%] items-center justify-center w-full">
+            <div className="flex absolute bottom-[32%] items-center justify-center w-full">
                 { selfIndex >= 0 &&
                     <ThirtyOnePlayer name={socket.nickname} lives={currentPlayers[selfIndex].lives} isTurn={isMyTurn} didKnock={selfIndex === knockPlayer} hasPicked={hasPicked}/>
                 }                 
             </div>
             
             { isMyTurn && !hasPicked &&
-                <div className="absolute group bottom-[60px] left-[75%] rounded-full">
+                <div className="absolute group bottom-[8%] left-[75%] rounded-full">
                     <button className={`knockButton gradientButton`}
                             onClick={() => {
                                 knock();
@@ -317,7 +359,8 @@ export const ThirtyOne = ({roomCode}) => {
                                                                 removeMovingElement={removeMovingElement}
                                                                 transitionDuration={DISCARD_DURATION}/>
                                 addMovingElement(element);
-                                socket.emit('thirty_one_get_own_cards', roomCode);
+
+                                setMyCards(myCards.filter((element) => element.id !== card.id));
                                 socket.emit('thirty_one_get_turn', roomCode);
                             }} 
                         >

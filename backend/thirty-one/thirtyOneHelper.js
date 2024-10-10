@@ -117,8 +117,11 @@ const setUpNewRound = (rooms, roomCode) => {
     }
     discardPile.push(deck.drawCard());
 
+    const oldPlayers = rooms[roomCode].gameData.currentPlayers;
+
+
     const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData);
-    const newTurn = gameData.startTurn + 1;
+    const newTurn = getNextPlayerIndex(oldPlayers, currentPlayers, rooms[roomCode].gameData.startTurn);
 
     rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: newTurn, turn: newTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false}
 }
@@ -127,6 +130,18 @@ const getCurrentPlayers = (playersData) => {
     return Object.values(playersData).filter(data => data.lives > 0).map((data) => {
         return {nameData: data.nameData, lives: data.lives};
     });
+}
+
+const getNextPlayerIndex = (oldPlayers, currentPlayers, index) => {
+    const newIndex = (index + 1) % oldPlayers.length;
+    while (newIndex !== index) {
+        if (oldPlayers[newIndex].lives > 0) {
+            return currentPlayers.findIndex(user => user.nameData.userId === oldPlayers[newIndex].nameData.userId);
+        }
+
+        newIndex = (newIndex + 1) % oldPlayers.length;
+    }
+    return -1;
 }
 
 module.exports = {

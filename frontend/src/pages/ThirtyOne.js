@@ -19,8 +19,6 @@ import CardOutline from "../components/card/CardOutline";
 
 
 // TODO
-// Add a divider in the results screen
-// Resize elements for smaller screens
 // Properly change starting turn
 // Add info button
 // Add settings to change #lives and rulesets such as starting turn 
@@ -170,7 +168,7 @@ export const ThirtyOne = ({roomCode}) => {
         if (!currentPlayers) { return; }
 
         socket.on("deck_pick_up", () => {
-            const cardWidth = isMyTurn ? MY_CARD_WIDTH : 150;
+            const cardWidth = isMyTurn ? MY_CARD_WIDTH : MIDDLE_CARD_WIDTH;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
             const element = <MovingElement id={Date.now()} 
                                             element={<CardBacking width={cardWidth}/>} 
@@ -188,7 +186,7 @@ export const ThirtyOne = ({roomCode}) => {
         });
 
         socket.on("discard_pile_pick_up", (card) => {
-            const cardWidth = isMyTurn ? MY_CARD_WIDTH : 150;
+            const cardWidth = isMyTurn ? MY_CARD_WIDTH : MIDDLE_CARD_WIDTH;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
 
             const element = <MovingElement id={Date.now()} 

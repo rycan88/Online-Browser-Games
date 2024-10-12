@@ -4,7 +4,7 @@
 
 @layer base {
   .standardCard {
-    @apply relative flex h-[300px] w-[200px] p-[4px] text-[48px] bg-slate-200 shadow-md overflow-clip rounded-[5%] select-none;
+    @apply relative flex bg-slate-200 shadow-md overflow-clip rounded-[5%] select-none;
   }
 
   .simplifiedCard {

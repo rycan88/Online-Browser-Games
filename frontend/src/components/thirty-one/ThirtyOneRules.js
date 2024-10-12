@@ -22,7 +22,7 @@ export const ThirtyOneRules = () => {
                         <li>Knock to signal that everyone else has one last turn before the round is over<br/>(Note: You cannot knock until everyone has had at least 1 turn.)</li>
                     </ul>
                     <div>
-                        The round ends either after everyone else has had a turn after a knock, or if a player reaches 31. 
+                        The round ends either after everyone else has had a turn after a knock, the deck runs out of cards, or if a player reaches 31. 
                     </div>
                 </div>
 

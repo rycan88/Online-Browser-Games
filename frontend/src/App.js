@@ -88,7 +88,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="App scrollbar-hide">
       <AppContext.Provider value={{ rooms, setRooms }}>
         <QueryClientProvider client={client}>
           <Router>

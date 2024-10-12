@@ -33,12 +33,6 @@ export const SidebarData = [
     {
         title: "31",
         icon: <GiCardAceSpades />,
-        link: "/thirty_one",
-        isMain: false,
-    },
-    {
-        title: "31 LOBBY",
-        icon: <GiCardAceSpades />,
         link: "/thirty_one/lobby",
         isMain: false,
     },

@@ -19,6 +19,7 @@ import { Profile } from './pages/Profile';
 import { refreshPage } from './utils';
 import { Games } from './pages/Games';
 import { enterFullScreen } from './utils';
+import { ThirtyOne } from './pages/ThirtyOne';
 import LoadingScreen from './components/LoadingScreen';
 
 export const AppContext = createContext();
@@ -26,12 +27,23 @@ const socket = getSocket();
 
 function App() {
   const client = new QueryClient();
-  const [rooms, setRooms] = useState([]);
+  const [rooms, setRooms] = useState({});
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const gameName = "telepath";
 
-  const roomRoutes = (gameName, rooms) => {
-    return rooms.map((roomCode) => {
+  const GameElement = (gameName, roomCode) => {
+    if (gameName === "telepath") {
+      return <Telepath roomCode={roomCode} />
+    } else if (gameName === "thirty_one") {
+      return <ThirtyOne roomCode={roomCode} />
+    }
+    return <></>
+  }
+
+  const roomRoutes = (rooms) => {
+    return Object.keys(rooms).map((roomCode) => {
+      const gameName = rooms[roomCode];
+      console.log(`/${gameName}/lobby/${roomCode}`)
+
       return <Route key={roomCode} 
                     path={`/${gameName}/lobby/${roomCode}`} 
                     element={<Room key={roomCode} gameName={gameName} roomCode={roomCode}/>} />
@@ -39,10 +51,11 @@ function App() {
   }
 
   const gameRoutes = (rooms) => {
-    return rooms.map((roomCode) => {
+    return Object.keys(rooms).map((roomCode) => {
+      const gameName = rooms[roomCode];
       return <Route key={roomCode} 
-                    path={`/telepath/${roomCode}`} 
-                    element={<Telepath roomCode={roomCode} />} />
+                    path={`/${gameName}/${roomCode}`} 
+                    element={GameElement(gameName, roomCode)} />
         }) 
   }
 
@@ -82,13 +95,15 @@ function App() {
             <Navbar />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/telepath/lobby" element={<Lobby game="Telepath"/>} />
-              {roomRoutes(gameName, rooms)}
+              <Route path="/telepath/lobby" element={<Lobby game="telepath"/>} />
+              <Route path="/thirty_one/lobby" element={<Lobby game="thirty_one"/>} />
+              {roomRoutes(rooms)}
               {gameRoutes(rooms)}
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
+              <Route path="/thirty_one" element={<ThirtyOne />} />
               <Route path="*" element={isDataLoaded ? <ErrorPage/> : <LoadingScreen />} />
             </Routes>
           </Router>

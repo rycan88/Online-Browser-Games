@@ -9,17 +9,19 @@ import { CopyLinkButton } from "../CopyLinkButton";
 
 const socket = getSocket();
 
+const Titles = {"telepath": "Telepath", "thirty_one": "31"}
+
 // roomCode: string
 // gameName: string
 export const Room = (props) => {
+    const gameName = props.gameName;
+    const roomCode = props.roomCode;
     const navigate = useNavigate();
-    const location = useLocation();
     
     const [players, setPlayers] = useState([]);
     const [teamData, setTeamData] = useState([]);
     const [teamMode, setTeamMode] = useState(true);
-    const gameName = props.gameName;
-    const roomCode = props.roomCode;
+
     const canStart = teamMode ? teamData.length * 2 === players.length : players.length >= 2;
     useEffect(() => {
         socket.on('update_players', (players) => {
@@ -36,13 +38,12 @@ export const Room = (props) => {
 
         socket.on('game_started', () => {
             navigate(`/${gameName}/${roomCode}`);
-            socket.emit('generate_telepath_prompt', props.roomCode);
         });
 
         socket.on('room_error', (errorMessage) => {
             navigate(`/${gameName}/lobby`, { state: {error: errorMessage}});
         });
-        console.log(socket.nickname)
+
         socket.emit('join_room', roomCode);
         socket.emit("get_all_players", roomCode);
 
@@ -66,13 +67,11 @@ export const Room = (props) => {
     }
 
     const onAction = () => {
-        console.log("ON");
         setTeamMode(true);
         socket.emit('set_team_mode', roomCode, true);
     }
 
     const offAction = () => {
-        console.log("OFF")
         setTeamMode(false);
         socket.emit('set_team_mode', roomCode, false);
     }
@@ -80,14 +79,16 @@ export const Room = (props) => {
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
             <div className="lobbyBox">
-                <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">
-                    <h6 className="text-lg">Teams</h6>
-                    <ToggleSwitch className="fixed right-1 top-1" onAction={onAction} offAction={offAction} isOn={teamMode}/>
-                </div>
+                { gameName === "telepath" &&
+                    <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">
+                        <h6 className="text-lg">Teams</h6>
+                        <ToggleSwitch className="fixed right-1 top-1" onAction={onAction} offAction={offAction} isOn={teamMode}/>
+                    </div>
+                }
                 <div className="absolute left-1 top-3 sm:left-3 sm:top-3">
                     <CopyLinkButton/>
                 </div>
-                <h1 className="text-2xl sm:text-3xl">{gameName.toUpperCase()}</h1>                    
+                <h1 className="text-2xl sm:text-3xl">{Titles[gameName]}</h1>                    
                 <h2 className="text-6xl sm:text-8xl py-3 my-auto">{roomCode}</h2>
                 <div className="flex flex-col h-[45%] w-full overflow-y-auto">
                     { teamMode 

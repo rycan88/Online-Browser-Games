@@ -30,6 +30,22 @@
   button {
     @apply select-none;
   }
+
+  .tooltip {
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-slate-200 text-black text-xs px-2 py-1 rounded;
+  }
+
+  .myContainerCard {
+    @apply relative flex flex-col w-[calc(min(700px,80%))] h-[80%] mt-[6vh] justify-start items-center gap-[4px] pt-[5vh] px-[2vw] pb-[5vh] text-slate-200 bg-gradient-to-tr from-sky-950 to-sky-900 border-2 border-slate-400 rounded-xl shadow-xl;
+  }
+
+  .myContainerCardTitle {
+    @apply absolute flex justify-center items-center h-[8vh] text-[3vh] text-slate-200 py-[2vh] px-[4vh] -top-[4vh] bg-sky-800 shadow-xl rounded-[2vh] border-[1px] border-slate-400;
+  }
+
+  .myContainerCardInnerBox {
+    @apply bg-sky-800/30 shadow-xl rounded-lg border-[1px] border-sky-700;
+  }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

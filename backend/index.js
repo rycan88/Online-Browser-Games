@@ -36,13 +36,17 @@ const io = new Server(server, {
     },
 });
 
-const telepathHelper = require("./telepath/telepathHelper");
-const { telepathPlayerData } = require("./telepath/telepathPlayerData");
-const { User, getRoomLeader, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer} = require("./serverUtils");
+
+const { User, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms} = require("./serverUtils");
+const { Deck } = require("./cards/Deck");
+const { setUpPlayerData, setUpGameData } = require("./gameUtils");
+const { telepathEvents } = require("./telepath/telepathEvents");
+const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
 
 // Lobby Rooms
 const rooms = {};
 const teamGames = ["telepath"];
+const gamePlayerLimits = {"telepath": 100, "thirty_one": 8};
 const deleteTimers = {};
 // Our socket has a socketId, userId, and nickname
 // socketId changes per tab, while userId changes per browser
@@ -58,7 +62,7 @@ io.on("connection", (socket) => {
     socket.nickname = nickname;
     console.log(`User Connected: ${socket.id} ${userId} ${nickname} `);
 
-    socket.emit('update_rooms', Object.keys(rooms))
+    socket.emit('update_rooms', getSimplifiedRooms(rooms))
 
     socket.on('nickname_changed', (nickname) => {
         currentUser.nickname = nickname
@@ -93,11 +97,15 @@ io.on("connection", (socket) => {
 
     socket.on('create_room', (gameName, roomCode) => {
         leaveAllRooms(io, rooms, socket.id);
-        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: true };
+        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
+        if (gameName === "telepath") {
+            rooms[roomCode].teamMode = true;
+        }
         socket.join(roomCode);
         rooms[roomCode].players.push(currentUser);
         rooms[roomCode].spectators.push(currentUser);
-        io.emit('update_rooms', Object.keys(rooms));
+
+        io.emit('update_rooms', getSimplifiedRooms(rooms));
         if (teamGames.includes(gameName)) {
             addToTeamList(rooms, roomCode, currentUser);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
@@ -110,6 +118,8 @@ io.on("connection", (socket) => {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         } else if (rooms[roomCode].gameStarted && !Object.keys(rooms[roomCode].playersData).includes(socket.userId)) { // If they arent a player in the game that started
             socket.emit('room_error', `Game ${roomCode} has already started`);
+        } else if (!containsUserId(rooms[roomCode].players, socket.userId) && rooms[roomCode].players.length >= gamePlayerLimits[rooms[roomCode].gameName]) {
+            socket.emit('room_error', `Player limit reached`);
         } else if (!containsSocketId(rooms[roomCode].players, socket.id)) { // If the socket is not already connected to the room
             clearDeleteTimer(deleteTimers, roomCode);
             socket.leaveAll();
@@ -150,30 +160,8 @@ io.on("connection", (socket) => {
     
     socket.on('start_game', (roomCode) => {
         if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
-            if (teamGames.includes(rooms[roomCode].gameName)) {
-                const teamData = rooms[roomCode].teamData;
-                const teamMode = rooms[roomCode].teamMode;
-                const players = rooms[roomCode].players;
-
-                if ((teamData.length * 2 !== players.length && teamMode) || (players.length < 2 && !teamMode)  ) { 
-                    console.log("Shouldn't be able to start");
-                    return; 
-                }
-
-                const playersData = {}
-                if (teamMode) {
-                    teamData.forEach((team) => {
-                        playersData[team[0].userId] = telepathPlayerData(team[0], team[1], 0);
-                        playersData[team[1].userId] = telepathPlayerData(team[1], team[0], 0);
-                    });
-                } else {
-                    players.forEach((player) => {
-                        playersData[player.userId] = telepathPlayerData(player, player, 0);                   
-                    })
-                }
-                rooms[roomCode].playersData = playersData;  
-
-            }
+            setUpPlayerData(rooms, roomCode);
+            setUpGameData(rooms, roomCode);
             rooms[roomCode].gameStarted = true;
             io.to(roomCode).emit('game_started');
         }
@@ -194,7 +182,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on('get_all_rooms', () => {
-        io.emit('update_rooms', Object.keys(rooms));
+        io.emit('update_rooms', getSimplifiedRooms(rooms));
     });
 
     socket.on('get_all_players', (roomCode) => {
@@ -208,7 +196,6 @@ io.on("connection", (socket) => {
     socket.on('get_players_data', (roomCode) => {
         if (rooms[roomCode]) {
             io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
-            console.log("start", rooms[roomCode].playersData);
         }
     });
     
@@ -226,84 +213,12 @@ io.on("connection", (socket) => {
         }
     });
 
-    // Telepath
+    telepathEvents(io, socket, rooms);
+    thirtyOneEvents(io, socket, rooms);
 
-    // Triggers when a player is ready to send their wordList
-    socket.on("send_telepath_words", (roomCode, chosenWords) => {
-        if (rooms[roomCode]) {
-            const playersData = rooms[roomCode].playersData;
-            const teamMode = rooms[roomCode].teamMode;
-            playersData[socket.userId].chosenWords = chosenWords; 
-            playersData[socket.userId].hasPickedWords = true;
-
-            if (!Object.values(playersData).find((data) => data.hasPickedWords === false)) {
-                const gameData = rooms[roomCode].gameData;
-                gameData.shouldShowResults = true; 
-                telepathHelper.calculateScores(playersData, teamMode);
-                io.to(roomCode).emit("receive_game_data", gameData);    
-            }
-            io.to(roomCode).emit("receive_players_data", playersData);
-        }
-    })
-
-    socket.on("unsend_telepath_words", (roomCode) => {
-        if (rooms[roomCode]) {
-            const playersData = rooms[roomCode].playersData;
-            playersData[socket.userId].chosenWords = []; 
-            playersData[socket.userId].hasPickedWords = false;
-            io.to(roomCode).emit("receive_players_data", playersData);
-        }
-    })
-
-    // Triggers when player is ready for a new word
-    socket.on("send_telepath_ready", (roomCode) => {
-        if (rooms[roomCode]) {
-            let playersData = rooms[roomCode].playersData;
-            playersData[socket.userId].isReady = true;
-
-            if (!Object.values(playersData).find((data) => data.isReady === false)) {
-                Object.values(playersData).forEach((userData) => {
-                    playersData[userData.nameData.userId] = telepathPlayerData(userData.nameData, userData.partner, userData.totalScore);
-                })
-                const gameData = rooms[roomCode].gameData;
-                gameData.shouldShowResults = false;
-                telepathHelper.setNewPrompt(gameData);
-                io.to(roomCode).emit("receive_game_data", gameData);    
-            }      
-            io.to(roomCode).emit("receive_players_data", playersData); 
-        }
-    })
-
-    socket.on("generate_telepath_prompt", (roomCode) => {
-        const roomLeader = getRoomLeader(rooms, roomCode);
-        if (rooms[roomCode] && roomLeader.socketId === socket.id) {
-            const gameData = rooms[roomCode].gameData
-            telepathHelper.setNewPrompt(gameData);
-            io.to(roomCode).emit('receive_game_data', gameData);
-        }
-    });
-    
-    socket.on("get_all_telepath_data", (roomCode) => {
-        if (rooms[roomCode]) {
-            if (!(socket.userId in rooms[roomCode].playersData)) {
-                socket.emit('room_error', `Game ${roomCode} has already started`);
-                return;
-            }
-            if (!(containsSocketId(rooms[roomCode].spectators, socket.id))) {
-                rooms[roomCode].spectators.push(currentUser);
-                socket.join(roomCode);
-            }
-
-            socket.emit('receive_game_data', rooms[roomCode].gameData);
-            socket.emit('receive_players_data', rooms[roomCode].playersData);
-            socket.emit('update_team_mode', rooms[roomCode].teamMode);
-        } else {
-            socket.emit('room_error', `Lobby ${roomCode} does not exist`);
-        }
-    });
 })
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
     console.log("SERVER IS RUNNING");

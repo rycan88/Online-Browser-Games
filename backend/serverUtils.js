@@ -102,6 +102,14 @@ const startDeleteTimer = (rooms, deleteTimers, roomCode) => {
     }
   };
 
+  const getSimplifiedRooms = (rooms) => {
+    const simplifiedRooms = {}
+    for (const roomCode of Object.keys(rooms)) {
+        simplifiedRooms[roomCode] = rooms[roomCode].gameName;
+    }
+    return simplifiedRooms;
+  }
+
 module.exports = {
     User,
     getRoomLeader,
@@ -112,4 +120,5 @@ module.exports = {
     containsUserId,
     startDeleteTimer,
     clearDeleteTimer,
+    getSimplifiedRooms,
 };

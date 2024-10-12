@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .standardCard {
+    @apply relative flex h-[300px] w-[200px] p-[4px] text-[48px] bg-slate-200 shadow-md overflow-clip rounded-[5%] select-none;
+  }
+
+  .simplifiedCard {
+    @apply relative flex bg-slate-200 shadow-md overflow-clip rounded-[5%] select-none;
+  }
+
+  .standardCard .cardCornerContainer {
+    @apply flex flex-col items-center text-[50%] w-[15%];
+  }
+  .standardCard .cardMiddleContainer {
+    @apply w-[70%] h-[80%];
+  }
+
+  .standardCard .middleSuitIcon {
+    @apply text-[100%];
+  }
+
+  .standardCard .faceCardContent svg {
+    @apply absolute w-[90%] h-full top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 object-fill;
+  }
+}

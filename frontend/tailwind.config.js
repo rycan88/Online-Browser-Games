@@ -36,7 +36,32 @@ module.exports = {
         'info': "url(../images/info.svg)",
         'hamburger': "url(../images/hamburger-icon.svg)",
         'cards': "url(../images/cards-bg.jpg)",
-      }
+        'poker-gradient': 'radial-gradient(circle at center, #006400, #013220)',
+      },
+      keyframes: {
+        bounceCard: {
+          '0%, 20%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
+          '50%': { transform: 'translateY(-10px)', animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)' },
+          '80%, 100%': { transform: 'translateY(0)', animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)' },
+        },
+        loseHeartFrame2: {
+          '0%': { color: colors.red[700], transform: 'scale(1)'},
+          '10%, 20%, 30%, 40%, 50%, 60%, 70%': { color: colors.red[700], transform: 'translateY(-5%) translateX(5%) scale(1.2)'},
+          '15%, 35%, 55%': { color: colors.red[700], transform: 'rotate(-20deg) translateY(-5%) translateX(5%) scale(1.2)'},
+          '25%, 45%, 65%': { color: colors.red[700], transform: 'rotate(20deg) translateY(-5%) translateX(5%) scale(1.2)'},
+          '80%, 99%': { color: colors.slate[500], transform: 'translateY(-5%) translateX(5%) scale(1.2)'},
+          '100%': { color: colors.slate[500], transform: 'scale(1)'}, 
+        },
+        loseHeartFrame: {
+          '0%': { color: colors.red[700], transform: 'scale(1)'},
+          '60%, 80%': { color: colors.slate[500], transform: 'scale(0.5)'},
+          '100%': { color: colors.slate[500], transform: 'scale(1)'}, 
+        }
+      },
+      animation: {
+        myBounce: 'bounceCard 2s infinite',
+        loseHeart: 'loseHeartFrame'
+      },
 
     },
   },

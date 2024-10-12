@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .thirtyOnePage {
+    @apply bg-poker-gradient;
+  }
+
+  .thirtyOnePage .selfCards {
+    @apply flex absolute bottom-1 left-1/2 transform -translate-x-[calc(50%-45px)];
+  }
+
+  .thirtyOnePage .selfCards .standardCard {
+    @apply -ml-[2em];
+  }
+
+  .thirtyOnePage .hoverAnimation {
+    @apply transition ease-in-out -translate-y-4 cursor-pointer;
+  }
+
+  .thirtyOnePage .knockButton {
+    @apply flex h-[15vh] w-[15vh] rounded-full items-center justify-center text-slate-100 text-[6vh] border-[0.2vh] border-slate-900 shadow-xl;
+  }
+
+  .thirtyOnePage .knockButton:disabled {
+    @apply border-slate-900/50 text-slate-100/50;
+  }
+}
+
+@media (orientation: portrait) {
+  .landscape-only {
+    display: hidden;
+  }
+
+  .rotate-notice {
+    display: block;
+    text-align: center;
+    padding: 20px;
+    font-size: 1.5rem;
+  }
+}
+
+@media (orientation: landscape) {
+  .landscape-only {
+    display: block;
+  }
+
+  .rotate-notice {
+    display: hidden;
+  }
+}

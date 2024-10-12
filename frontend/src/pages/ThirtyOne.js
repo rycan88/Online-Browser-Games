@@ -83,12 +83,14 @@ export const ThirtyOne = ({roomCode}) => {
         if (!isMyTurn) {
             position.left -= elementWidth / 2;
             position.top -= elementHeight / 2;
-        } else {
-            position.left -= 50;
         }
+        
         return position;
     }
 
+    useEffect(() => {
+        window.scrollTo(0, 60); // Scroll to 200 pixels from the top of the page
+    }, []);
 
     useEffect(() => {
         socket.on('receive_own_cards', (cardArray) => {
@@ -172,6 +174,7 @@ export const ThirtyOne = ({roomCode}) => {
         socket.on("deck_pick_up", () => {
             const cardWidth = isMyTurn ? MY_CARD_WIDTH : MIDDLE_CARD_WIDTH;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
+
             const element = <MovingElement id={Date.now()} 
                                             element={<CardBacking width={cardWidth}/>} 
                                             startPosition={getLastElementPosition(".thirtyOneDeck")}
@@ -181,7 +184,9 @@ export const ThirtyOne = ({roomCode}) => {
                                                 !isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
                                             }}
                                             removeMovingElement={removeMovingElement}
-                                            transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}/>
+                                            transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}
+            />
+
             addMovingElement(element);
             socket.emit('thirty_one_get_deck_count', roomCode);
             isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
@@ -200,7 +205,8 @@ export const ThirtyOne = ({roomCode}) => {
                                                 !isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
                                             }}
                                             removeMovingElement={removeMovingElement}
-                                            transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}/>
+                                            transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}
+            />
             addMovingElement(element);
             socket.emit('thirty_one_get_discard_pile', roomCode);
             isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
@@ -220,7 +226,8 @@ export const ThirtyOne = ({roomCode}) => {
                                                 socket.emit('thirty_one_get_turn', roomCode);
                                             }}
                                             removeMovingElement={removeMovingElement}
-                                            transitionDuration={DISCARD_DURATION}/>
+                                            transitionDuration={DISCARD_DURATION}
+            />
             addMovingElement(element);
         });
 
@@ -275,8 +282,8 @@ export const ThirtyOne = ({roomCode}) => {
     }
 
     return (
-        <div className="thirtyOnePage entirePage">
-            <div className="absolute top-4 right-4">
+        <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)]">
+            <div className="absolute top-[2%] right-[2%]">
                 <InfoButton>
                     <ThirtyOneRules />
                 </InfoButton>

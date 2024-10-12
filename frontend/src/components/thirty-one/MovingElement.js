@@ -8,7 +8,7 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
     useEffect(() => {
         let endCalled = false;
         const startTimer = setTimeout(() => {
-            setPosition({left: animationEndPosition.left, top: animationEndPosition.top - NAVBAR_HEIGHT / 2});
+            setPosition({left: animationEndPosition.left, top: animationEndPosition.top});
 
         }, 10);
 
@@ -35,8 +35,8 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
     }, [])
 
     return (
-        <div className={`absolute transition-all ease-out`}
-            style={{left: position ? position.left : startPosition.left, top: position ? position.top - NAVBAR_HEIGHT / 2 : startPosition.top, transitionDuration: `${transitionDuration}ms`}}
+        <div className={`fixed transition-all ease-out`}
+            style={{left: position ? position.left : startPosition.left, top: position ? position.top : startPosition.top, transitionDuration: `${transitionDuration}ms`}}
             onTransitionEnd={() => {
                 removeMovingElement(id)
             }}

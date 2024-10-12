@@ -46,6 +46,7 @@ const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
 // Lobby Rooms
 const rooms = {};
 const teamGames = ["telepath"];
+const gamePlayerLimits = {"telepath": 100, "thirty_one": 8};
 const deleteTimers = {};
 // Our socket has a socketId, userId, and nickname
 // socketId changes per tab, while userId changes per browser
@@ -117,6 +118,8 @@ io.on("connection", (socket) => {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         } else if (rooms[roomCode].gameStarted && !Object.keys(rooms[roomCode].playersData).includes(socket.userId)) { // If they arent a player in the game that started
             socket.emit('room_error', `Game ${roomCode} has already started`);
+        } else if (!containsUserId(rooms[roomCode].players, socket.userId) && rooms[roomCode].players.length >= gamePlayerLimits[rooms[roomCode].gameName]) {
+            socket.emit('room_error', `Player limit reached`);
         } else if (!containsSocketId(rooms[roomCode].players, socket.id)) { // If the socket is not already connected to the room
             clearDeleteTimer(deleteTimers, roomCode);
             socket.leaveAll();

@@ -24,8 +24,8 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
 
     return (
         <div className="thirtyOnePage entirePage flex items-center justify-center text-slate-200 text-[2vh]">
-            <div className="relative flex flex-col w-[calc(min(700px,80%))] h-[80%] mt-[6vh] justify-start gap-[4px] pt-[5vh] px-[2vw] pb-[75px] items-center text-slate-200 bg-gradient-to-tr from-sky-950 to-sky-900 border-2 border-slate-400 rounded-xl shadow-xl">
-                <div className="absolute flex justify-center items-center w-[20vh] h-[8vh] text-[3vh] text-slate-200 p-4 -top-[4vh] bg-sky-800 shadow-xl rounded-xl border-[1px] border-slate-400">
+            <div className="myContainerCard pb-[75px]">
+                <div className="myContainerCardTitle">
                     Results
                 </div>
                 
@@ -70,7 +70,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         return (
                             <>
                                 {breakPoint && <div className="w-full h-[0.25vh] -mx-[2vh] my-[1vh] bg-red-800"></div>}
-                                <div className={`flex w-[90%] gap-2 px-[0.5vw] items-center justify-center ${isOut && "text-slate-500"} ${isMyData ? (isOut ? "bg-yellow-500/20" : "bg-yellow-500/40") : (isOut ? "bg-sky-800/10" : "bg-sky-800/30")} py-[1vh] shadow-xl rounded-lg border-[1px] border-sky-700`}>
+                                <div className={`myContainerCardInnerBox w-[90%] flex items-center justify-center gap-2 px-[0.5vw] py-[1vh] ${isOut && "text-slate-500"} ${isMyData ? (isOut ? "bg-yellow-500/20" : "bg-yellow-500/40") : (isOut ? "bg-sky-800/10" : "bg-sky-800/30")}`}>
                                     <div className="flex w-[8%] justify-center"> 
                                         { (playerData.lives > 0 || playersAlive.length <= 1) ?
                                             <>

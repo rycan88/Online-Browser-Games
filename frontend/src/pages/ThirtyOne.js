@@ -16,7 +16,9 @@ import { Pile } from "../components/card/Pile";
 import { getLastElementPosition, getPlayerCoord } from "../components/thirty-one/ThirtyOneUtils";
 import { MovingElement } from "../components/thirty-one/MovingElement";
 import CardOutline from "../components/card/CardOutline";
-
+import { BsInfoCircleFill } from "react-icons/bs";
+import { InfoButton } from "../components/InfoButton";
+import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
 
 // TODO
 // Properly change starting turn
@@ -274,6 +276,13 @@ export const ThirtyOne = ({roomCode}) => {
 
     return (
         <div className="thirtyOnePage entirePage">
+            <div className="absolute top-4 right-4">
+                <InfoButton>
+                    <ThirtyOneRules />
+                </InfoButton>
+            
+            </div>
+
             <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer} hasPicked={hasPicked}/>
 
             <div className="flex flex-col absolute bottom-[45%] items-center justify-center w-full gap-5">

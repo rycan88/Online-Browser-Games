@@ -92,7 +92,7 @@ export const ThirtyOne = ({roomCode}) => {
 
     useEffect(() => {
         window.scrollTo(0, NAVBAR_HEIGHT);
-    }, []);
+    }, [landscapeMode]);
 
     useEffect(() => {
         socket.on('receive_own_cards', (cardArray) => {

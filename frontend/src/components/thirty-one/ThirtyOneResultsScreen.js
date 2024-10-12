@@ -10,10 +10,17 @@ import { IoIosHeartEmpty } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { SimplifiedCard } from "../card/SimplifiedCard";
 import { AnimatedBreakingHeart } from "../AnimatedBreakingHeart";
+import { InfoButton } from "../InfoButton";
+import { ThirtyOneRules } from "./ThirtyOneRules";
+import { useEffect } from "react";
 
 const socket = getSocket();
-
+const NAVBAR_HEIGHT = 60;
 export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
+    useEffect(() => {
+        window.scrollTo(0, NAVBAR_HEIGHT);
+    }, []);
+
     if (!playersData) {return <></>}
 
     const CARD_WIDTH = (window.innerHeight * 0.05) * (2/3);
@@ -23,7 +30,13 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
     });
 
     return (
-        <div className="thirtyOnePage entirePage flex items-center justify-center text-slate-200 text-[2vh]">
+        <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)] flex items-center justify-center text-slate-200 text-[2vh]">
+            <div className="absolute top-[2%] right-[2%]">
+                <InfoButton>
+                    <ThirtyOneRules />
+                </InfoButton>
+            
+            </div>
             <div className="myContainerCard pb-[75px]">
                 <div className="myContainerCardTitle">
                     Results

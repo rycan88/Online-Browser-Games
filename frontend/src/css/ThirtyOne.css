@@ -4,19 +4,11 @@
 
 @layer components {
   .thirtyOnePage {
-    @apply bg-poker-gradient;
+    @apply bg-poker-gradient overflow-hidden;
   }
 
   .thirtyOnePage .selfCards {
-    @apply flex absolute bottom-1 left-1/2 transform -translate-x-[calc(50%-45px)];
-  }
-
-  .thirtyOnePage .selfCards .standardCard {
-    @apply -ml-[2em];
-  }
-
-  .thirtyOnePage .hoverAnimation {
-    @apply transition ease-in-out -translate-y-4 cursor-pointer;
+    @apply flex absolute bottom-[5%] left-1/2 transform -translate-x-[calc(50%)];
   }
 
   .thirtyOnePage .knockButton {

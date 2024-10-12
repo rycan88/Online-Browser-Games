@@ -6,8 +6,8 @@ export const ThirtyOnePlayerDisplay = ({selfIndex, currentPlayers, playerTurn, k
     const wholePage = document.querySelector(".thirtyOnePage");
 
     const playerCount = currentPlayers.length;
-    const viewportWidth = wholePage.getBoundingClientRect().width;
-    const viewportHeight = wholePage.getBoundingClientRect().height;
+    const viewportWidth = wholePage ? wholePage.clientWidth : window.innerWidth;
+    const viewportHeight = wholePage ? wholePage.clientHeight : window.innerHeight;
     const centerX = viewportWidth / 2;
     const centerY = viewportHeight / 2;
     const width = viewportWidth * 0.85;

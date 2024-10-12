@@ -10,7 +10,7 @@ export const SimplifiedCard = ({number, suit, width = 200}) => {
         >
             
             <div className="absolute text-[1.2em] font-bold"
-                style={{top: -width * 0.08, left: width * 0.1}}>
+                style={{top: -width * 0.08, left: number === 10 ? width * 0.01 : width * 0.1}}>
                     {cardNumber}
             </div>
             <div className="absolute text-[1.7em]" 

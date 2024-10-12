@@ -19,16 +19,16 @@ import CardOutline from "../components/card/CardOutline";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { InfoButton } from "../components/InfoButton";
 import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
+import { ThirtyOneSelfCard } from "../components/thirty-one/ThirtyOneSelfCard";
 
 // TODO
-// Properly change starting turn
-// Add info button
+// Allow users to drag cards
 // Add settings to change #lives and rulesets such as starting turn 
 // Bonus: Show cards being dealt, first card being flipped
 
 const socket = getSocket();
 
-
+const NAVBAR_HEIGHT = 60;
 
 export const ThirtyOne = ({roomCode}) => {
     const MIDDLE_CARD_WIDTH = (window.innerHeight * 0.20) * (2/3);
@@ -83,13 +83,15 @@ export const ThirtyOne = ({roomCode}) => {
         if (!isMyTurn) {
             position.left -= elementWidth / 2;
             position.top -= elementHeight / 2;
+        } else {
+            position.left += elementWidth / 2;
         }
-        
+
         return position;
     }
 
     useEffect(() => {
-        window.scrollTo(0, 60); // Scroll to 200 pixels from the top of the page
+        window.scrollTo(0, NAVBAR_HEIGHT);
     }, []);
 
     useEffect(() => {
@@ -292,7 +294,7 @@ export const ThirtyOne = ({roomCode}) => {
 
             <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer} hasPicked={hasPicked}/>
 
-            <div className="flex flex-col absolute bottom-[45%] items-center justify-center w-full gap-5">
+            <div className="flex flex-col absolute bottom-[48%] items-center justify-center w-full gap-5">
                 <div className="text-white text-[3vh]">
                     {isMyTurn ? (hasPicked ? "Discard a card" : `Draw a card ${canKnock ? "or knock" : ""}`) : `${currentPlayers[playerTurn].nameData.nickname}'s turn`}
                 </div>
@@ -331,7 +333,7 @@ export const ThirtyOne = ({roomCode}) => {
  
             </div>
 
-            <div className="flex absolute bottom-[32%] items-center justify-center w-full">
+            <div className="flex absolute bottom-[35%] items-center justify-center w-full">
                 { selfIndex >= 0 &&
                     <ThirtyOnePlayer name={socket.nickname} lives={currentPlayers[selfIndex].lives} isTurn={isMyTurn} didKnock={selfIndex === knockPlayer} hasPicked={hasPicked}/>
                 }                 
@@ -354,37 +356,34 @@ export const ThirtyOne = ({roomCode}) => {
 
             <div className="selfCards">
                 {myCards.map((card, index) => {
-                    return (
-                        <div className={`${isMyTurn && hasPicked && "hover:hoverAnimation"}`} 
-                            onClick={(e) => { 
-                                if (!(isMyTurn && hasPicked)) { return; }
-                                socket.emit("thirty_one_discard_card", roomCode, card);
+                    return <ThirtyOneSelfCard handLength={myCards.length}
+                        card={card}
+                        index={index}
+                        cardWidth={MY_CARD_WIDTH}
+                        canBeHovered={isMyTurn && hasPicked}
+                        onClickEvent={ (e) => {
+                            if (!(isMyTurn && hasPicked)) { return; }
 
-                                const cardWidth = MIDDLE_CARD_WIDTH;
-
-                                const rect = e.target.getBoundingClientRect();
-                                const element = <MovingElement id={Date.now()} 
-                                                                element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
-                                                                startPosition={{left: rect.left, top: rect.top}}
-                                                                animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
-                                                                animationEndCall={() => {
-                                                                    socket.emit('thirty_one_get_discard_pile', roomCode);
-                                                                }}
-                                                                removeMovingElement={removeMovingElement}
-                                                                transitionDuration={DISCARD_DURATION}/>
-                                addMovingElement(element);
-
-                                setMyCards(myCards.filter((element) => element.id !== card.id));
-                                socket.emit('thirty_one_get_turn', roomCode);
-                            }} 
-                        >
-                            
-                            <Card number={card.number} 
-                                    suit={card.suit}
-                                    width={MY_CARD_WIDTH}
-                            />
-                        </div>
-                    );
+                            socket.emit("thirty_one_discard_card", roomCode, card);
+            
+                            const cardWidth = MIDDLE_CARD_WIDTH;
+            
+                            const rect = e.target.getBoundingClientRect();
+                            const element = <MovingElement id={Date.now()} 
+                                                            element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
+                                                            startPosition={{left: rect.left, top: rect.top}}
+                                                            animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
+                                                            animationEndCall={() => {
+                                                                socket.emit('thirty_one_get_discard_pile', roomCode);
+                                                            }}
+                                                            removeMovingElement={removeMovingElement}
+                                                            transitionDuration={DISCARD_DURATION}/>
+                            addMovingElement(element);
+            
+                            setMyCards(myCards.filter((element) => element.id !== card.id));
+                            socket.emit('thirty_one_get_turn', roomCode);
+                        }}
+                    />
                 })}
             </div>
 

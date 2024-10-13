@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  .overlay {
+    @apply absolute w-full h-full z-10;
+  }
+
   .background {
-    @apply w-full h-[calc(100vh-60px)] bg-black/[0.7] fixed top-[60px] left-[0] z-10 cursor-pointer;
+    @apply w-full h-full bg-black/[0.7] z-10 cursor-pointer;
   }
   .overlayContainer {
     @apply flex w-full h-full justify-center items-center cursor-auto;

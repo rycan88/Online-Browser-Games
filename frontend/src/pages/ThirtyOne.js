@@ -284,13 +284,10 @@ export const ThirtyOne = ({roomCode}) => {
     }
 
     return (
-        <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)]">
-            <div className="absolute top-[2%] right-[2%]">
-                <InfoButton>
-                    <ThirtyOneRules />
-                </InfoButton>
-            
-            </div>
+        <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)]">   
+            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
+                <ThirtyOneRules />
+            </InfoButton>    
 
             <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer} hasPicked={hasPicked}/>
 

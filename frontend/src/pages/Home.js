@@ -25,6 +25,7 @@ export const Home = () => {
           <h2>{catData?.fact}</h2>
           <br/>
           <h2>(Home page in progress)</h2>
+          <h2>FOR OPTIMAL GAMEPLAY, PLEASE PLAY ON DESKTOP</h2>
       </div>
     );
 }

@@ -67,11 +67,12 @@ export const ThirtyOne = ({roomCode}) => {
             setLandscapeMode(true);
         }
     }
+    console.log(arrayOfElements)
 
     const removeMovingElement = (cardId) => { // cardId is the timestamp of when the movingCard was created
         if (!cardId) {return; }
         const timeDiff = Date.now() - cardId;
-        if (timeDiff < 100) { return; }
+        if (process.env.NODE_ENV === 'production' && timeDiff < 70) { console.log("TOO SHORT", timeDiff); return; }
         setArrayOfElements((prevCards) => prevCards.filter((card) => card.props.id !== cardId));
     }
 

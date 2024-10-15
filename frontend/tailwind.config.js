@@ -48,11 +48,16 @@ module.exports = {
           '0%': { color: colors.red[700], transform: 'scale(1)'},
           '60%, 80%': { color: colors.slate[500], transform: 'scale(0.5)'},
           '100%': { color: colors.slate[500], transform: 'scale(1)'}, 
-        }
+        },
+        riseUpFrame: {
+          '0%': { transform: 'translateY(0)'},
+          '100%': { transform: 'translateY(-100%)'},
+        },
       },
       animation: {
         myBounce: 'bounceCard 2s infinite',
-        loseHeart: 'loseHeartFrame'
+        loseHeart: 'loseHeartFrame',
+        riseUp: 'riseUpFrame 1s ease-in-out forwards'
       },
 
     },

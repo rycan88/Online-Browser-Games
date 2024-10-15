@@ -121,7 +121,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                                 ))
                                             }  
                                             { heartsLost > 0 &&
-                                                <div className="absolute font-bold bottom-[90%] left-[90%] text-[1em] text-red-700">-{heartsLost}</div>
+                                                <div className="animate-riseUp 1s forwards absolute font-bold left-[90%] text-[1em] text-red-700 ">-{heartsLost}</div>
                                             }
                                         </div>
 

@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getPlayerCoords } from "../../utils";
 
 const NAVBAR_HEIGHT = 60;
 export const MovingElement = ({id, element, startPosition, animationEndPosition={left:0, top:0}, animationEndCall, removeMovingElement, transitionDuration=700}) => { 
     const [position, setPosition] = useState(null);
-
+    const endCalled = useRef(false);
     useEffect(() => {
-        let endCalled = false;
         const startTimer = setTimeout(() => {
             setPosition({left: animationEndPosition.left, top: animationEndPosition.top});
 
@@ -15,14 +14,16 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
         const endTimer = setTimeout(() => {
             if (animationEndCall) {
                 animationEndCall();
+                console.log("endTimer")
             }
-            endCalled = true;
+            endCalled.current = true;
         }, transitionDuration - 25);
 
         const fallbackTimeout = setTimeout(() => {
-            if (!endCalled) {
+            if (!endCalled.current) {
                 animationEndCall();
                 removeMovingElement(id);
+                console.log("fallbackTimer")
             }
 
         }, transitionDuration);

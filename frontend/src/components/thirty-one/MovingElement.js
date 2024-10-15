@@ -14,7 +14,7 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
         const endTimer = setTimeout(() => {
             if (animationEndCall) {
                 animationEndCall();
-                console.log("endTimer")
+                console.log("endTimer", Date.now())
             }
             endCalled.current = true;
         }, transitionDuration - 25);
@@ -40,7 +40,7 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
             style={{left: position ? position.left : startPosition.left, top: position ? position.top : startPosition.top, transitionDuration: `${transitionDuration}ms`}}
             onTransitionEnd={() => {
                 removeMovingElement(id);
-                console.log("movingElementRemoved");
+                console.log("movingElementRemoved", Date.now());
             }}
         >
             {element}

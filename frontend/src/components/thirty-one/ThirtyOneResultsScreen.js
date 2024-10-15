@@ -102,7 +102,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                         </div>
 
 
-                                        <div className="flex text-red-700 text-[0.8em] gap-[0.13vw] w-[30%] justify-center">
+                                        <div className="flex relative text-red-700 text-[0.8em] gap-[0.13vw] w-[30%] justify-center">
 
                                             {playerData.lives > 0 && 
                                                 [...Array(playerData.lives)].map((_, index) => (
@@ -120,6 +120,9 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                                     <div className="text-slate-500"><FaHeartBroken /></div>
                                                 ))
                                             }  
+                                            { heartsLost > 0 &&
+                                                <div className="absolute font-bold bottom-[90%] left-[90%] text-[1em] text-red-700">-{heartsLost}</div>
+                                            }
                                         </div>
 
                                     </div>

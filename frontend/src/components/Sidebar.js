@@ -32,12 +32,13 @@ export const Sidebar = (props) => {
 
     return (
         <div className="sidebar" ref={sidebarRef} style={{left: props.sidebarWidth+"px"}}>
-            <div className="flex flex-col">
-                <div className="flex place-content-center items-center w-full h-[50px]">
-                    <h1 className="text-lg">Random Games Online</h1>
-                    <IoMdClose className="closeButton hover:redGradientButton"
-                            onClick={closeSidebar}/>
-                </div>
+            <div className="flex place-content-center items-center w-full h-[50px]">
+                <h1 className="text-lg sticky">Random Games Online</h1>
+                <IoMdClose className="closeButton hover:redGradientButton"
+                        onClick={closeSidebar}/>
+            </div>
+            <div className="flex flex-col h-full overflow-y-auto">
+
                 <ul>
                   {(SidebarData.map((val, key) => {
                     const extraFormatting = val.isMain ? "pl-[30px] border-t-[0.1px]" : "pl-[80px]"

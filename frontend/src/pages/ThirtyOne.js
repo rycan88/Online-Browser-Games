@@ -102,6 +102,7 @@ export const ThirtyOne = ({roomCode}) => {
 
         socket.on('receive_discard_pile', (discardPile, id) => {
             if (id && socket.id === id) {return; }
+            console.log("discard_pile_got")
             setDiscardPile(discardPile);
         });
 

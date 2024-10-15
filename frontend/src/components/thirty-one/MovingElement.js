@@ -39,7 +39,8 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
         <div className={`fixed transition-all ease-out z-[50]`}
             style={{left: position ? position.left : startPosition.left, top: position ? position.top : startPosition.top, transitionDuration: `${transitionDuration}ms`}}
             onTransitionEnd={() => {
-                removeMovingElement(id)
+                removeMovingElement(id);
+                console.log("movingElementRemoved");
             }}
         >
             {element}

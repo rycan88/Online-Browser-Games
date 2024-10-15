@@ -24,15 +24,17 @@ const thirtyOneEvents = (io, socket, rooms) => {
         }
     });
 
-    socket.on("thirty_one_get_discard_pile", (roomCode) => {
+    socket.on("thirty_one_get_discard_pile", (roomCode, cardId) => {
         if (rooms[roomCode]) {
-            socket.emit('receive_discard_pile', rooms[roomCode].gameData.discardPile);
+            socket.emit('receive_discard_pile', rooms[roomCode].gameData.discardPile, cardId);
         }
     });
 
-    socket.on("thirty_one_get_own_cards", (roomCode) => {
+    socket.on("thirty_one_get_own_cards", (roomCode, cardId) => {
         if (rooms[roomCode]) {
-            rooms[roomCode].playersData[socket.userId] && !rooms[roomCode].gameData.shouldShowResults && socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards);
+            if (rooms[roomCode].playersData[socket.userId] && !rooms[roomCode].gameData.shouldShowResults) {
+                socket.emit('receive_own_cards', rooms[roomCode].playersData[socket.userId].cards, cardId);
+            }   
         }
     });
 

@@ -68,8 +68,11 @@ export const ThirtyOne = ({roomCode}) => {
         }
     }
 
-    const removeMovingElement = (id) => {
-        setArrayOfElements((prevCards) => prevCards.filter((card) => card.props.id !== id));
+    const removeMovingElement = (cardId) => { // cardId is the timestamp of when the movingCard was created
+        if (!cardId) {return; }
+        const timeDiff = Date.now() - cardId;
+        if (timeDiff < 100) { return; }
+        setArrayOfElements((prevCards) => prevCards.filter((card) => card.props.id !== cardId));
     }
 
     const addMovingElement = (element) => {
@@ -95,15 +98,15 @@ export const ThirtyOne = ({roomCode}) => {
     }, [landscapeMode]);
 
     useEffect(() => {
-        socket.on('receive_own_cards', (cardArray) => {
+        socket.on('receive_own_cards', (cardArray, cardId) => {
             setMyCards(cardArray);
+            removeMovingElement(cardId);
             setDataInitialized(true);
         });
 
-        socket.on('receive_discard_pile', (discardPile, id) => {
-            if (id && socket.id === id) {return; }
-            console.log("discard_pile_got", Date.now())
+        socket.on('receive_discard_pile', (discardPile, cardId) => {
             setDiscardPile(discardPile);
+            removeMovingElement(cardId);
         });
 
         socket.on("receive_turn", (turn) => {
@@ -178,12 +181,13 @@ export const ThirtyOne = ({roomCode}) => {
             const cardWidth = isMyTurn ? MY_CARD_WIDTH : MIDDLE_CARD_WIDTH;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
 
-            const element = <MovingElement id={Date.now()} 
+            const cardId = Date.now();
+            const element = <MovingElement id={cardId} 
                                             element={<CardBacking width={cardWidth}/>} 
                                             startPosition={getLastElementPosition(".thirtyOneDeck")}
                                             animationEndPosition={selfCardsPosition} 
                                             animationEndCall={() => {
-                                                socket.emit('thirty_one_get_own_cards', roomCode);
+                                                socket.emit('thirty_one_get_own_cards', roomCode, cardId);
                                                 !isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
                                             }}
                                             removeMovingElement={removeMovingElement}
@@ -199,15 +203,15 @@ export const ThirtyOne = ({roomCode}) => {
             const cardWidth = isMyTurn ? MY_CARD_WIDTH : MIDDLE_CARD_WIDTH;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
 
-            const element = <MovingElement id={Date.now()} 
+            const cardId = Date.now();
+            const element = <MovingElement id={cardId} 
                                             element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
                                             startPosition={getLastElementPosition(".thirtyOneDiscardPile")}
                                             animationEndPosition={selfCardsPosition} 
                                             animationEndCall={() => {
-                                                socket.emit('thirty_one_get_own_cards', roomCode);
+                                                socket.emit('thirty_one_get_own_cards', roomCode, cardId);
                                                 !isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
                                             }}
-                                            removeMovingElement={removeMovingElement}
                                             transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}
             />
             addMovingElement(element);
@@ -220,18 +224,15 @@ export const ThirtyOne = ({roomCode}) => {
             const cardWidth = MIDDLE_CARD_WIDTH;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
 
-            const element = <MovingElement id={Date.now()} 
+            const cardId = Date.now();
+            const element = <MovingElement id={cardId} 
                                             element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
                                             startPosition={selfCardsPosition}
                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                             animationEndCall={() => {
-                                                async function doStuff() {
-                                                    socket.emit('thirty_one_get_turn', roomCode);
-                                                    console.log("Before", Date.now());
-                                                    await socket.emit('thirty_one_get_discard_pile', roomCode);
-                                                    console.log("After", Date.now());
-                                                }
-                                                doStuff()
+                                                socket.emit('thirty_one_get_turn', roomCode);
+                                                socket.emit('thirty_one_get_discard_pile', roomCode, cardId);
+
                                             }}
                                             removeMovingElement={removeMovingElement}
                                             transitionDuration={DISCARD_DURATION}
@@ -372,12 +373,13 @@ export const ThirtyOne = ({roomCode}) => {
                             const cardWidth = MIDDLE_CARD_WIDTH;
             
                             const rect = e.target.getBoundingClientRect();
-                            const element = <MovingElement id={Date.now()} 
+                            const cardId = Date.now();
+                            const element = <MovingElement id={cardId} 
                                                             element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
                                                             startPosition={{left: rect.left, top: rect.top}}
                                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                                             animationEndCall={() => {
-                                                                socket.emit('thirty_one_get_discard_pile', roomCode);
+                                                                socket.emit('thirty_one_get_discard_pile', roomCode, cardId);
                                                             }}
                                                             removeMovingElement={removeMovingElement}
                                                             transitionDuration={DISCARD_DURATION}/>

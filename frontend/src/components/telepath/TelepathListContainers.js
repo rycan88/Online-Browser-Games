@@ -107,7 +107,6 @@ export const TelepathListContainers = (props) => {
     // Unsend word when we change the wordList after sent
     useEffect(() => {
         if (hasPickedWords && !shouldShowResults) {
-            console.log("unsend");
             unsendWords();
         }
     }, [myWords]);

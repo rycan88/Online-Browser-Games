@@ -42,7 +42,7 @@ export const TelepathTeamScores = (props) => {
             setMainUser(player1.nameData);
         }
     }
-    console.log(socket.userId, mainUser.userId)
+
     return (
         <div className={`teamScores ${showAdded && "hover:scoresSelected cursor-pointer"} ${(showAdded && player1.nameData.userId === mainUser.userId) ? "scoresSelected" : "bg-slate-900/30 border-slate-500/50"}`} 
                 onClick={clickAction}

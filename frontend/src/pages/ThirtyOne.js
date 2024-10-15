@@ -33,7 +33,7 @@ const NAVBAR_HEIGHT = 60;
 export const ThirtyOne = ({roomCode}) => {
     const MIDDLE_CARD_WIDTH = (window.innerHeight * 0.20) * (2/3);
     const MY_CARD_WIDTH = (window.innerHeight * 0.25) * (2/3);
-    const PICK_UP_DURATION = 400;
+    const PICK_UP_DURATION = 300;
     const DISCARD_DURATION = 600;
     
     const navigate = useNavigate();

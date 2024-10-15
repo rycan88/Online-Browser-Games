@@ -225,8 +225,13 @@ export const ThirtyOne = ({roomCode}) => {
                                             startPosition={selfCardsPosition}
                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                             animationEndCall={() => {
-                                                socket.emit('thirty_one_get_discard_pile', roomCode);
-                                                socket.emit('thirty_one_get_turn', roomCode);
+                                                async function doStuff() {
+                                                    socket.emit('thirty_one_get_turn', roomCode);
+                                                    console.log("Before", Date.now());
+                                                    await socket.emit('thirty_one_get_discard_pile', roomCode);
+                                                    console.log("After", Date.now());
+                                                }
+                                                doStuff()
                                             }}
                                             removeMovingElement={removeMovingElement}
                                             transitionDuration={DISCARD_DURATION}

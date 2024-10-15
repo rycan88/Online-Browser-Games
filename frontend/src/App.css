@@ -36,7 +36,7 @@
   }
 
   .myContainerCard {
-    @apply relative flex flex-col w-[calc(min(700px,80%))] h-[80%] mt-[6vh] justify-start items-center gap-[4px] pt-[5vh] px-[2vw] pb-[5vh] text-slate-200 bg-gradient-to-tr from-sky-950 to-sky-900 border-2 border-slate-400 rounded-xl shadow-xl;
+    @apply relative flex flex-col w-[calc(min(800px,80%))] h-[80%] mt-[6vh] justify-start items-center gap-[4px] pt-[5vh] px-[2vw] pb-[5vh] text-slate-200 bg-gradient-to-tr from-sky-950 to-sky-900 border-2 border-slate-400 rounded-xl shadow-xl;
   }
 
   .myContainerCardTitle {

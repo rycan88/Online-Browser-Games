@@ -6,6 +6,8 @@ import { TeamList } from "./TeamList";
 import { ToggleSwitch } from "../ToggleSwitch";
 import { PlayerList } from "./PlayerList";
 import { CopyLinkButton } from "../CopyLinkButton";
+import { InfoButton } from "../InfoButton";
+import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 
 const socket = getSocket();
 
@@ -77,7 +79,12 @@ export const Room = (props) => {
     }
 
     return (
-        <div className="lobbyPage entirePage place-content-center items-center">
+        <div className="lobbyPage entirePage justify-center items-center">
+            { gameName === "thirty_one" && 
+                <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
+                    <ThirtyOneRules />
+                </InfoButton>   
+            }
             <div className="lobbyBox">
                 { gameName === "telepath" &&
                     <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">

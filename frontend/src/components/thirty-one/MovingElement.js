@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { getPlayerCoords } from "../../utils";
 
 const NAVBAR_HEIGHT = 60;
-export const MovingElement = ({id, element, startPosition, animationEndPosition={left:0, top:0}, animationEndCall, transitionDuration=700}) => { // Id is important so this element can easily be tracked
+export const MovingElement = ({id, element, startPosition, animationEndPosition={left:0, top:0}, animationEndCall, removeMovingElement, transitionDuration=700}) => { // Id is important so this element can easily be tracked
     const [position, setPosition] = useState(null);
     const endCalled = useRef(false);
     const isUnmounted = useRef(false);
@@ -15,22 +15,15 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
         const endTimer = setTimeout(() => {
             if (animationEndCall && !endCalled.current) {
                 animationEndCall();
-                console.log("endTimer");
                 endCalled.current = true;
             }
  
         }, transitionDuration - 5);
 
-        const fallbackTimeout = setTimeout(() => {
-            if (!endCalled.current) {
-                endCalled.current = true;
-                animationEndCall();
-                console.log("fallbackTimeout");
-            }
-
-
-        }, transitionDuration);
-
+        const fallbackTimer = setTimeout(() => {
+            removeMovingElement(id);
+ 
+        }, transitionDuration + 100);
 
         return () => {
             clearTimeout(startTimer);
@@ -38,7 +31,6 @@ export const MovingElement = ({id, element, startPosition, animationEndPosition=
             if (isUnmounted.current && !endCalled.current) {
                 animationEndCall();
                 endCalled.current = true;
-                console.log("Destroyed");
             }
             isUnmounted.current = true;
         }    

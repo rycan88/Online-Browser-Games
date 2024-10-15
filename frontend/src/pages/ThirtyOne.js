@@ -67,12 +67,14 @@ export const ThirtyOne = ({roomCode}) => {
             setLandscapeMode(true);
         }
     }
-    console.log(arrayOfElements)
 
     const removeMovingElement = (cardId) => { // cardId is the timestamp of when the movingCard was created
         if (!cardId) {return; }
         const timeDiff = Date.now() - cardId;
-        if (process.env.NODE_ENV === 'production' && timeDiff < 70) { console.log("TOO SHORT", timeDiff); return; }
+        if (process.env.NODE_ENV === 'production' && timeDiff < 70) { 
+            console.log("TOO SHORT", timeDiff); 
+            return; 
+        }
         setArrayOfElements((prevCards) => prevCards.filter((card) => card.props.id !== cardId));
     }
 
@@ -213,6 +215,7 @@ export const ThirtyOne = ({roomCode}) => {
                                                 socket.emit('thirty_one_get_own_cards', roomCode, cardId);
                                                 !isMyTurn && socket.emit('thirty_one_get_turn', roomCode);
                                             }}
+                                            removeMovingElement={removeMovingElement}
                                             transitionDuration={isMyTurn ? PICK_UP_DURATION : DISCARD_DURATION}
             />
             addMovingElement(element);
@@ -231,9 +234,8 @@ export const ThirtyOne = ({roomCode}) => {
                                             startPosition={selfCardsPosition}
                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                             animationEndCall={() => {
-                                                socket.emit('thirty_one_get_turn', roomCode);
                                                 socket.emit('thirty_one_get_discard_pile', roomCode, cardId);
-
+                                                socket.emit('thirty_one_get_turn', roomCode);
                                             }}
                                             removeMovingElement={removeMovingElement}
                                             transitionDuration={DISCARD_DURATION}

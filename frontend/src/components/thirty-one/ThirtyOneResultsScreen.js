@@ -31,36 +31,33 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
 
     return (
         <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)] flex items-center justify-center text-slate-200 text-[2vh]">
-            <div className="absolute top-[2%] right-[2%]">
-                <InfoButton>
-                    <ThirtyOneRules />
-                </InfoButton>
-            
-            </div>
+            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
+                <ThirtyOneRules />
+            </InfoButton>   
             <div className="myContainerCard pb-[75px]">
                 <div className="myContainerCardTitle">
                     Results
                 </div>
                 
-                <div className={`flex w-[90%] px-[0.5vw] gap-2 items-center justify-center py-2`}>
+                <div className={`flex w-[95%] gap-[0.5vw] px-[2vw] items-center justify-center py-2`}>
                     <div className="flex w-[8%] items-center justify-center">
                         Ready Status
                     </div>
                     
-                    <div className="flex gap-2 w-[40%] items-center justify-center">
+                    <div className="flex gap-2 w-[45%] items-center justify-center">
 
-                        <div className="flex items-center justify-center w-[70%]">
+                        <div className="flex items-center justify-center w-[60%]">
                             Username
                         </div>
 
 
-                        <div className="w-[30%] items-center justify-start">
+                        <div className="w-[40%] items-center justify-start">
                             Lives
                         </div>
 
                     </div>
 
-                    <div className="flex w-[25%] items-center justify-center">
+                    <div className="flex w-[35%] items-center justify-center">
                         Cards
                     </div>
                     <div className="w-[10%]">
@@ -83,7 +80,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         return (
                             <>
                                 {breakPoint && <div className="w-full h-[0.25vh] -mx-[2vh] my-[1vh] bg-red-800"></div>}
-                                <div className={`myContainerCardInnerBox w-[90%] flex items-center justify-center gap-2 px-[0.5vw] py-[1vh] ${isOut && "text-slate-500"} ${isMyData ? (isOut ? "bg-yellow-500/20" : "bg-yellow-500/40") : (isOut ? "bg-sky-800/10" : "bg-sky-800/30")}`}>
+                                <div className={`myContainerCardInnerBox w-[95%] flex items-center justify-center gap-[0.5vw] px-[2vw] py-[1vh] ${isOut && "text-slate-500"} ${isMyData ? (isOut ? "bg-yellow-500/20" : "bg-yellow-500/40") : (isOut ? "bg-sky-800/10" : "bg-sky-800/30")}`}>
                                     <div className="flex w-[8%] justify-center"> 
                                         { (playerData.lives > 0 || playersAlive.length <= 1) ?
                                             <>
@@ -95,14 +92,14 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                         }    
                                     </div>    
                                     
-                                    <div className="flex gap-2 w-[40%] items-center justify-end">
-                                        <div className={`flex relative items-center justify-center w-[70%] ${isMyData && ""}`}>
+                                    <div className="flex gap-2 w-[45%] items-center justify-end">
+                                        <div className={`flex relative items-center justify-center w-[60%] overflow-x-auto`}>
                                             {playersAlive <= 1 && index === 0 && <div className="absolute bottom-[2vh] text-[4vh] animate-myBounce">👑</div>}
                                             {playerData.nameData.nickname}
                                         </div>
 
 
-                                        <div className="flex relative text-red-700 text-[0.8em] gap-[0.13vw] w-[30%] justify-center">
+                                        <div className="flex relative text-red-700 text-[1em] gap-[0.16vw] w-[40%] justify-center">
 
                                             {playerData.lives > 0 && 
                                                 [...Array(playerData.lives)].map((_, index) => (
@@ -126,7 +123,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                         </div>
 
                                     </div>
-                                    <div className="flex place-content-center gap-[0.5vw] w-[25%]">
+                                    <div className="flex place-content-center gap-[0.5vw] w-[35%]">
                                         { !isOut &&  
                                             playerData.cards.map((card) => {
                                                 return (

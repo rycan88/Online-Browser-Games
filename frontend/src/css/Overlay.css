@@ -4,7 +4,7 @@
 
 @layer base {
   .overlay {
-    @apply absolute w-full h-full z-10;
+    @apply absolute top-[0] left-[0] w-full h-full z-10;
   }
 
   .background {

@@ -3,6 +3,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 import '../../css/Telepath.css';
 import getSocket from "../../socket";
+import { useEffect, useState } from "react";
 
 const socket = getSocket();
 
@@ -25,6 +26,9 @@ export const TelepathTeamScores = (props) => {
     const addedScore = props.addedScore;
     const totalScore = props.totalScore;
 
+    const [displayedScore, setDisplayedScore] = useState(totalScore - addedScore);
+    const [startZBounceAnimation, setStartZBounceAnimation] = useState(false);
+
     let nickname2 = "";
     let secondReady = null;
     if (teamMode) {
@@ -42,6 +46,10 @@ export const TelepathTeamScores = (props) => {
             setMainUser(player1.nameData);
         }
     }
+
+    useEffect(() => {
+        setStartZBounceAnimation(false);
+    }, [])
 
     return (
         <div className={`teamScores ${showAdded && "hover:scoresSelected cursor-pointer"} ${(showAdded && player1.nameData.userId === mainUser.userId) ? "scoresSelected" : "bg-slate-900/30 border-slate-500/50"}`} 
@@ -63,10 +71,29 @@ export const TelepathTeamScores = (props) => {
                 <div className="scoreNumberContainer">
                     {showAdded && 
                         <h4 className="flex addedScore"> 
-                            {totalScore - addedScore} <span className="text-green-500">+{addedScore}</span>
+                            <span className="text-green-500"                                                     
+                                style={{
+                                    animation: `riseUpFrame 1000ms ease-out forwards`,
+                                }} 
+                                onAnimationEnd={ () => {
+                                    setDisplayedScore(totalScore);
+                                    setStartZBounceAnimation(true);
+                                }}
+                            >
+                                +{addedScore}
+                            </span>
                         </h4>
                     }
-                    <h2 className="score">{totalScore}</h2>
+                    <h2 className={`score`}
+                        style={{
+                            animation: (startZBounceAnimation && addedScore > 0) && `zBounceFrame 1000ms ease-in-out forwards`,
+                        }} 
+                        onAnimationEnd={ () => {
+                            setStartZBounceAnimation(false);
+                        }}
+                    >
+                        {displayedScore}
+                    </h2>
 
                 </div>
             </div>

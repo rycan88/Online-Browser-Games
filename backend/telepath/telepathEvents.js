@@ -7,6 +7,9 @@ const telepathEvents = (io, socket, rooms) => {
     socket.on("send_telepath_words", (roomCode, chosenWords) => {
         if (rooms[roomCode]) {
             const playersData = rooms[roomCode].playersData;
+
+            if (playersData[socket.userId].hasPickedWords) { return; }
+
             const teamMode = rooms[roomCode].teamMode;
             playersData[socket.userId].chosenWords = chosenWords; 
             playersData[socket.userId].hasPickedWords = true;
@@ -24,6 +27,9 @@ const telepathEvents = (io, socket, rooms) => {
     socket.on("unsend_telepath_words", (roomCode) => {
         if (rooms[roomCode]) {
             const playersData = rooms[roomCode].playersData;
+
+            if (!playersData[socket.userId].hasPickedWords) { return; }
+
             playersData[socket.userId].chosenWords = []; 
             playersData[socket.userId].hasPickedWords = false;
             io.to(roomCode).emit("receive_players_data", playersData);
@@ -34,6 +40,9 @@ const telepathEvents = (io, socket, rooms) => {
     socket.on("send_telepath_ready", (roomCode) => {
         if (rooms[roomCode]) {
             let playersData = rooms[roomCode].playersData;
+
+            if (playersData[socket.userId].isReady) { return; }
+
             playersData[socket.userId].isReady = true;
 
             if (!Object.values(playersData).find((data) => data.isReady === false)) {

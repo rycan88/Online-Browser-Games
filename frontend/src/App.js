@@ -88,15 +88,15 @@ function App() {
   }, []);
 
   return (
-    <div className="App scrollbar-hide">
+    <div className="App">
       <AppContext.Provider value={{ rooms, setRooms }}>
         <QueryClientProvider client={client}>
           <Router>
             <Navbar />
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/telepath/lobby" element={<Lobby game="telepath"/>} />
-              <Route path="/thirty_one/lobby" element={<Lobby game="thirty_one"/>} />
+              <Route path="/telepath/lobby" element={<Lobby gameName="telepath"/>} />
+              <Route path="/thirty_one/lobby" element={<Lobby gameName="thirty_one"/>} />
               {roomRoutes(rooms)}
               {gameRoutes(rooms)}
               <Route path="/games" element={<Games/>} />

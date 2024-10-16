@@ -52,21 +52,28 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
     // Pick up from deck
     socket.on("thirty_one_pick_up_deck_card", (roomCode) => {
-        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { return; }
+        if (!rooms[roomCode]) { return; }
         
         const deck = rooms[roomCode].gameData.deck;
-        if (deck.getCount() === 0 ||  rooms[roomCode].playersData[socket.userId].cards.length > 3) { return; }
+        const currentPlayers = rooms[roomCode].gameData.currentPlayers;
+        const playerTurn = rooms[roomCode].gameData.turn % currentPlayers.length;
+        if (deck.getCount() === 0 ||  rooms[roomCode].playersData[socket.userId].cards.length > 3 || playerTurn % 1 !== 0 || 
+            currentPlayers[playerTurn].nameData.userId !== socket.userId) { return; }
         rooms[roomCode].gameData.turn += 0.5;
         const newCard = deck.drawCard();
         rooms[roomCode].playersData[socket.userId].cards.push(newCard);
-        io.to(roomCode).emit('deck_pick_up', socket.id, rooms[roomCode].gameData.currentPlayers, rooms[roomCode].gameData.turn);
+        io.to(roomCode).emit('deck_pick_up', socket.id, currentPlayers, rooms[roomCode].gameData.turn);
     })
 
     // Pick up from discard pile
     socket.on("thirty_one_pick_up_discard_card", (roomCode) => {
-        if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { return; }
+        if (!rooms[roomCode]) { return; }
         const discardPile = rooms[roomCode].gameData.discardPile;
-        if (discardPile.length === 0 ||  rooms[roomCode].playersData[socket.userId].cards.length > 3) { return; }
+
+        const currentPlayers = rooms[roomCode].gameData.currentPlayers;
+        const playerTurn = rooms[roomCode].gameData.turn % currentPlayers.length;
+        if (discardPile.length === 0 || playerTurn % 1 !== 0 || currentPlayers[playerTurn].nameData.userId !== socket.userId) { return; }
+
         rooms[roomCode].gameData.turn += 0.5;
         const newCard = discardPile.pop();
   
@@ -77,6 +84,10 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
     socket.on("thirty_one_discard_card", (roomCode, discardedCard) => {
         if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 === 0) { return; }
+
+        const currentPlayers = rooms[roomCode].gameData.currentPlayers;
+        const playerTurn = rooms[roomCode].gameData.turn % currentPlayers.length;
+        if (currentPlayers[playerTurn - 0.5].nameData.userId !== socket.userId) {return; }
 
         const discardPile = rooms[roomCode].gameData.discardPile;
         discardPile.push(discardedCard);
@@ -106,9 +117,13 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
     socket.on("thirty_one_knock", (roomCode) => {
         if (!rooms[roomCode] || rooms[roomCode].gameData.turn % 1 !== 0) { return; }
-        const turn = rooms[roomCode].gameData.turn;
+
+        const currentPlayers = rooms[roomCode].gameData.currentPlayers;
+        const playerTurn = rooms[roomCode].gameData.turn % currentPlayers.length;
+        if (currentPlayers[playerTurn].nameData.userId !== socket.userId) {return; }
+
         const playerCount = rooms[roomCode].gameData.currentPlayers.length;
-        rooms[roomCode].gameData.roundEnd = turn + playerCount;
+        rooms[roomCode].gameData.roundEnd = rooms[roomCode].gameData.turn + playerCount;
         rooms[roomCode].gameData.turn += 1;
         rooms[roomCode].playersData[socket.userId].didKnock = true;
         io.to(roomCode).emit('receive_turn', rooms[roomCode].gameData.turn);

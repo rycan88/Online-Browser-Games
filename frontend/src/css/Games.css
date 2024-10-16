@@ -4,22 +4,14 @@
 
 @layer base {
   .gamesPage {
-    @apply z-[-20];
-  }
-
-  .gamesPage .gamesContainer {
-    @apply bg-cards z-[-20];
+    @apply bg-cards;
   }
 
   .gamesPage .cardFlexContainer {
     @apply w-full min-h-[calc(100vh-60px)];
   }
 
-  .gamesPage .gamesCard {
-    @apply flex flex-col items-center gap-4 w-[500px] max-w-[90%] h-[500px] sm:h-[700px] p-6 bg-gradient-to-bl from-slate-100 to-slate-400 rounded-3xl cursor-pointer z-[0];
-  }
-
   .gamesPage .logoContainer {
-    @apply h-[200px] sm:h-[300px] w-[200px] sm:w-[300px] shadow-xl rounded-3xl;
+    @apply h-[25vh] w-[25vh] shadow-xl rounded-[10%];
   }
 }

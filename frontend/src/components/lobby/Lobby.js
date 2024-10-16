@@ -6,12 +6,14 @@ import getSocket from "../../socket";
 import { TelepathRules } from "../telepath/TelepathRules";
 
 import { AppContext } from "../../App";
+import { InfoButton } from "../InfoButton";
+import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 
-const Rules = {"telepath": <TelepathRules />, "thirty_one": "Get 31"}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
 const Titles = {"telepath": "Telepath", "thirty_one": "31"}
 
 const socket = getSocket();
-export const Lobby = ({game}) => {
+export const Lobby = ({gameName}) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -64,9 +66,13 @@ export const Lobby = ({game}) => {
 
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
+            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
+                {Rules[gameName]}
+            </InfoButton>   
+
             <div className="lobbyBox">
-                <h1 className="gameTitle">{Titles[game]}</h1>
-                <p className="rules">{Rules[game]}</p>
+                <h1 className="gameTitle">{Titles[gameName]}</h1>
+                <p className="rules"></p>
                 <input type="text" 
                         value={typedCode}
                         placeholder="Enter 4-letter code..."
@@ -82,7 +88,7 @@ export const Lobby = ({game}) => {
                         while (roomArray.includes(roomCode)) {
                             roomCode = generateRoomCode();
                         }
-                        createRoom(game, roomCode);
+                        createRoom(gameName, roomCode);
                     }}>
                         <h2>Create</h2>
                     </button>

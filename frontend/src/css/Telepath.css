@@ -43,7 +43,7 @@
   }
 
   .telepathPage .addedScore {
-    @apply absolute left-[12px] md:left-[16px] top-[6px] h-full text-xs sm:text-sm lg:text-base;
+    @apply absolute right-[-10%] top-[6px] h-full text-xs sm:text-sm lg:text-base;
   }
 
   .telepathPage .score {
@@ -100,7 +100,7 @@
   }
 
   .telepathPage .submitWords {
-    @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] place-content-evenly px-4 text-xl sm:text-2xl rounded-xl sm:rounded-3xl;
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-6 h-[10%] w-[50%] max-h-[80px] max-w-[200px] place-content-evenly px-4 text-xl sm:text-2xl rounded-lg sm:rounded-xl;
   }
   .telepathPage .wordPoints {
     @apply text-base sm:text-lg lg:text-xl text-right;

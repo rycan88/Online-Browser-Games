@@ -8,6 +8,8 @@ import { TelepathTeamScoresDisplay } from "../components/telepath/TelepathTeamSc
 import { TelepathListContainers } from "../components/telepath/TelepathListContainers";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../components/LoadingScreen";
+import { TelepathRules } from "../components/telepath/TelepathRules";
+import { InfoButton } from "../components/InfoButton";
 
 // TODO
 // QoL changes
@@ -72,6 +74,9 @@ export const Telepath = (props) => {
 
     return (
         <div className="telepathPage entirePage">
+            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
+                <TelepathRules />
+            </InfoButton>   
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="containerHolder">
                 <div className="scoreDisplayContainer scrollbar-hide">
@@ -93,7 +98,7 @@ export const Telepath = (props) => {
                     />
                 </div>
             </div>
-            <div className="entirePage bg-black/50 z-[-10]"></div>
+            <div className="entirePage bg-black/70 z-[-10]"></div>
         </div>
 
     );

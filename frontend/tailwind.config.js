@@ -50,14 +50,19 @@ module.exports = {
           '100%': { color: colors.slate[500], transform: 'scale(1)'}, 
         },
         riseUpFrame: {
-          '0%': { transform: 'translateY(0)'},
-          '100%': { transform: 'translateY(-100%)'},
+          '0%': { transform: 'translateY(80%) scale(0.5)', opacity: 0 },
+          '100%': { transform: 'translateY(0) scale(1)', opacity: 1 },
+        },
+        zBounceFrame: {
+          '0%, 100%': { transform: 'scale(1)'},
+          '50%': { transform: 'scale(1.3)'},
         },
       },
       animation: {
         myBounce: 'bounceCard 2s infinite',
         loseHeart: 'loseHeartFrame',
-        riseUp: 'riseUpFrame 1s ease-in-out forwards'
+        riseUp: 'riseUpFrame',
+        zBounce: 'zBounceFrame',
       },
 
     },

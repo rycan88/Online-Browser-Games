@@ -93,13 +93,13 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                     </div>    
                                     
                                     <div className="flex gap-2 w-[45%] items-center justify-end">
-                                        <div className={`flex relative items-center justify-center w-[60%] overflow-x-auto`}>
+                                        <div className={`flex relative items-center justify-center text-[max(1.1vw,1em)] w-[60%] overflow-x-auto`}>
                                             {playersAlive <= 1 && index === 0 && <div className="absolute bottom-[2vh] text-[4vh] animate-myBounce">👑</div>}
                                             {playerData.nameData.nickname}
                                         </div>
 
 
-                                        <div className="flex relative text-red-700 text-[1em] gap-[0.16vw] w-[40%] justify-center">
+                                        <div className="flex relative text-red-700 text-[max(1.15vw,1em)] gap-[0.2vw] w-[40%] justify-center">
 
                                             {playerData.lives > 0 && 
                                                 [...Array(playerData.lives)].map((_, index) => (
@@ -109,7 +109,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
 
                                             {
                                                 [...Array(heartsLost)].map((_, index) => (
-                                                    <AnimatedBreakingHeart />
+                                                    <AnimatedBreakingHeart animationDuration={1250}/>
                                                 )) 
                                             }  
                                             {
@@ -118,7 +118,13 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                                 ))
                                             }  
                                             { heartsLost > 0 &&
-                                                <div className="animate-riseUp 1s forwards absolute font-bold left-[90%] text-[1em] text-red-700 ">-{heartsLost}</div>
+                                                <div className="absolute animate-riseUp font-bold top-[-95%] left-[90%] text-[1em] text-red-700 "
+                                                    style={{
+                                                        animation: `riseUpFrame 1500ms ease-out forwards`,
+                                                    }}
+                                                >
+                                                    -{heartsLost}
+                                                </div>
                                             }
                                         </div>
 

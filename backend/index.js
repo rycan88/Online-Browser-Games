@@ -134,6 +134,10 @@ io.on("connection", (socket) => {
                 io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
             } 
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
+
+            if (rooms[roomCode].gameStarted) {
+                socket.emit('game_started')
+            }
         }
     });
 

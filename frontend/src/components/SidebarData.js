@@ -39,7 +39,7 @@ export const SidebarData = [
     {
         title: "RPS Melee",
         icon: <FaHandRock />,
-        link: "/rock_paper_scissors_melee",
+        link: "/rock_paper_scissors_melee/lobby",
         isMain: false,
     },
     {

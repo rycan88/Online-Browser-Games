@@ -251,7 +251,7 @@ export const ThirtyOne = ({roomCode}) => {
     }, [arrayOfElements, roomCode, currentPlayers, turn]);
 
     if (!dataInitialized || currentPlayers.length === 0 ) {
-        return <LoadingScreen roomCode={roomCode} playersData={playersData}/>;
+        return <LoadingScreen />;
     }
 
 

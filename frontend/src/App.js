@@ -21,6 +21,7 @@ import { Games } from './pages/Games';
 import { enterFullScreen } from './utils';
 import { ThirtyOne } from './pages/ThirtyOne';
 import LoadingScreen from './components/LoadingScreen';
+import { RPSMelee } from './pages/RPSMelee';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -35,6 +36,8 @@ function App() {
       return <Telepath roomCode={roomCode} />
     } else if (gameName === "thirty_one") {
       return <ThirtyOne roomCode={roomCode} />
+    } else if (gameName === "rock_paper_scissors_melee") {
+      return <RPSMelee roomCode={roomCode}/>
     }
     return <></>
   }
@@ -97,8 +100,10 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/telepath/lobby" element={<Lobby gameName="telepath"/>} />
               <Route path="/thirty_one/lobby" element={<Lobby gameName="thirty_one"/>} />
+              <Route path="/rock_paper_scissors_melee/lobby" element={<Lobby gameName="rock_paper_scissors_melee"/>} />
               {roomRoutes(rooms)}
               {gameRoutes(rooms)}
+              <Route path="/rock_paper_scissors_melee" element={<RPSMelee/>} />
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />

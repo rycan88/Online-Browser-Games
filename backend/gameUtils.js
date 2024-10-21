@@ -3,6 +3,7 @@ const { thirtyOnePlayerData } = require("./thirty-one/thirtyOnePlayerData");
 const telepathHelper = require("./telepath/telepathHelper");
 const { Deck } = require("./cards/Deck");
 const { getCurrentPlayers } = require("./thirty-one/thirtyOneHelper");
+const { rpsMeleePlayerData } = require("./rps-melee/rpsMeleePlayerData");
 
 const setUpPlayerData = (rooms, roomCode) => {
     const gameName = rooms[roomCode].gameName;
@@ -44,6 +45,20 @@ const setUpPlayerData = (rooms, roomCode) => {
         })
         
         rooms[roomCode].playersData = playersData;         
+    } else if (gameName === "rock_paper_scissors_melee") {
+        const players = rooms[roomCode].players;
+
+        if (players.length !== 2) { 
+            console.log("Shouldn't be able to start");
+            return; 
+        }
+
+        const playersData = {}
+
+        playersData[players[0].userId] = rpsMeleePlayerData(players[0], players[1]); 
+        playersData[players[1].userId] = rpsMeleePlayerData(players[1], players[0]);                   
+
+        rooms[roomCode].playersData = playersData;      
     }
 }
 
@@ -67,6 +82,11 @@ const setUpGameData = (rooms, roomCode) => {
 
             const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
             rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
+        } else if (gameName === "rock_paper_scissors_melee") {
+            const maxPoints = rooms[roomCode].gameData.maxPoints ?? 4;
+            const roundDuration = rooms[roomCode].gameData.roundDuration ?? 600;
+
+            rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration};            
         }
     }
 }

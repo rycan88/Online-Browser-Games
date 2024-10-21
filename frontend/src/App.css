@@ -46,6 +46,14 @@
   .myContainerCardInnerBox {
     @apply bg-sky-800/30 shadow-xl rounded-lg border-[1px] border-sky-700;
   }
+
+  .myContainerCardCenterScrollBox {
+    @apply flex flex-col h-[70%] overflow-y-auto;
+  }
+
+  .myContainerCardBottomButton {
+    @apply p-2 absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[clamp(100px,25%,200px)] h-[clamp(50px,12%,100px)] rounded-lg text-[2vh];
+  }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

@@ -36,6 +36,7 @@ module.exports = {
         'info': "url(../images/info.svg)",
         'hamburger': "url(../images/hamburger-icon.svg)",
         'cards': "url(../images/cards-bg.jpg)",
+        'temple': "url(../images/temple-bg.png)",
         'poker-gradient': 'radial-gradient(circle at center, #006400, #013220)',
       },
       keyframes: {
@@ -57,12 +58,17 @@ module.exports = {
           '0%, 100%': { transform: 'scale(1)'},
           '50%': { transform: 'scale(1.3)'},
         },
+        fadeOutFrame: {
+          '0%, 50%': { opacity: 1 },
+          '100%': { opacity: 0 },          
+        }
       },
       animation: {
         myBounce: 'bounceCard 2s infinite',
         loseHeart: 'loseHeartFrame',
         riseUp: 'riseUpFrame',
         zBounce: 'zBounceFrame',
+        fadeOut: 'fadeOutFrame',
       },
 
     },

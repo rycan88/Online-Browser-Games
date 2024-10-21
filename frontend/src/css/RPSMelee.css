@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .RPSMeleePage {
+    @apply bg-temple relative flex flex-col items-center;
+  }
+
+  .RPSMeleePage .fightArea {
+    @apply flex justify-center items-center h-[30%] w-[12vh] text-[12vh];
+  }
+
+  .RPSMeleePage .optionButton {
+    @apply relative flex justify-center items-center text-[4vh] w-[10vh] h-[10vh] rounded-full shadow-2xl border-[2px] border-slate-200/80;
+  }
+}

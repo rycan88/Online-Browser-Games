@@ -1,8 +1,11 @@
 import { BsInfoCircleFill } from "react-icons/bs";
 import { Overlay } from "./Overlay";
 import { useState } from "react";
+import { FaGear } from "react-icons/fa6";
 
-export const InfoButton = ({buttonStyle, children}) => {
+const buttonIcon = {"info": <BsInfoCircleFill />, "settings": <FaGear className="text-slate-400"/>}
+
+export const InfoButton = ({buttonStyle, buttonType="info", children}) => {
     const [isOpen, setIsOpen] = useState(false)
 
     const toggleOverlay = () => {
@@ -16,7 +19,7 @@ export const InfoButton = ({buttonStyle, children}) => {
                     toggleOverlay();
                 }}
             >
-                <BsInfoCircleFill />
+                {buttonIcon[buttonType]}
             </div>
             <Overlay isOpen={isOpen} onClose={toggleOverlay}>
                 {children}

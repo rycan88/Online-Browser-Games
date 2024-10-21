@@ -1,5 +1,5 @@
 import { MdHome } from "react-icons/md";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaHandRock, FaInfoCircle } from "react-icons/fa";
 import { IoLogoGameControllerB } from "react-icons/io";
 import { IoIosColorPalette } from "react-icons/io";
 import { GiBrain } from "react-icons/gi";
@@ -34,6 +34,12 @@ export const SidebarData = [
         title: "31",
         icon: <GiCardAceSpades />,
         link: "/thirty_one/lobby",
+        isMain: false,
+    },
+    {
+        title: "RPS Melee",
+        icon: <FaHandRock />,
+        link: "/rock_paper_scissors_melee/lobby",
         isMain: false,
     },
     {

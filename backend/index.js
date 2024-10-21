@@ -42,11 +42,12 @@ const { Deck } = require("./cards/Deck");
 const { setUpPlayerData, setUpGameData } = require("./gameUtils");
 const { telepathEvents } = require("./telepath/telepathEvents");
 const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
+const { rpsMeleeEvents } = require("./rps-melee/rpsMeleeEvents");
 
 // Lobby Rooms
 const rooms = {};
 const teamGames = ["telepath"];
-const gamePlayerLimits = {"telepath": 100, "thirty_one": 8};
+const gamePlayerLimits = {"telepath": 100, "thirty_one": 8, "rock_paper_scissors_melee": 2};
 const deleteTimers = {};
 // Our socket has a socketId, userId, and nickname
 // socketId changes per tab, while userId changes per browser
@@ -111,6 +112,10 @@ io.on("connection", (socket) => {
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         } 
         socket.emit('update_players', rooms[roomCode].players);
+
+        if (gameName === "rock_paper_scissors_melee") {
+            rooms[roomCode].gameData = {maxPoints: 5, roundDuration: 1000};   
+        }
       });
     
     socket.on('join_room', (roomCode) => {
@@ -219,6 +224,7 @@ io.on("connection", (socket) => {
 
     telepathEvents(io, socket, rooms);
     thirtyOneEvents(io, socket, rooms);
+    rpsMeleeEvents(io, socket, rooms);
 
 })
 

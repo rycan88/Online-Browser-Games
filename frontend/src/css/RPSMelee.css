@@ -8,7 +8,7 @@
   }
 
   .RPSMeleePage .fightArea {
-    @apply flex justify-center items-center h-[30%] w-[50%] text-[12vh];
+    @apply flex justify-center items-center h-[30%] w-[12vh] text-[12vh];
   }
 
   .RPSMeleePage .optionButton {

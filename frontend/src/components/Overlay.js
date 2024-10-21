@@ -15,15 +15,17 @@ export function Overlay({ isOpen, onClose, children }) {
                                 }
                             }
                         }}>
-                        <div className="absolute top-4 right-4 text-white text-[2vw]"
-                            onClick={(e) => {
-                                if (onClose) {
-                                    onClose();
-                                }
-                            }}
-                        >
-                            <IoMdClose />
-                        </div>
+                        {   onClose && 
+                            <div className="absolute top-4 right-4 text-white text-[2vw]"
+                                onClick={(e) => {
+                                    if (onClose) {
+                                        onClose();
+                                    }
+                                }}
+                            >
+                                <IoMdClose />
+                            </div>
+                        }
                         <div className="overlayContainer">
                             {children}
                         </div>

@@ -58,12 +58,17 @@ module.exports = {
           '0%, 100%': { transform: 'scale(1)'},
           '50%': { transform: 'scale(1.3)'},
         },
+        fadeOutFrame: {
+          '0%, 50%': { opacity: 1 },
+          '100%': { opacity: 0 },          
+        }
       },
       animation: {
         myBounce: 'bounceCard 2s infinite',
         loseHeart: 'loseHeartFrame',
         riseUp: 'riseUpFrame',
         zBounce: 'zBounceFrame',
+        fadeOut: 'fadeOutFrame',
       },
 
     },

@@ -1,12 +1,17 @@
-import { FaHandPaper, FaHandRock, FaHandScissors } from "react-icons/fa";
+import { FaCheck} from "react-icons/fa";
 import "../css/RPSMelee.css";
 import { RPSMeleeOptionButton } from "../components/rps-melee/RPSMeleeOptionButton";
 import { RPSMeleeTimeBar } from "../components/rps-melee/RPSMeleeTimeBar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import getSocket from "../socket";
 import LoadingScreen from "../components/LoadingScreen";
+import { IoMdClose } from "react-icons/io";
+import { GoDash } from "react-icons/go";
+import { Overlay } from "../components/Overlay";
+import { RPSMeleeReadyOverlay } from "../components/rps-melee/RPSMeleeReadyOverlay";
+import { RPSMeleeResults } from "../components/rps-melee/RPSMeleeResults";
 
-const icons = {"rock": <div>✊</div>, "paper": <div className="rotate-180">📃</div>, "scissors": <div className="rotate-180">✂️</div>}
+const icons = {"rock": <div>✊</div>, "paper": <div>📃</div>, "scissors": <div>✂️</div>}
 
 const socket = getSocket();
 
@@ -16,15 +21,19 @@ export const RPSMelee = ({roomCode}) => {
     const [myData, setMyData] = useState([]);
     const [opponentData, setOpponentData] = useState([]);
     const [roundStartTime, setRoundStartTime] = useState(null);
-    const [roundInterval, setRoundInterval] = useState(null);
-    const [isRoundActive, setIsRoundActive] = useState(false);
+    const [roundDuration, setroundDuration] = useState(null);
     const [timeBarPercent, setTimeBarPercent] = useState(100);
+    const [gameInProgress, setGameInProgress] = useState(false);
+    const [roundInProgress, setRoundInProgress] = useState(false);
+    const [countDown, setCountDown] = useState(0);
+
+    const [showAnimation, setShowAnimation] = useState(null);
 
     useEffect(() => {    
         socket.on('receive_players_data', (playersData) => {
             const playersList = Object.values(playersData);
 
-            if (playersList.length !== 2) { console.log("WHAT"); return; }
+            if (playersList.length !== 2) { return; }
 
             const myData = playersData[socket.userId];
             const opponentData = playersData[myData.opponent.userId];
@@ -32,43 +41,67 @@ export const RPSMelee = ({roomCode}) => {
             setMyData(myData);
             setOpponentData(opponentData);
             setDataInitialized(true);
-            console.log("HI")
         });
 
-        socket.on('round_started', (roundStartTime, roundInterval) => {
-            setRoundInterval(roundInterval);
-            setIsRoundActive(true);
+        socket.on('receive_game_data', (gameData) => {
+            setGameInProgress(gameData.gameInProgress);
+            setRoundInProgress(gameData.roundInProgress);
+            setroundDuration(gameData.roundDuration);
+        });
+        
+        socket.on('round_started', (roundStartTime) => {
             setRoundStartTime(roundStartTime);
             setTimeBarPercent(100);
         });
 
         socket.on('round_ended', () => {
-            setIsRoundActive(false);
+            setShowAnimation(true);
+            setTimeout(() => {
+                setShowAnimation(false);
+            }, 500);
+
             setRoundStartTime(null);
             setTimeBarPercent(0);
         });
-        
-        /*
-        socket.on('receive_game_data', (gameData) => {
-            setGameData(gameData);
-        });
-        */
 
         socket.emit('join_room', roomCode);
         socket.emit('get_all_rps_melee_data', roomCode);
 
         return () => {
-            socket.off('receive_own_cards');
+            socket.off('receive_players_data');
+            socket.off('receive_game_data');
             socket.off('round_started');
+            socket.off('round_ended');
         }
     }, []);
 
     useEffect(() => {
+        socket.on('start_count_down', () => {
+            setTimeBarPercent(100);
+            setCountDown(3);
+
+            const intervalId = setInterval(() => {
+                setCountDown((previous) => {
+                    if (previous <= 0) {
+                        clearInterval(intervalId);
+                    }
+                    return previous - 1
+                });
+            }, 1000);
+
+        });
+
+        return () => {
+            socket.off('start_count_down');
+        }
+    }, [])
+
+    useEffect(() => {
         let intervalId;
-        if (isRoundActive && roundStartTime && roundInterval) {
+        if (roundInProgress && roundStartTime && roundDuration) {
             intervalId = setInterval(() => {
-                const timeDiff = Math.max((roundStartTime + roundInterval) - Date.now(), 0);
-                const percent = timeDiff * 100 / roundInterval;
+                const timeDiff = Math.max((roundStartTime + roundDuration) - Date.now(), 0);
+                const percent = timeDiff * 100 / roundDuration;
                 setTimeBarPercent(percent);
             }, 20);
 
@@ -77,16 +110,42 @@ export const RPSMelee = ({roomCode}) => {
         return () => {
             clearInterval(intervalId);
         };
-    }, [isRoundActive, roundStartTime, roundInterval]);
+    }, [roundInProgress, roundStartTime, roundDuration]);
 
     if (!dataInitialized) {
         return <LoadingScreen />;
     }
 
+
     const myChoice = icons[myData.choice];
+    
+    if (!gameInProgress && myData.choiceHistory.length > 0 ) {
+        return <RPSMeleeResults myData={myData} opponentData={opponentData} isReady={myData.isReady} roomCode={roomCode}/>
+    }
+
+    let didWin = null;
+    if (myData.choiceHistory.length > 0) {
+        didWin = myData.choiceHistory.at(-1).didWin;
+    }
 
     return (
         <div className="RPSMeleePage entirePage select-none z-[0] text-slate-400">
+            { !gameInProgress && myData.choiceHistory.length === 0 &&
+                <>
+                    <RPSMeleeReadyOverlay roomCode={roomCode} isReady={myData.isReady} />
+                </>
+
+            }
+
+            { countDown > 0 &&
+                <Overlay isOpen={true}>
+                    <div className="text-slate-200 text-[30vh]">
+                        {countDown}
+                    </div>
+                </Overlay>
+            }
+
+
             <div className="absolute flex flex-col gap-[2vh] justify-center items-center left-[0] h-full w-[30%] text-white text-[clamp(12px,3vh,24px)]">
                 <>
                     <div>{opponentData.nameData.nickname}</div> 
@@ -101,11 +160,27 @@ export const RPSMelee = ({roomCode}) => {
                 </>
 
             </div>
-            <div className="fightArea rotate-180">
+
+
+
+            <div className="fightArea">
                 { icons[opponentData.choice] ?? <div>❔</div> }
             </div>
-            <div className="fightArea ">
+            <div className="fightArea flex relative">
                 { myChoice ?? <div>❔</div>}
+                { showAnimation &&
+                <div className="absolute left-[150%] text-[12vh] animate-fadeOut" style={{animation: "fadeOutFrame 500ms ease-out forwards"}}>
+                    { didWin ?
+                        <FaCheck className="text-green-500"/>
+                    :
+                        didWin === false ?
+                            <IoMdClose className="text-red-500"/>
+                        :
+                            <GoDash/>
+
+                    }
+                </div>
+            }
             </div>
             <div className="buttonChoices flex flex-col h-[40%] w-full py-[0.5vh]">
                 <div className="flex h-[50%] justify-center items-end">

@@ -9,6 +9,7 @@ import { CopyLinkButton } from "../CopyLinkButton";
 import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { TelepathRules } from "../telepath/TelepathRules";
+import { RPSMeleeSettings } from "../rps-melee/RPSMeleeSettings";
 
 const socket = getSocket();
 
@@ -83,7 +84,12 @@ export const Room = (props) => {
         <div className="lobbyPage entirePage justify-center items-center">
             <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
                 {Rules[gameName]}
-            </InfoButton>   
+            </InfoButton>
+            { gameName === "rock_paper_scissors_melee" &&
+                <InfoButton buttonStyle="absolute top-[2%] right-[4.5%]" buttonType="settings">
+                    <RPSMeleeSettings roomCode={roomCode}/>
+                </InfoButton>  
+            } 
             <div className="lobbyBox">
                 { gameName === "telepath" &&
                     <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">

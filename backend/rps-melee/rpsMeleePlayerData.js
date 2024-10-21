@@ -1,10 +1,12 @@
-const rpsMeleePlayerData = (nameData, opponent) => {    
+const rpsMeleePlayerData = (nameData, opponent, score=0, choiceHistory=[]) => {    
     return {
         nameData: nameData,
-        score: 0,
+        score: score,
         choice: null,
         isReady: false,
         opponent: opponent,
+        didWin: null,
+        choiceHistory: choiceHistory,
     }
 }
 

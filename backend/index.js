@@ -112,6 +112,10 @@ io.on("connection", (socket) => {
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         } 
         socket.emit('update_players', rooms[roomCode].players);
+
+        if (gameName === "rock_paper_scissors_melee") {
+            rooms[roomCode].gameData = {maxPoints: 5, roundDuration: 1000};   
+        }
       });
     
     socket.on('join_room', (roomCode) => {

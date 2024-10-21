@@ -73,7 +73,8 @@ export const Lobby = ({gameName}) => {
             <div className="lobbyBox">
                 <h1 className="gameTitle">{Titles[gameName]}</h1>
                 <p className="rules"></p>
-                <input type="text" 
+                <input className="lobbyInput"
+                        type="text" 
                         value={typedCode}
                         placeholder="Enter 4-letter code..."
                         onChange={ handleTextChange } 

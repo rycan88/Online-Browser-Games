@@ -83,7 +83,10 @@ const setUpGameData = (rooms, roomCode) => {
             const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
             rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
         } else if (gameName === "rock_paper_scissors_melee") {
-            rooms[roomCode].gameData = {shouldShowResults: false, currentRound: 0, roundLimit: 5, roundInterval: 2000};            
+            const maxPoints = rooms[roomCode].gameData.maxPoints ?? 4;
+            const roundDuration = rooms[roomCode].gameData.roundDuration ?? 600;
+
+            rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration};            
         }
     }
 }

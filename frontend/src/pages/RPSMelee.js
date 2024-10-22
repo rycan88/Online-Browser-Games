@@ -11,7 +11,7 @@ import { Overlay } from "../components/Overlay";
 import { RPSMeleeReadyOverlay } from "../components/rps-melee/RPSMeleeReadyOverlay";
 import { RPSMeleeResults } from "../components/rps-melee/RPSMeleeResults";
 
-const icons = {"rock": <div>✊</div>, "paper": <div>📃</div>, "scissors": <div>✂️</div>}
+const icons = {"rock": <div>✊</div>, "paper": <div>📃</div>, "scissors": <div>✂️</div>, "gun": <div>🔫</div>, "reflector": <div>🛡️</div>}
 
 const socket = getSocket();
 
@@ -21,10 +21,11 @@ export const RPSMelee = ({roomCode}) => {
     const [myData, setMyData] = useState([]);
     const [opponentData, setOpponentData] = useState([]);
     const [roundStartTime, setRoundStartTime] = useState(null);
-    const [roundDuration, setroundDuration] = useState(null);
+    const [roundDuration, setRoundDuration] = useState(null);
     const [timeBarPercent, setTimeBarPercent] = useState(100);
     const [gameInProgress, setGameInProgress] = useState(false);
     const [roundInProgress, setRoundInProgress] = useState(false);
+    const [withGun, setWithGun] = useState(true);
     const [countDown, setCountDown] = useState(0);
 
     const [showAnimation, setShowAnimation] = useState(null);
@@ -46,7 +47,8 @@ export const RPSMelee = ({roomCode}) => {
         socket.on('receive_game_data', (gameData) => {
             setGameInProgress(gameData.gameInProgress);
             setRoundInProgress(gameData.roundInProgress);
-            setroundDuration(gameData.roundDuration);
+            setRoundDuration(gameData.roundDuration);
+            setWithGun(gameData.withGun);
         });
         
         socket.on('round_started', (roundStartTime) => {
@@ -146,7 +148,7 @@ export const RPSMelee = ({roomCode}) => {
             }
 
 
-            <div className="absolute flex flex-col gap-[2vh] justify-center items-center left-[0] h-full w-[30%] text-white text-[clamp(12px,3vh,24px)]">
+            <div className="absolute flex flex-col gap-[2vh] justify-center items-center left-[0] h-full w-[30%] text-white text-[clamp(12px,2vh,24px)]">
                 <>
                     <div>{opponentData.nameData.nickname}</div> 
                     <div className="text-[1.5em]">{opponentData.score}</div>
@@ -183,10 +185,18 @@ export const RPSMelee = ({roomCode}) => {
             }
             </div>
             <div className="buttonChoices flex flex-col h-[40%] w-full py-[0.5vh]">
-                <div className="flex h-[50%] justify-center items-end">
+                <div className="flex h-[50%] gap-[1%] justify-center items-end">
+                    { withGun &&
+                        <RPSMeleeOptionButton roomCode={roomCode} type={"gun"} icon={icons["gun"]} direction={"UpLeft"} isDisabled={Boolean(myChoice)}/>
+                    }
+
                     <RPSMeleeOptionButton roomCode={roomCode} type={"rock"} icon={icons["rock"]} direction={"Up"} isDisabled={Boolean(myChoice)}/>
+                    
+                    { withGun &&
+                        <RPSMeleeOptionButton roomCode={roomCode} type={"reflector"} icon={icons["reflector"]} direction={"UpRight"} isDisabled={Boolean(myChoice)}/>
+                    }
                 </div>
-                <div className="flex gap-[1.5%] h-[50%] justify-center">
+                <div className="flex gap-[1%] h-[50%] justify-center">
                     <RPSMeleeOptionButton roomCode={roomCode} type={"paper"} icon={icons["paper"]} direction={"Left"} isDisabled={Boolean(myChoice)}/>
                     <RPSMeleeOptionButton roomCode={roomCode} type={"scissors"} icon={icons["scissors"]} direction={"Right"} isDisabled={Boolean(myChoice)}/>                
                 </div>               

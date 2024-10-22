@@ -12,14 +12,15 @@ const rpsMeleeEvents = (io, socket, rooms) => {
         if (!rooms[roomCode]) { return; }
         const roundDuration = rooms[roomCode].gameData.roundDuration;
         const maxPoints = rooms[roomCode].gameData.maxPoints;
-        socket.emit('receive_settings_data', {roundDuration: roundDuration, maxPoints: maxPoints});
+        const withGun = rooms[roomCode].gameData.withGun;
+        socket.emit('receive_settings_data', {roundDuration: roundDuration, maxPoints: maxPoints, withGun: withGun});
     });
 
     socket.on("send_rps_melee_settings_data", (roomCode, settingsData) => {
-        console.log("settingsData", settingsData);
         if (!rooms[roomCode] || !settingsData) { return; }
         const roundDuration = settingsData.roundDuration;
         const maxPoints = settingsData.maxPoints;
+        const withGun = settingsData.withGun;
         
         if (roundDuration) {
             rooms[roomCode].gameData.roundDuration = roundDuration; 
@@ -29,7 +30,11 @@ const rpsMeleeEvents = (io, socket, rooms) => {
             rooms[roomCode].gameData.maxPoints = maxPoints; 
         }
 
-        io.to(roomCode).emit('receive_settings_data', {roundDuration: roundDuration, maxPoints: maxPoints});
+        if (withGun !== null) {
+            rooms[roomCode].gameData.withGun = withGun; 
+        }
+
+        io.to(roomCode).emit('receive_settings_data', {roundDuration: roundDuration, maxPoints: maxPoints, withGun: withGun});
     });
 
     socket.on("rps_melee_ready", (roomCode) => {
@@ -60,6 +65,8 @@ const rpsMeleeEvents = (io, socket, rooms) => {
 
     socket.on("rps_melee_choose", (roomCode, choice) => {
         if (!rooms[roomCode]) { return; }
+        if (!rooms[roomCode].gameData.withGun && ["gun", "reflector"].includes(choice)) { return; }
+
         const playersData = rooms[roomCode].playersData;
         if (playersData[socket.userId].choice || !rooms[roomCode].gameData.roundInProgress) { return; }
 
@@ -115,7 +122,7 @@ const startRound = (io, socket, rooms, roomCode) => {
     }, roundDuration)
 }
 
-const losingMatchups = {"rock": "scissors", "paper": "rock", "scissors": "paper"}; // Outputs the choice that would lose to the input
+const losingMatchups = {"rock": ["scissors", "reflector"], "paper": ["rock", "reflector"], "scissors": ["paper", "reflector"], "reflector": ["gun"], "gun": ["rock", "paper", "scissors"], null: []}; // Outputs the choice that would lose to the input
 const calculateScore = (io, socket, rooms, roomCode) => {
     const playersData = rooms[roomCode].playersData;
 
@@ -127,11 +134,11 @@ const calculateScore = (io, socket, rooms, roomCode) => {
     const p2Choice = p2Data.choice;
     if (p1Choice === p2Choice) { 
 
-    } else if (!p1Choice || losingMatchups[p2Choice] === p1Choice) {
+    } else if (!p1Choice || losingMatchups[p2Choice].includes(p1Choice)) {
         p2Data.didWin = true;
         p1Data.didWin = false;
         p2Data.score += 1;
-    } else if (!p2Choice || losingMatchups[p1Choice] === p2Choice) {
+    } else if (!p2Choice || losingMatchups[p1Choice].includes(p2Choice)) {
         p1Data.didWin = true;
         p2Data.didWin = false;
         p1Data.score += 1;

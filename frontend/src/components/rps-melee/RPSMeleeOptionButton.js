@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import getSocket from "../../socket";
 
-const keyLetter = {"Up": "W", "Left": "A", "Right": "D"}; // Must be uppercase since ArrowLeft is how we check the left keypress
-const buttonKeyPlacement = {"Up": "bottom-[100%] left-1/2  translate-y-1/2 -translate-x-1/2", "Left": "right-[100%] top-1/2  translate-x-1/2 -translate-y-1/2", "Right": "left-[100%] top-1/2 -translate-x-1/2 -translate-y-1/2"};
-const colours = {"rock": "bg-red-500", "paper": "bg-blue-500", "scissors": "bg-green-500"};
+const keyLetter = {"Up": "W", "Left": "A", "Right": "D", "UpLeft": "Q", "UpRight": "E"}; // Must be uppercase since ArrowLeft is how we check the left keypress
+const buttonKeyPlacement = {"Up": "bottom-[100%] left-1/2  translate-y-1/2 -translate-x-1/2", "Left": "right-[100%] top-1/2  translate-x-1/2 -translate-y-1/2", "Right": "left-[100%] top-1/2 -translate-x-1/2 -translate-y-1/2", "UpLeft": "right-[70%] bottom-[70%]", "UpRight": "left-[70%] bottom-[70%]"};
+const colours = {"rock": "bg-red-500", "paper": "bg-blue-500", "scissors": "bg-green-500", "gun": "bg-slate-800", "reflector": "bg-slate-400"};
 
 const socket = getSocket();
 

@@ -6,7 +6,7 @@ import { RPSMeleeSettings } from "./RPSMeleeSettings";
 
 const socket = getSocket();
 
-const icons = {"rock": <div>✊</div>, "paper": <div>📃</div>, "scissors": <div>✂️</div>, null:<div>--</div>}
+const icons = {"rock": <div>✊</div>, "paper": <div>📃</div>, "scissors": <div>✂️</div>, "gun": <div>🔫</div>, "reflector": <div>🛡️</div>, null:<div>--</div>}
 
 export const RPSMeleeResults = ({myData, opponentData, isReady, roomCode}) => {
     const choiceHistory = myData.choiceHistory;
@@ -35,7 +35,6 @@ export const RPSMeleeResults = ({myData, opponentData, isReady, roomCode}) => {
                 </div>
                 <div className="myContainerCardCenterScrollBox gap-[2vh] w-[90%] py-2">
                     { choiceHistory.map((data) => {
-                        console.log(data);
                         return (
                             <div className="myContainerCardInnerBox flex items-center py-2">
                                 <div className="w-[30%]">{icons[data.myChoice]}</div>

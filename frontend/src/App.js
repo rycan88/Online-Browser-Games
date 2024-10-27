@@ -22,6 +22,7 @@ import { enterFullScreen } from './utils';
 import { ThirtyOne } from './pages/ThirtyOne';
 import LoadingScreen from './components/LoadingScreen';
 import { RPSMelee } from './pages/RPSMelee';
+import { StarBattle } from './components/star-battle/StarBattle';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -103,7 +104,7 @@ function App() {
               <Route path="/rock_paper_scissors_melee/lobby" element={<Lobby gameName="rock_paper_scissors_melee"/>} />
               {roomRoutes(rooms)}
               {gameRoutes(rooms)}
-              <Route path="/rock_paper_scissors_melee" element={<RPSMelee/>} />
+              <Route path="/star_battle" element={<StarBattle/>} />
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />

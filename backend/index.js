@@ -43,6 +43,7 @@ const { setUpPlayerData, setUpGameData } = require("./gameUtils");
 const { telepathEvents } = require("./telepath/telepathEvents");
 const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
 const { rpsMeleeEvents } = require("./rps-melee/rpsMeleeEvents");
+const { starBattleEvents } = require("./star_battle/starBattleEvents");
 
 // Lobby Rooms
 const rooms = {};
@@ -97,7 +98,8 @@ io.on("connection", (socket) => {
     });
 
     socket.on('create_room', (gameName, roomCode) => {
-        leaveAllRooms(io, rooms, socket.id);
+        socket.leaveAll();
+        leaveAllRooms(io, rooms, deleteTimers, currentUser);
         rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
         if (gameName === "telepath") {
             rooms[roomCode].teamMode = true;
@@ -148,7 +150,6 @@ io.on("connection", (socket) => {
 
     socket.on('leave_room', (roomCode) => {
         if (rooms[roomCode] && containsSocketId(rooms[roomCode].players, socket.id)) {
-            socket.leave(roomCode);
             rooms[roomCode].players = rooms[roomCode].players.filter(user => user.socketId !== socket.id);
             rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.userId !== socket.userId);
 
@@ -169,8 +170,8 @@ io.on("connection", (socket) => {
     
     socket.on('start_game', (roomCode) => {
         if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
-            setUpPlayerData(rooms, roomCode);
-            setUpGameData(rooms, roomCode);
+            setUpPlayerData(io, socket, rooms, roomCode);
+            setUpGameData(io, socket, rooms, roomCode);
             rooms[roomCode].gameStarted = true;
             io.to(roomCode).emit('game_started');
         }
@@ -225,7 +226,7 @@ io.on("connection", (socket) => {
     telepathEvents(io, socket, rooms);
     thirtyOneEvents(io, socket, rooms);
     rpsMeleeEvents(io, socket, rooms);
-
+    starBattleEvents(io, socket, rooms);
 })
 
 const PORT = process.env.PORT || 5000;

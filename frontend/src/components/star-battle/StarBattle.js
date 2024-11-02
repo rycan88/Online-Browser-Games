@@ -1,12 +1,39 @@
 import Phaser from "phaser";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { movePlayerManager } from "./Movement";
-import { Block } from "./Block";
+import getSocket from "../../socket";
+import LoadingScreen from "../LoadingScreen";
+import { useNavigate } from "react-router-dom";
+import { configureKeyboard } from "./Keyboard.js";
 
-export const StarBattle = () => {
-  const windowWidth = 1280;
-  const windowHeight = 720;
+const socket = getSocket();
+
+const windowWidth = 1280;
+const windowHeight = 720;
+export const StarBattle = ({roomCode}) => {
+  const [selfIndex, setSelfIndex] = useState(0);
+  const navigate = useNavigate();
+
   useEffect(() => {
+    socket.on("receive_self_index", (selfIndex) => {
+      setSelfIndex(selfIndex);
+    });
+
+    socket.on('room_error', (errorMessage) => {
+      navigate(`/star_battle/lobby`, { state: {error: errorMessage}});
+    });
+
+    socket.emit('join_room', roomCode);
+
+    return () => {
+      socket.off("receive_self_index");
+      socket.off("room_error");
+    };
+  })
+
+  useEffect(() => {
+    socket.emit("get_self_index");
+
     const config = {
       type: Phaser.AUTO,
       width: windowWidth,
@@ -14,9 +41,7 @@ export const StarBattle = () => {
       backgroundColor: 0x000000, //0x87CEFA,
       physics: {
         default: "arcade",
-        arcade: {
-          gravity: { y: 600 },
-        },
+        arcade: {},
       },
       parent: "phaser-container",
       scene: {
@@ -26,53 +51,59 @@ export const StarBattle = () => {
       },
     };
     const game = new Phaser.Game(config);
+
     function preload() {
-      //this.load.setBaseURL('https://labs.phaser.io');
-      //this.load.image('sky', 'assets/skies/space3.png');
+      this.load.image('tiles', `${process.env.PUBLIC_URL}/assets/star-battle/sheet.png`);
+      this.load.tilemapTiledJSON("tilemap", `${process.env.PUBLIC_URL}/assets/star-battle/tilemap.json`);
     }
 
-    function create() {
+    function create() {      
+      const map = this.make.tilemap({key: "tilemap"});
+      const tileset = map.addTilesetImage("iceworld", "tiles");
+      map.createLayer("Map1", tileset)
+      this.cameras.main.scrollY = 30;
+
       this.add.text(20, 20, "Loading game...");
-      this.player = this.physics.add.image(400, 300, "sky");
-      this.player.setDisplaySize(50, 80);
-      this.player.setCollideWorldBounds(true);
 
-      // Blocks
-      this.blocks = this.physics.add.group();
-      this.blocks.add(new Block(this, 900, 570));
-      this.blocks.add(new Block(this, 700, 470));
+      this.players = [];
 
-      this.blocks.children.iterate((block) => {
-        block.setImmovable(true);
-        block.body.setAllowGravity(false); // Disable gravity for the blocks
+      for (let i = 0; i < 4; i++) {
+        const newPlayer = this.physics.add.image(-1000, -1000, "sky");
+        newPlayer.setDisplaySize(50, 100);
+
+        this.players.push(newPlayer);
+      }
+
+      configureKeyboard(this, roomCode);
+
+      socket.on("receive_player_positions", (positions) => {
+        if (!positions) { return; }
+        positions.forEach((position, index) => {
+          this.players[index].setPosition(position.x, position.y)
+        })
       });
-
-      this.physics.add.collider(this.player, this.blocks);
-
-      this.cursorKeys = this.input.keyboard.createCursorKeys();
-      this.cursorKeys.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-      this.cursorKeys.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-      this.cursorKeys.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-      this.cursorKeys.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    }
-
-    function moveObject(obj, speedArr) {
-      obj.x = (obj.x + speedArr[0] + windowWidth) % windowWidth;
-      obj.y = (obj.y + speedArr[1] + windowHeight) % windowHeight;
     }
 
     function update(time, delta) {
-      movePlayerManager(this.cursorKeys, this.player, delta / 1000);
+      movePlayerManager(roomCode, this.cursorKeys, delta / 1000);
     }
 
     return () => {
       game.destroy(true);
+      socket.off("receive_player_positions");
+      socket.off("receive_self_index");
+      socket.off("receive_game_data");
     };
   }, []);
+
+
+
 
   return (
     <div className="entirePage flex items-center justify-center bg-[#5072A7]">
       <div id="phaser-container"></div>
     </div>
   );
+  
+
 };

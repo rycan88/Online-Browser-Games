@@ -45,7 +45,7 @@ export const SidebarData = [
     {
         title: "Star Battle",
         icon: <FaStar />,
-        link: "/star_battle",
+        link: "/star_battle/lobby",
         isMain: false,
     },
     {

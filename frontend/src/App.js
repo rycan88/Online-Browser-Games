@@ -33,14 +33,18 @@ function App() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const GameElement = (gameName, roomCode) => {
-    if (gameName === "telepath") {
-      return <Telepath roomCode={roomCode} />
-    } else if (gameName === "thirty_one") {
-      return <ThirtyOne roomCode={roomCode} />
-    } else if (gameName === "rock_paper_scissors_melee") {
-      return <RPSMelee roomCode={roomCode}/>
+    switch (gameName) {
+      case "telepath":
+        return <Telepath roomCode={roomCode} />;
+      case "thirty_one":
+        return <ThirtyOne roomCode={roomCode} />;
+      case "rock_paper_scissors_melee":
+        return <RPSMelee roomCode={roomCode}/>;
+      case "star_battle":
+        return <StarBattle roomCode={roomCode}/>;
+      default:
+        return <></>;
     }
-    return <></>
   }
 
   const roomRoutes = (rooms) => {
@@ -102,9 +106,9 @@ function App() {
               <Route path="/telepath/lobby" element={<Lobby gameName="telepath"/>} />
               <Route path="/thirty_one/lobby" element={<Lobby gameName="thirty_one"/>} />
               <Route path="/rock_paper_scissors_melee/lobby" element={<Lobby gameName="rock_paper_scissors_melee"/>} />
+              <Route path="/star_battle/lobby" element={<Lobby gameName="star_battle"/>} />
               {roomRoutes(rooms)}
               {gameRoutes(rooms)}
-              <Route path="/star_battle" element={<StarBattle/>} />
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />

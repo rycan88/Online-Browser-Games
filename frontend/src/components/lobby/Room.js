@@ -17,16 +17,14 @@ const Titles = {"telepath": "Telepath", "thirty_one": "31"}
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
 // roomCode: string
 // gameName: string
-export const Room = (props) => {
-    const gameName = props.gameName;
-    const roomCode = props.roomCode;
+export const Room = ({gameName, roomCode}) => {
     const navigate = useNavigate();
     
     const [players, setPlayers] = useState([]);
     const [teamData, setTeamData] = useState([]);
     const [teamMode, setTeamMode] = useState(true);
 
-    const canStart = teamMode ? teamData.length * 2 === players.length : players.length >= 2;
+    const canStart = gameName === "star_battle" ? true : (teamMode ? teamData.length * 2 === players.length : players.length >= 2);
     useEffect(() => {
         socket.on('update_players', (players) => {
             setPlayers(players);

@@ -140,8 +140,8 @@ const thirtyOneEvents = (io, socket, rooms) => {
 
         if (rooms[roomCode].gameData.gameEnded) {
             if (!Object.values(playersData).find((data) => data.isReady === false)) {
-                setUpPlayerData(rooms, roomCode);
-                setUpGameData(rooms, roomCode);
+                setUpPlayerData(io, socket, rooms, roomCode);
+                setUpGameData(io, socket, rooms, roomCode);
                 io.to(roomCode).emit('start_new_round');
             }
         } else {

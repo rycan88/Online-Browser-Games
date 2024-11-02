@@ -4,8 +4,10 @@ const telepathHelper = require("./telepath/telepathHelper");
 const { Deck } = require("./cards/Deck");
 const { getCurrentPlayers } = require("./thirty-one/thirtyOneHelper");
 const { rpsMeleePlayerData } = require("./rps-melee/rpsMeleePlayerData");
+const { starBattlePlayerData } = require("./star_battle/starBattlePlayerData");
+const { createStarBattleWorld } = require("./star_battle/starBattleUtils");
 
-const setUpPlayerData = (rooms, roomCode) => {
+const setUpPlayerData = (io, socket, rooms, roomCode) => {
     const gameName = rooms[roomCode].gameName;
     if (gameName === "telepath") {
         const teamData = rooms[roomCode].teamData;
@@ -59,37 +61,50 @@ const setUpPlayerData = (rooms, roomCode) => {
         playersData[players[1].userId] = rpsMeleePlayerData(players[1], players[0]);                   
 
         rooms[roomCode].playersData = playersData;      
+    } else if (gameName === "star_battle") {
+        const players = rooms[roomCode].players;
+
+        const playersData = {}
+
+        players.forEach((player) => {
+            playersData[player.userId] = starBattlePlayerData(player);                   
+        })  
+        
+        rooms[roomCode].playersData = playersData;        
     }
 }
 
-const setUpGameData = (rooms, roomCode) => {
-    if (rooms[roomCode]) {
-        const gameName = rooms[roomCode].gameName;
-        const gameData = rooms[roomCode].gameData
-        if (gameName === "telepath") {
-            telepathHelper.setNewPrompt(gameData);
-        } else if (gameName === "thirty_one") {
-            const deck = new Deck();
-            const discardPile = [];
-            deck.shuffle();
-            const playerDataArray = Object.values(rooms[roomCode].playersData)
-            for (let i = 0; i < 3; i++) {
-                for (const playerData of playerDataArray) {
-                    playerData.cards.push(deck.drawCard());
-                }
+const setUpGameData = (io, socket, rooms, roomCode) => {
+    if (!rooms[roomCode]) { return; }
+    
+    const gameName = rooms[roomCode].gameName;
+    const gameData = rooms[roomCode].gameData
+    if (gameName === "telepath") {
+        telepathHelper.setNewPrompt(gameData);
+    } else if (gameName === "thirty_one") {
+        const deck = new Deck();
+        const discardPile = [];
+        deck.shuffle();
+        const playerDataArray = Object.values(rooms[roomCode].playersData)
+        for (let i = 0; i < 3; i++) {
+            for (const playerData of playerDataArray) {
+                playerData.cards.push(deck.drawCard());
             }
-            discardPile.push(deck.drawCard());
-
-            const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
-        } else if (gameName === "rock_paper_scissors_melee") {
-            const maxPoints = rooms[roomCode].gameData.maxPoints;
-            const roundDuration = rooms[roomCode].gameData.roundDuration;
-            const withGun = rooms[roomCode].gameData.withGun;
-
-            rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration, withGun: withGun};            
         }
+        discardPile.push(deck.drawCard());
+
+        const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
+        rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
+    } else if (gameName === "rock_paper_scissors_melee") {
+        const maxPoints = rooms[roomCode].gameData.maxPoints;
+        const roundDuration = rooms[roomCode].gameData.roundDuration;
+        const withGun = rooms[roomCode].gameData.withGun;
+
+        rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration, withGun: withGun};            
+    } else if (gameName === "star_battle") {
+        createStarBattleWorld(io, socket, rooms, roomCode);
     }
+    
 }
 
 module.exports = {

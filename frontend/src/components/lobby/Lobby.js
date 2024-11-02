@@ -10,7 +10,7 @@ import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
-const Titles = {"telepath": "Telepath", "thirty_one": "31"}
+const Titles = {"telepath": "Telepath", "thirty_one": "31", "star_battle": "Star Battle"}
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {

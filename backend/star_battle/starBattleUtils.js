@@ -11,6 +11,7 @@ const tilemapData = tilemapJSON.layers[0].data;
 const tileSize = [tilemapJSON.tilewidth, tilemapJSON.tileheight];
 const mapDimensions = [tilemapJSON.layers[0].width, tilemapJSON.layers[0].height]; 
 
+const mapPixels = [tileSize[0] * mapDimensions[0], tileSize[1] * mapDimensions[1]]; 
 const createStarBattleWorld = (io, socket, rooms, roomCode) => {
 
 
@@ -31,6 +32,9 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
             if (tilemapData[y * mapDimensions[0] + x] === 0) { continue; }
             const location = [(x + 0.5) * tileSize[0], (y + 0.5) * tileSize[1]];
             const block = new Box(location[0], location[1], tileSize[0], tileSize[1], world);
+
+            const leftBlock = new Box(location[0] - mapPixels[0], location[1], tileSize[0], tileSize[1], world);
+            const rightBlock = new Box(location[0] + mapPixels[0], location[1], tileSize[0], tileSize[1], world);
         }
     }
 
@@ -48,6 +52,8 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
             
                 if (isOnTop) {
                     characterBody.topCollisions.push(otherBody);
+                } else if (isPlayer(otherBody)) {
+                    otherBody.topCollisions.push(characterBody);                   
                 }
             }
         });
@@ -67,13 +73,18 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
     });
 
     const frameTime = 1000 / 80; // 80FPS
+    console.log(mapPixels[0]);
     const interval = setInterval(() => {
         Engine.update(engine, frameTime);
         if (!rooms[roomCode]) {
             clearInterval(interval);
             return;
         }
-        const positions = getPositions(rooms[roomCode].playersData);
+
+        const playersData = rooms[roomCode].playersData;
+        loopPlayerPositions(playersData);
+
+        const positions = getPositions(playersData);
         io.to(roomCode).emit('receive_player_positions', positions);
     }, frameTime);
 
@@ -86,9 +97,27 @@ const getPositions = (playersData) => {
     })
 }
 
+// Makes sure that the player stays on the map
+const loopPlayerPositions = (playersData) => {
+    Object.values(playersData).forEach((data) => {
+        const newPositionX = mod(data.player.body.position.x, mapPixels[0]);
+        if (data.player.body.position.x !== newPositionX) {
+            data.player.setPositionX(newPositionX);
+        }
+    })
+}
+
 const playerCategory = 0x0002;
 const isPlayer = (body) => {
     return body.collisionFilter.category === playerCategory;
+}
+
+const mod = (n, m) => {
+    if (n < 0) {
+        return ((n % m) + m) % m; 
+    } 
+
+    return n % m;
 }
 
 module.exports = {

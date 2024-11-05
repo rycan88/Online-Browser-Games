@@ -10,7 +10,7 @@ const playerCategory = 0x0002;
 class Player extends Box {
     constructor(x, y, world, isStatic=false) {
         super(x, y, 50, 100, world, isStatic);
-        this.body.collisionFilter = {category: playerCategory, mask: defaultCategory | playerCategory};
+        this.body.collisionFilter = {category: playerCategory, mask: defaultCategory | playerCategory, group: 1};
         this.body.topCollisions = [];
     }
 
@@ -20,6 +20,10 @@ class Player extends Box {
 
     setVelocityY(velocityY) {
         Body.setVelocity(this.body, {x: this.body.velocity.x, y: velocityY});  
+    }
+
+    setPositionX(positionX) {
+        Body.setPosition(this.body, {x: positionX, y: this.body.position.y});         
     }
 
     jump() {

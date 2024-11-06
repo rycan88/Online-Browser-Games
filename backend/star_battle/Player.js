@@ -8,10 +8,11 @@ const Body = Matter.Body;
 const defaultCategory = 0x0001;
 const playerCategory = 0x0002;
 class Player extends Box {
-    constructor(x, y, world, isStatic=false) {
-        super(x, y, 50, 100, world, isStatic);
+    constructor(x, y, world, playerNum, isStatic=false) {
+        super(x, y, 48, 100, world, isStatic);
         this.body.collisionFilter = {category: playerCategory, mask: defaultCategory | playerCategory, group: 1};
         this.body.topCollisions = [];
+        this.playerNum = playerNum;
     }
 
     setVelocityX(velocityX) {
@@ -24,6 +25,10 @@ class Player extends Box {
 
     setPositionX(positionX) {
         Body.setPosition(this.body, {x: positionX, y: this.body.position.y});         
+    }
+
+    respawn() {
+        Body.setPosition(this.body, {x: 200 + 200 * this.playerNum, y: 50});  
     }
 
     jump() {

@@ -41,6 +41,14 @@ const applyMovement = (player, movement, deltaTime) => {
 }
 
 const starBattleEvents = (io, socket, rooms) => {    
+    socket.on("star_battle_get_self_index", (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+        
+        const selfIndex = Object.keys(rooms[roomCode].playersData).indexOf(socket.userId);
+        socket.emit("receive_self_index", selfIndex);
+    });
+
+
     socket.on("star_battle_move", (roomCode, movement, deltaTime) => {
         if (!rooms[roomCode]) { return; }
         

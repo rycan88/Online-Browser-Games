@@ -5,13 +5,13 @@ import getSocket from "../../socket";
 import LoadingScreen from "../LoadingScreen";
 import { useNavigate } from "react-router-dom";
 import { configureKeyboard } from "./Keyboard.js";
+import { adjustPosition } from "./StarBattleUtils.js";
 
 // TODO: 
 
 // Respawn on death
 // Ground Pound
 // Fix keyboard ghosting
-// Correct Map Loop (properly)
 // Better Horizontal Movement
 // Crouch
 // Stars spawn in starSpawnPoints
@@ -25,14 +25,9 @@ const socket = getSocket();
 const windowWidth = 1280;
 const windowHeight = 720;
 export const StarBattle = ({roomCode}) => {
-  const [selfIndex, setSelfIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("receive_self_index", (selfIndex) => {
-      setSelfIndex(selfIndex);
-    });
-
     socket.on('room_error', (errorMessage) => {
       navigate(`/star_battle/lobby`, { state: {error: errorMessage}});
     });
@@ -40,13 +35,12 @@ export const StarBattle = ({roomCode}) => {
     socket.emit('join_room', roomCode);
 
     return () => {
-      socket.off("receive_self_index");
       socket.off("room_error");
     };
   })
 
   useEffect(() => {
-    socket.emit("get_self_index");
+
 
     const config = {
       type: Phaser.AUTO,
@@ -76,11 +70,13 @@ export const StarBattle = ({roomCode}) => {
     }
 
     function create() {      
+      let myIndex = -1;
+
       const leftMap = this.make.tilemap({key: "tilemap"});
       const rightMap = this.make.tilemap({key: "tilemap"});
       const anotherMap = this.make.tilemap({key: "tilemap"});
 
-      const tilemapWidth = 50 * 26;
+      const tilemapWidth = 50 * 30;
       const tilemapHeight = 50 * 15;
       const tileset = leftMap.addTilesetImage("iceworld", "tiles");
       leftMap.createLayer("Map1", tileset, -tilemapWidth, 0);
@@ -92,7 +88,6 @@ export const StarBattle = ({roomCode}) => {
       loadingText.setScrollFactor(0);
 
       this.players = [];
-
       for (let i = 0; i < 4; i++) {
         const newPlayer = this.physics.add.image(-1000, -1000, "sky");
         newPlayer.setDisplaySize(50, 100);
@@ -100,22 +95,36 @@ export const StarBattle = ({roomCode}) => {
         this.players.push(newPlayer);
       }
 
-      this.cameras.main.startFollow(this.players[0]);
+
       this.cameras.main.setBounds(-tilemapWidth, tilemapHeight - windowHeight, tilemapWidth * 3, windowHeight);
 
       configureKeyboard(this, roomCode);
 
-      socket.on("receive_player_positions", (positions) => {
-        if (!positions) { return; }
-        positions.forEach((position, index) => {
-          this.players[index].setPosition(position.x, position.y)
-        })
+      socket.on("receive_self_index", (selfIndex) => {
+        myIndex = selfIndex;
+        this.cameras.main.startFollow(this.players[selfIndex]);
       });
+
+      socket.on("receive_player_positions", (positions) => {
+        if (!positions || myIndex === -1) { return; }
+
+        const myPosition = positions[myIndex];
+
+        positions.forEach((position, index) => {
+          const newPosition = adjustPosition(myPosition, position, windowWidth, tilemapWidth);
+          this.players[index].setPosition(newPosition.x, newPosition.y)
+        })
+
+      });
+
+      socket.emit("star_battle_get_self_index", roomCode);
     }
 
     function update(time, delta) {
       movePlayerManager(roomCode, this.cursorKeys, delta / 1000);
     }
+
+
 
     return () => {
       game.destroy(true);
@@ -133,6 +142,5 @@ export const StarBattle = ({roomCode}) => {
       <div id="phaser-container"></div>
     </div>
   );
-  
-
 };
+

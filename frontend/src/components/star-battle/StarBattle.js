@@ -9,9 +9,7 @@ import { adjustPosition } from "./StarBattleUtils.js";
 
 // TODO: 
 
-// Respawn on death
 // Ground Pound
-// Fix keyboard ghosting
 // Better Horizontal Movement
 // Crouch
 // Stars spawn in starSpawnPoints

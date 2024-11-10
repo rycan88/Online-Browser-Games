@@ -24,6 +24,7 @@ const applyMovement = (player, movement, deltaTime) => {
     const sprintMultiplier = movement.sprint ? 1.5 : 1;
     const turnSpeed = 150 * sprintMultiplier;
     const moveAcceleration = accelerationX * sprintMultiplier * deltaTime
+    if (player.groundPounding.bool) { return; }
     // Left
     if (movement.left) {
         player.setVelocityX(-maxMovementSpeed * sprintMultiplier * deltaTime);    
@@ -60,8 +61,8 @@ const starBattleEvents = (io, socket, rooms) => {
         applyMovement(player, movement, deltaTime);
     });
 
-    // jumpStatus true if jump, false if should stop jumping
-    socket.on("star_battle_jump", (roomCode, jumpStatus) => {
+    // keyStatus true if jump button is pressed, false if jump button is released
+    socket.on("star_battle_jump", (roomCode, keyStatus) => {
         if (!rooms[roomCode]) { return; }
         
         const myPlayerData = rooms[roomCode].playersData[socket.userId];
@@ -70,10 +71,30 @@ const starBattleEvents = (io, socket, rooms) => {
         const player = myPlayerData.player;
 
         // Jump
-        if (isOnGround(player) && jumpStatus) {
+        if (isOnGround(player) && keyStatus) {
             player.jump();
-        } else if (!jumpStatus){
+        } else if (!keyStatus){
             player.stopJump();
+        }
+    });
+
+    // keyStatus true if down button is pressed, false if down button is released
+    socket.on("star_battle_down", (roomCode, keyStatus) => {
+        if (!rooms[roomCode]) { return; }
+        
+        const myPlayerData = rooms[roomCode].playersData[socket.userId];
+        if (!myPlayerData) { return; }
+
+        const player = myPlayerData.player;
+
+        if (isOnGround(player)) {
+            if (keyStatus) {
+                player.crouch();
+            } else {
+                player.uncrouch();
+            }
+        } else if (keyStatus){
+            player.groundPound();
         }
     });
 }

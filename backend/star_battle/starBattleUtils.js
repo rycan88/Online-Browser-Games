@@ -3,6 +3,7 @@ const Engine = Matter.Engine;
 const Events = Matter.Events;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
+const Body = Matter.Body;
 
 const tilemapJSON = require("../../frontend/public/assets/star-battle/tilemap.json");
 const { Box } = require("./Box");
@@ -13,7 +14,7 @@ const mapDimensions = [tilemapJSON.layers[0].width, tilemapJSON.layers[0].height
 
 const mapPixels = [tileSize[0] * mapDimensions[0], tileSize[1] * mapDimensions[1]]; 
 const createStarBattleWorld = (io, socket, rooms, roomCode) => {
-
+    let currentFrame = 0;
 
     const engine = Engine.create();
     const world = engine.world;
@@ -43,7 +44,7 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
             const { bodyA, bodyB, collision } = pair;
             const characterBody = isPlayer(bodyA) ? bodyA : isPlayer(bodyB) ? bodyB : null;
             const otherBody = characterBody === bodyA ? bodyB : bodyA;
-        
+
             if (characterBody && otherBody) {
                 const normal = collision.normal;
                 const isOnTop = normal.y < -0.5; // Adjust threshold as needed (typically -1 for direct upward)
@@ -79,9 +80,14 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
             return;
         }
 
+        currentFrame += 1;
+        
         const playersData = rooms[roomCode].playersData;
-        loopPlayerPositions(playersData);
-        checkRespawn(playersData);
+
+        Object.values(playersData).forEach((data) => {
+            data.player.currentFrame = currentFrame;
+            data.player.update(mapPixels);
+        });      
 
         const positions = getPositions(playersData);
         io.to(roomCode).emit('receive_player_positions', positions);
@@ -96,35 +102,9 @@ const getPositions = (playersData) => {
     })
 }
 
-// Makes sure that the player stays on the map
-const loopPlayerPositions = (playersData) => {
-    Object.values(playersData).forEach((data) => {
-        const newPositionX = mod(data.player.body.position.x, mapPixels[0]);
-        if (data.player.body.position.x !== newPositionX) {
-            data.player.setPositionX(newPositionX);
-        }
-    })
-}
-
-const checkRespawn = (playersData) => {
-    Object.values(playersData).forEach((data) => {
-        if (data.player.body.position.y >= mapPixels[1] + 150) {
-            data.player.respawn();
-        }
-    })
-}
-
 const playerCategory = 0x0002;
 const isPlayer = (body) => {
     return body.collisionFilter.category === playerCategory;
-}
-
-const mod = (n, m) => {
-    if (n < 0) {
-        return ((n % m) + m) % m; 
-    } 
-
-    return n % m;
 }
 
 module.exports = {

@@ -11,8 +11,11 @@ export const configureKeyboard = (game, roomCode) => {
 
     const spaceKey = game.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     const upKey = game.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    
+    const downKey = game.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 
     const upKeys = [game.cursorKeys.wKey, spaceKey, upKey];
+    const downKeys = [game.cursorKeys.sKey, downKey];
 
     upKeys.forEach(key => {
         key.on('down', () => {
@@ -21,6 +24,16 @@ export const configureKeyboard = (game, roomCode) => {
     
         key.on('up', () => {
             socket.emit("star_battle_jump", roomCode, false);
+        });
+    });
+
+    downKeys.forEach(key => {
+        key.on('down', () => {
+            socket.emit("star_battle_down", roomCode, true);
+        });
+    
+        key.on('up', () => {
+            socket.emit("star_battle_down", roomCode, false);
         });
     });
 

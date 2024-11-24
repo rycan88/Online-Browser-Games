@@ -1,19 +1,31 @@
-const Matter = require('matter-js');
+const planck = require('planck-js');
 const { Box } = require('./Box');
-
-const World = Matter.World;
-const Bodies = Matter.Bodies;
-const Body = Matter.Body;
 
 const defaultCategory = 0x0001;
 const playerCategory = 0x0002;
 
 const fps = 80;
-class Player extends Box {
-    constructor(x, y, world, playerNum, isStatic=false) {
-        super(x, y, 50, 100, world, isStatic);
-        this.body.collisionFilter = {category: playerCategory, mask: defaultCategory | playerCategory, group: 1};
-        this.body.isSensor = true;
+const SCALE = 1 / 50; // 1 meter per 50 pixels
+
+const WIDTH = 45;
+const HEIGHT  = 45;
+
+const normalSpeed = 5;
+const moveForce = 500;
+
+class Player {
+    constructor(x, y, world, playerNum) {
+        this.body = world.createBody({
+            type: "dynamic",
+            position: planck.Vec2(x * SCALE, y * SCALE),
+            fixedRotation: true,
+        })
+        this.body.setSleepingAllowed(false);
+        this.body.createFixture(planck.Box(SCALE * (WIDTH / 2), SCALE * (HEIGHT / 2 - 1)), { density: 2.0, friction: 0.1, restitution: 0})
+
+        this.body.createFixture(planck.Circle(planck.Vec2(0, SCALE * ((HEIGHT - WIDTH) / 2 + 0.5)), SCALE * WIDTH / 2), { density: 0, friction: 0, restitution: 0, userData: ""})
+        this.body.createFixture(planck.Box(SCALE * (WIDTH / 2 - 0.5), SCALE * 2, planck.Vec2(0, SCALE * (HEIGHT / 2 + 1))), { density: 0, friction: 0, restitution: 0, userData: "playerFoot", isSensor: true})
+        
         this.body.topCollisions = [];
 
         this.playerNum = playerNum;
@@ -23,34 +35,93 @@ class Player extends Box {
         this.groundPounding = {bool: false, startFrame: 0, position: [0, 0]};
     }
 
+    getPosition() {
+        return this.body.getPosition();
+    }
+
+    getVelocity() {
+        return this.body.getLinearVelocity();
+    }
+
     setVelocityX(velocityX) {
-        Body.setVelocity(this.body, {x: velocityX, y: this.body.velocity.y});  
+        const newVelocity = planck.Vec2(velocityX, this.getVelocity().y)
+        this.body.setLinearVelocity(newVelocity);  
     }
 
     setVelocityY(velocityY) {
-        Body.setVelocity(this.body, {x: this.body.velocity.x, y: velocityY});  
+        const newVelocity = planck.Vec2(this.getVelocity().x, velocityY);
+        this.body.setLinearVelocity(newVelocity);   
     }
 
     setVelocity(x, y) {
-        Body.setVelocity(this.body, {x: x, y: y});  
+        const newVelocity = planck.Vec2(x, y);
+        this.body.setLinearVelocity(newVelocity); 
     }
 
     setPositionX(positionX) {
-        Body.setPosition(this.body, {x: positionX, y: this.body.position.y});         
+        const newPosition = planck.Vec2(positionX, this.getPosition().y);
+        this.body.setPosition(newPosition);        
     }
 
     setPosition(x, y) {
-        Body.setPosition(this.body, {x: x, y: y});
+        const newPosition = planck.Vec2(x, y);
+        this.body.setPosition(newPosition); 
+    }
+
+    isOnGround() {
+        return this.body.topCollisions.length !== 0;
+    }
+
+    up(keyStatus) {
+        if (this.isOnGround() && keyStatus) {
+            this.jump();
+        } else if (!keyStatus){
+            this.stopJump();
+        }
+    }
+
+    down() {
+
+    }
+
+    horizontalMovement(direction, isRunning) {
+        if (direction === 0) {
+            this.slowDown();
+            return;
+        }
+
+        const maxSpeed = isRunning ? normalSpeed * 1.5 : normalSpeed;
+
+        let velX = this.getVelocity().x;
+
+        if (Math.sign(velX) === -direction && Math.abs(velX) > 1) {
+            velX *= 0.9;
+            this.setVelocityX(velX);
+        }
+
+        if (Math.abs(velX) < maxSpeed) {
+            const force = planck.Vec2(direction * moveForce * SCALE, 0);
+            this.body.applyForceToCenter(force);
+        } else {
+            velX = direction * maxSpeed; 
+            this.setVelocityX(velX);
+        }
+    }
+
+    slowDown() {
+        const playerVelocity = this.getVelocity();
+        const damping = 0.95;
+        this.setVelocityX(playerVelocity.x * damping);
     }
 
     jump() {
         this.jumping = {bool: true, startFrame: this.currentFrame};
-        this.setVelocityY(-17);
+        this.body.applyLinearImpulse(planck.Vec2(0, -1275 * SCALE), this.getPosition(), true);
     }
 
     stopJump() {
         if (this.jumping.bool && this.currentFrame - this.jumping.startFrame <= 0.25 * fps) {
-            this.setVelocityY(this.body.velocity.y / 2);
+            this.setVelocityY(this.getVelocity().y / 2);
         }
     }
 
@@ -64,13 +135,13 @@ class Player extends Box {
 
     groundPound() {
         if (this.groundPounding.bool) { return; }
-        this.groundPounding = {bool: true, startFrame: this.currentFrame, position: [this.body.position.x, this.body.position.y]};
+        this.groundPounding = {bool: true, startFrame: this.currentFrame, position: this.getPosition()};
     }
 
     update(mapPixels) {
         if (this.respawning.bool) {
             if (this.currentFrame - this.respawning.startFrame < 1 * fps) {
-                this.setPosition(200 + 200 * this.playerNum, 50); 
+                this.setPosition(200 + 200 * this.playerNum * SCALE, 50 * SCALE); 
                 this.setVelocity(0, 0);
             } else {
                 this.respawning.bool = false;
@@ -78,39 +149,39 @@ class Player extends Box {
         }
 
         if (this.body.topCollisions.length !== 0) {
-            if (this.groundPounding.bool) {
-                console.log("GROUND HIT", this.body.position.y)
+            if (this.groundPounding.bool && this.groundPounding.startFrame < this.currentFrame - 2) {
+                this.groundPounding.bool = false;
             }
-            if (this.jumping.bool) {
-                console.log("GROUND HIT", this.body.position.y)
+            if (this.jumping.bool && this.jumping.startFrame < this.currentFrame - 2) {
+                this.jumping.bool = false;
             }
-            this.jumping.bool = false;
-            this.groundPounding.bool = false;
         }
 
         if (this.groundPounding.bool) {
             if (this.currentFrame - this.groundPounding.startFrame < 0.25 * fps) {
-                this.setPosition(this.groundPounding.position[0], this.groundPounding.position[1]); 
+                this.setPosition(this.groundPounding.position.x, this.groundPounding.position.y); 
                 this.setVelocity(0, 0);
             } else {
                 //this.setPositionX(this.groundPounding.position[0]); 
-                this.setVelocity(0, 30);               
+                this.setVelocity(0, 20);               
             }
         }
         this.loopPosition(mapPixels);
         this.checkRespawn(mapPixels);
+        
     }
 
     // Makes sure that the player stays on the map
     loopPosition(mapPixels) {
-        const newPositionX = mod(this.body.position.x, mapPixels[0]);
-        if (this.body.position.x !== newPositionX) {
+        const newPositionX = mod(this.getPosition().x, mapPixels[0]);
+        if (this.getPosition().x !== newPositionX) {
             this.setPositionX(newPositionX);
         }
     }
 
     checkRespawn(mapPixels) {
-        if (this.body.position.y >= mapPixels[1] + 150) {
+        if (this.getPosition().y >= mapPixels[1] + 150 * SCALE) {
+            console.log("RESPAWNED")
             this.respawning = {bool: true, startFrame: this.currentFrame};
             this.jumping = {bool: false, startFrame: 0};
             this.groundPounding = {bool: false, startFrame: 0, position: [0, 0]};

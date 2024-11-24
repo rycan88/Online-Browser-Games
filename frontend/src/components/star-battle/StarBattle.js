@@ -9,9 +9,6 @@ import { adjustPosition } from "./StarBattleUtils.js";
 
 // TODO: 
 
-// Ground Pound
-// Better Horizontal Movement
-// Crouch
 // Stars spawn in starSpawnPoints
 // Player can collect stars
 // Player can steal stars (ground pound works on other players)
@@ -88,7 +85,7 @@ export const StarBattle = ({roomCode}) => {
       this.players = [];
       for (let i = 0; i < 4; i++) {
         const newPlayer = this.physics.add.image(-1000, -1000, "sky");
-        newPlayer.setDisplaySize(50, 100);
+        newPlayer.setDisplaySize(50, 50);
 
         this.players.push(newPlayer);
       }

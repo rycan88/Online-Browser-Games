@@ -1,9 +1,4 @@
-const Matter = require("matter-js");
-const Engine = Matter.Engine;
-const Events = Matter.Events;
-const World = Matter.World;
-const Bodies = Matter.Bodies;
-const Body = Matter.Body;
+const planck = require("planck-js");
 
 const tilemapJSON = require("../../frontend/public/assets/star-battle/tilemap.json");
 const { Box } = require("./Box");
@@ -13,17 +8,18 @@ const tileSize = [tilemapJSON.tilewidth, tilemapJSON.tileheight];
 const mapDimensions = [tilemapJSON.layers[0].width, tilemapJSON.layers[0].height]; 
 
 const mapPixels = [tileSize[0] * mapDimensions[0], tileSize[1] * mapDimensions[1]]; 
+const SCALE = 1 / 50 // 1 meter = 50px 
+const scaledMapPixels = [mapPixels[0] * SCALE, mapPixels[1] * SCALE];
+
 const createStarBattleWorld = (io, socket, rooms, roomCode) => {
     let currentFrame = 0;
 
-    const engine = Engine.create();
-    const world = engine.world;
-    engine.gravity.scale = 0.002;
+    const world = planck.World({gravity: planck.Vec2(0, 30)});
 
     const players = rooms[roomCode].players;
     const playerBodies = [];
     players.forEach((playerNameData, index) => {
-        const player = new Player(200 + 200 * index, 50, world, index);
+        const player = new Player(200 * index, 50, world, index);
         playerBodies.push(player);
         rooms[roomCode].playersData[playerNameData.userId].player = player;                   
     }) 
@@ -33,48 +29,46 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
             if (tilemapData[y * mapDimensions[0] + x] === 0) { continue; }
             const location = [(x + 0.5) * tileSize[0], (y + 0.5) * tileSize[1]];
             const block = new Box(location[0], location[1], tileSize[0], tileSize[1], world);
-
             const leftBlock = new Box(location[0] - mapPixels[0], location[1], tileSize[0], tileSize[1], world);
             const rightBlock = new Box(location[0] + mapPixels[0], location[1], tileSize[0], tileSize[1], world);
         }
     }
 
-    Events.on(engine, "collisionStart", (event) => {
-        event.pairs.forEach((pair) => {
-            const { bodyA, bodyB, collision } = pair;
-            const characterBody = isPlayer(bodyA) ? bodyA : isPlayer(bodyB) ? bodyB : null;
-            const otherBody = characterBody === bodyA ? bodyB : bodyA;
+    world.on('begin-contact', (contact) => {
 
-            if (characterBody && otherBody) {
-                const normal = collision.normal;
-                const isOnTop = normal.y < -0.5; // Adjust threshold as needed (typically -1 for direct upward)
-            
-                if (isOnTop) {
-                    characterBody.topCollisions.push(otherBody);
-                } else if (isPlayer(otherBody)) {
-                    otherBody.topCollisions.push(characterBody);                   
-                }
-            }
-        });
+        const fixtureA = contact.getFixtureA();
+        const fixtureB = contact.getFixtureB();
+
+        const bodyA = fixtureA.getBody();
+        const bodyB = fixtureB.getBody();
+
+        const characterBody = isPlayerFoot(fixtureA) ? bodyA : isPlayerFoot(fixtureB) ? bodyB : null;
+        const otherBody = characterBody === bodyA ? bodyB : bodyA;
+
+        if (characterBody && otherBody) {
+            characterBody.topCollisions.push(otherBody);
+        }
     });
-    
-    Events.on(engine, "collisionEnd", (event) => {
-        event.pairs.forEach((pair) => {
-            const { bodyA, bodyB } = pair;
-            if (isPlayer(bodyA)) {
-                bodyA.topCollisions = bodyA.topCollisions.filter(otherBody => otherBody !== bodyB);
-            } 
+        
+    world.on('end-contact', (contact) => {
+        const fixtureA = contact.getFixtureA();
+        const fixtureB = contact.getFixtureB();
 
-            if (isPlayer(bodyB)) {
-                bodyB.topCollisions = bodyB.topCollisions.filter(otherBody => otherBody !== bodyA);
-            } 
-        });
-    });
+        const bodyA = fixtureA.getBody();
+        const bodyB = fixtureB.getBody();
 
-    const frameTime = 1000 / 80; // 80FPS
+        const characterBody = isPlayerFoot(fixtureA) ? bodyA : isPlayerFoot(fixtureB) ? bodyB : null;
+        const otherBody = characterBody === bodyA ? bodyB : bodyA;
+
+        if (characterBody && otherBody) {
+            characterBody.topCollisions = characterBody.topCollisions.filter(body => body !== otherBody);
+        }
+    });    
+
+    const fps = 80; // 80FPS
 
     const interval = setInterval(() => {
-        Engine.update(engine, frameTime);
+        world.step(1 / fps);
         if (!rooms[roomCode]) {
             clearInterval(interval);
             return;
@@ -86,25 +80,27 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
 
         Object.values(playersData).forEach((data) => {
             data.player.currentFrame = currentFrame;
-            data.player.update(mapPixels);
+            data.player.update(scaledMapPixels);
         });      
 
         const positions = getPositions(playersData);
-        io.to(roomCode).emit('receive_player_positions', positions);
-    }, frameTime);
 
-    rooms[roomCode].gameData = {engine: engine, world: world, interval: interval};
+        io.to(roomCode).emit('receive_player_positions', positions);
+    }, 1000 / fps);
+
+    rooms[roomCode].gameData = {world: world, interval: interval};
 }
 
 const getPositions = (playersData) => {
      return Object.values(playersData).map((data) => {
-        return data.player.body.position;
+        const position = data.player.getPosition();
+        return {x: position.x / SCALE, y: position.y / SCALE};
     })
 }
 
 const playerCategory = 0x0002;
-const isPlayer = (body) => {
-    return body.collisionFilter.category === playerCategory;
+const isPlayerFoot = (fixture) => {
+    return fixture.getUserData() === "playerFoot";
 }
 
 module.exports = {

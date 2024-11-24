@@ -1,8 +1,4 @@
-const Matter = require("matter-js");
-
-const World = Matter.World;
-const Bodies = Matter.Bodies;
-const Body = Matter.Body;
+const planck = require("planck-js");
 
 const windowSize = [1280, 720];
 const tileSize = [50, 50];
@@ -16,7 +12,6 @@ const maxMovementSpeed = 500;
 const maxSprintSpeed = maxMovementSpeed * 1.5;
 
 const movementSpeed = 200;
-const jumpSpeed = 800;
 
 const accelerationX = 400; 
 
@@ -27,17 +22,11 @@ const applyMovement = (player, movement, deltaTime) => {
     if (player.groundPounding.bool) { return; }
     // Left
     if (movement.left) {
-        player.setVelocityX(-maxMovementSpeed * sprintMultiplier * deltaTime);    
-    } 
-    
-    // Right
-    if (movement.right) {
-        player.setVelocityX(maxMovementSpeed * sprintMultiplier * deltaTime);   
-    } 
-    
-    // Stop
-    if (!movement.left && !movement.right) {
-        player.setVelocityX(0); 
+        player.horizontalMovement(-1, movement.sprint);
+    } else if (movement.right) {
+        player.horizontalMovement(1, movement.sprint);
+    } else {
+        player.horizontalMovement(0, movement.sprint);
     }
 }
 
@@ -71,11 +60,8 @@ const starBattleEvents = (io, socket, rooms) => {
         const player = myPlayerData.player;
 
         // Jump
-        if (isOnGround(player) && keyStatus) {
-            player.jump();
-        } else if (!keyStatus){
-            player.stopJump();
-        }
+        player.up(keyStatus);
+
     });
 
     // keyStatus true if down button is pressed, false if down button is released

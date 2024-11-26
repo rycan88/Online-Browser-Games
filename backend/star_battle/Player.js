@@ -14,19 +14,26 @@ const normalSpeed = 5;
 const moveForce = 500;
 
 class Player {
-    constructor(x, y, world, playerNum) {
+    constructor(x, y, mapDimensions, world, playerNum) {
         this.body = world.createBody({
             type: "dynamic",
             position: planck.Vec2(x * SCALE, y * SCALE),
             fixedRotation: true,
         })
+        
         this.body.setSleepingAllowed(false);
         this.body.createFixture(planck.Box(SCALE * (WIDTH / 2), SCALE * (HEIGHT / 2 - 1)), { density: 2.0, friction: 0.1, restitution: 0})
 
         this.body.createFixture(planck.Circle(planck.Vec2(0, SCALE * ((HEIGHT - WIDTH) / 2 + 0.5)), SCALE * WIDTH / 2), { density: 0, friction: 0, restitution: 0, userData: ""})
-        this.body.createFixture(planck.Box(SCALE * (WIDTH / 2 - 0.5), SCALE * 2, planck.Vec2(0, SCALE * (HEIGHT / 2 + 1))), { density: 0, friction: 0, restitution: 0, userData: "playerFoot", isSensor: true})
+        this.body.createFixture(planck.Box(SCALE * (WIDTH / 2 - 0.5), SCALE * 2, planck.Vec2(0, SCALE * (HEIGHT / 2 + 1))), { density: 0, friction: 0, restitution: 0, userData: "playerGroundSensor", isSensor: true})
+        
+
+        this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(-mapDimensions[0], 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
+        this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(0, 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
+        this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(mapDimensions[0], 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
         
         this.body.topCollisions = [];
+        this.body.starsCollected = 0;
 
         this.playerNum = playerNum;
         this.currentFrame = 0;

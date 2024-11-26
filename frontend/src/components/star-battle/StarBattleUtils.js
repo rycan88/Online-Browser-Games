@@ -1,8 +1,8 @@
 
-export function adjustPosition(myPosition, position, windowWidth, tilemapWidth) {
-    if (myPosition.x + windowWidth / 2 + 25 < position.x) {
+export function adjustPosition(myData, position, windowWidth, tilemapWidth) {
+    if (myData.x + windowWidth / 2 + 500 < position.x) {
         return {x: position.x - tilemapWidth, y: position.y};
-    } else if (myPosition.x - windowWidth / 2 - 25 > position.x) {
+    } else if (myData.x - windowWidth / 2 - 500 > position.x) {
         return {x: position.x + tilemapWidth, y: position.y};
     } else {
         return position;

@@ -71,16 +71,13 @@ export const StarBattle = ({roomCode}) => {
       const rightMap = this.make.tilemap({key: "tilemap"});
       const anotherMap = this.make.tilemap({key: "tilemap"});
 
-      const tilemapWidth = 50 * 30;
+      const tilemapWidth = 50 * 40;
       const tilemapHeight = 50 * 15;
       const tileset = leftMap.addTilesetImage("iceworld", "tiles");
       leftMap.createLayer("Map1", tileset, -tilemapWidth, 0);
       rightMap.createLayer("Map1", tileset, 0, 0);
       anotherMap.createLayer("Map1", tileset, tilemapWidth, 0);
       //this.cameras.main.scrollY = 30;
-
-      const loadingText = this.add.text(20, 20, "Loading game...");
-      loadingText.setScrollFactor(0);
 
       this.players = [];
       for (let i = 0; i < 4; i++) {
@@ -90,8 +87,15 @@ export const StarBattle = ({roomCode}) => {
         this.players.push(newPlayer);
       }
 
-
       this.cameras.main.setBounds(-tilemapWidth, tilemapHeight - windowHeight, tilemapWidth * 3, windowHeight);
+
+      const star = this.physics.add.image(-1000, -1000, "sky");
+      star.setDisplaySize(100, 100);
+
+      const starCountText = this.add.text(20, 20, "Stars: ");
+      starCountText.setScrollFactor(0);
+
+
 
       configureKeyboard(this, roomCode);
 
@@ -100,15 +104,21 @@ export const StarBattle = ({roomCode}) => {
         this.cameras.main.startFollow(this.players[selfIndex]);
       });
 
-      socket.on("receive_player_positions", (positions) => {
-        if (!positions || myIndex === -1) { return; }
+      socket.on("receive_positions", (playerPositions, starPosition) => {
+        if (!playerPositions || myIndex === -1) { return; }
 
-        const myPosition = positions[myIndex];
+        const myData = playerPositions[myIndex];
+        starCountText.setText(`Stars: ${myData.starsCollected}`);
 
-        positions.forEach((position, index) => {
-          const newPosition = adjustPosition(myPosition, position, windowWidth, tilemapWidth);
+        playerPositions.forEach((position, index) => {
+          const newPosition = adjustPosition(myData, position, windowWidth, tilemapWidth);
           this.players[index].setPosition(newPosition.x, newPosition.y)
         })
+
+        if (starPosition) {
+          const newPosition = adjustPosition(myData, starPosition, windowWidth, tilemapWidth);
+          star.setPosition(newPosition.x, newPosition.y);
+        }
 
       });
 
@@ -123,9 +133,10 @@ export const StarBattle = ({roomCode}) => {
 
     return () => {
       game.destroy(true);
-      socket.off("receive_player_positions");
+      socket.off("receive_positions");
       socket.off("receive_self_index");
       socket.off("receive_game_data");
+      socket.off("receive_star_position");
     };
   }, []);
 

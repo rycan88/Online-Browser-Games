@@ -121,8 +121,8 @@ export const StarBattle = ({roomCode}) => {
 
         totalFrames += 1;
         const currentTime = Date.now();
-        if (currentTime - previousTime >= 10000) {
-          overlayScene.events.emit("fps", totalFrames / 10, totalFrames);
+        if (currentTime - previousTime >= 1000) {
+          overlayScene.events.emit("fps", totalFrames);
           totalFrames = 0;
           previousTime = currentTime;
         }

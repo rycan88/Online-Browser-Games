@@ -58,7 +58,7 @@ export const StarBattle = ({roomCode}) => {
         update: update,
       },
       fps: {
-        target: 80,
+        target: 100,
         forceSetTimeout: true
       }
     };
@@ -75,6 +75,8 @@ export const StarBattle = ({roomCode}) => {
 
     function create() {      
       let myIndex = -1;
+      let previousTime = Date.now();
+      let totalFrames = 0;
 
       const leftMap = this.make.tilemap({key: "tilemap"});
       const rightMap = this.make.tilemap({key: "tilemap"});
@@ -110,11 +112,20 @@ export const StarBattle = ({roomCode}) => {
       socket.on("receive_positions", (playerPositions, starPosition) => {
         if (!playerPositions || myIndex === -1) { return; }
 
+
         const myData = playerPositions[myIndex];
         const overlayScene = game.scene.keys["OverlayScene"];
         overlayScene.events.emit("starCount", myData.starsCollected);
         overlayScene.events.emit("myPosition", myData.x, tilemapWidth);
         overlayScene.events.emit("starPosition", starPosition.x, tilemapWidth);
+
+        totalFrames += 1;
+        const currentTime = Date.now();
+        if (currentTime - previousTime >= 10000) {
+          overlayScene.events.emit("fps", totalFrames / 10, totalFrames);
+          totalFrames = 0;
+          previousTime = currentTime;
+        }
 
         playerPositions.forEach((position, index) => {
           const newPosition = adjustPosition(myData, position, windowWidth, tilemapWidth);

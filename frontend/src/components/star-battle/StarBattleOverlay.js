@@ -28,10 +28,14 @@ class OverlayScene extends Phaser.Scene {
         this.events.on("starPosition", (xpos, mapWidth) => {
             moveLineMapStar(xpos, mapWidth);
         });
+
+        this.events.on("fps", (fps, x) => {
+            this.fpsText.setText(`FPS: ${fps}`)
+        });
     }
 
     update() {
-        this.fpsText.setText(`FPS: ${Math.floor(this.sys.game.loop.actualFps)}`)
+
     }
 }
 

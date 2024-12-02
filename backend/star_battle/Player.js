@@ -132,8 +132,8 @@ class Player {
     }
 
     stopJump() {
-        if (this.jumping.bool && this.currentFrame - this.jumping.startFrame <= 0.25 * fps) {
-            this.setVelocityY(this.getVelocity().y / 2);
+        if (this.jumping.bool && this.currentFrame - this.jumping.startFrame <= 0.45 * fps) {
+            this.setVelocityY(this.getVelocity().y / 3);
         }
     }
 

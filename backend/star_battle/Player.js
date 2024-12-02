@@ -11,7 +11,7 @@ const WIDTH = 45;
 const HEIGHT  = 45;
 
 const normalSpeed = 5;
-const moveForce = 500;
+const moveForce = 300;
 
 class Player {
     constructor(x, y, mapDimensions, world, playerNum) {
@@ -24,10 +24,15 @@ class Player {
         this.body.setSleepingAllowed(false);
         this.body.createFixture(planck.Box(SCALE * (WIDTH / 2), SCALE * (HEIGHT / 2 - 1)), { density: 2.0, friction: 0.1, restitution: 0})
 
+        // Curves so the player does not get stuck on edges
+        this.body.createFixture(planck.Circle(planck.Vec2(0, -SCALE * ((HEIGHT - WIDTH) / 2 + 0.5)), SCALE * WIDTH / 2), { density: 0, friction: 0, restitution: 0, userData: ""})
         this.body.createFixture(planck.Circle(planck.Vec2(0, SCALE * ((HEIGHT - WIDTH) / 2 + 0.5)), SCALE * WIDTH / 2), { density: 0, friction: 0, restitution: 0, userData: ""})
+
+        // Ground Sensor
         this.body.createFixture(planck.Box(SCALE * (WIDTH / 2 - 0.5), SCALE * 2, planck.Vec2(0, SCALE * (HEIGHT / 2 + 1))), { density: 0, friction: 0, restitution: 0, userData: "playerGroundSensor", isSensor: true})
         
 
+        // Star Sensors
         this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(-mapDimensions[0], 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
         this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(0, 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
         this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(mapDimensions[0], 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})

@@ -6,13 +6,18 @@ import LoadingScreen from "../LoadingScreen";
 import { useNavigate } from "react-router-dom";
 import { configureKeyboard } from "./Keyboard.js";
 import { adjustPosition } from "./StarBattleUtils.js";
+import OverlayScene from "./StarBattleOverlay.js";
 
 // TODO: 
 
-// Stars spawn in starSpawnPoints
-// Player can collect stars
-// Player can steal stars (ground pound works on other players)
-// Add Powerups (Mini, Fire Power)
+// Number line (Dec. 1st)
+
+// Show everyones star count (Dec. 3)
+// Wall jump
+// Coyote time
+// Player can steal stars (ground pound works on other players) (Dec. 3) 
+
+// Add Powerups (Mini, Fire Power) (Dec. 5-9)
 // Add Enemies
 
 const socket = getSocket();
@@ -57,7 +62,11 @@ export const StarBattle = ({roomCode}) => {
         forceSetTimeout: true
       }
     };
-    const game = new Phaser.Game(config);
+
+    const game = new Phaser.Game({
+      ...config,
+      scene: [config.scene, OverlayScene],
+    });
 
     function preload() {
       this.load.image('tiles', `${process.env.PUBLIC_URL}/assets/star-battle/sheet.png`);
@@ -77,7 +86,6 @@ export const StarBattle = ({roomCode}) => {
       leftMap.createLayer("Map1", tileset, -tilemapWidth, 0);
       rightMap.createLayer("Map1", tileset, 0, 0);
       anotherMap.createLayer("Map1", tileset, tilemapWidth, 0);
-      //this.cameras.main.scrollY = 30;
 
       this.players = [];
       for (let i = 0; i < 4; i++) {
@@ -92,11 +100,6 @@ export const StarBattle = ({roomCode}) => {
       const star = this.physics.add.image(-1000, -1000, "sky");
       star.setDisplaySize(100, 100);
 
-      const starCountText = this.add.text(20, 20, "Stars: ");
-      starCountText.setScrollFactor(0);
-
-
-
       configureKeyboard(this, roomCode);
 
       socket.on("receive_self_index", (selfIndex) => {
@@ -108,7 +111,10 @@ export const StarBattle = ({roomCode}) => {
         if (!playerPositions || myIndex === -1) { return; }
 
         const myData = playerPositions[myIndex];
-        starCountText.setText(`Stars: ${myData.starsCollected}`);
+        const overlayScene = game.scene.keys["OverlayScene"];
+        overlayScene.events.emit("starCount", myData.starsCollected);
+        overlayScene.events.emit("myPosition", myData.x, tilemapWidth);
+        overlayScene.events.emit("starPosition", starPosition.x, tilemapWidth);
 
         playerPositions.forEach((position, index) => {
           const newPosition = adjustPosition(myData, position, windowWidth, tilemapWidth);
@@ -123,6 +129,8 @@ export const StarBattle = ({roomCode}) => {
       });
 
       socket.emit("star_battle_get_self_index", roomCode);
+      
+      this.scene.launch("OverlayScene")
     }
 
     function update(time, delta) {

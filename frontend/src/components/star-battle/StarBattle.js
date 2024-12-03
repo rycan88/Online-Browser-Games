@@ -77,6 +77,7 @@ export const StarBattle = ({roomCode}) => {
       let myIndex = -1;
       let previousTime = Date.now();
       let totalFrames = 0;
+      let minFPS = 1000;
 
       const leftMap = this.make.tilemap({key: "tilemap"});
       const rightMap = this.make.tilemap({key: "tilemap"});
@@ -122,11 +123,12 @@ export const StarBattle = ({roomCode}) => {
         totalFrames += 1;
         const currentTime = Date.now();
         const timeDiff = currentTime - previousTime;
-        if (timeDiff >= 500) {
-          overlayScene.events.emit("fps", totalFrames * 2);
-          console.log(timeDiff)
+        minFPS = Math.min(minFPS, Math.floor((1 / timeDiff) * 1000));
+        previousTime = currentTime;
+        if (totalFrames > 40) {
+          overlayScene.events.emit("fps", minFPS);
           totalFrames = 0;
-          previousTime = currentTime;
+          minFPS = 1000;
         }
 
         playerPositions.forEach((position, index) => {

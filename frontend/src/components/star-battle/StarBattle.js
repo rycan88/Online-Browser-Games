@@ -126,9 +126,9 @@ export const StarBattle = ({roomCode}) => {
         minFPS = Math.min(minFPS, Math.floor((1 / timeDiff) * 1000));
         previousTime = currentTime;
         if (totalFrames > 40) {
-          overlayScene.events.emit("fps", minFPS);
-          totalFrames = 0;
-          minFPS = 1000;
+            overlayScene.events.emit("fps", minFPS);
+            totalFrames = 0;
+            minFPS = 1000;
         }
 
         playerPositions.forEach((position, index) => {

@@ -23,7 +23,7 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
     const players = rooms[roomCode].players;
 
     players.forEach((playerNameData, index) => {
-        const player = new Player(200 * index, 50, mapDimensions, world, index);
+        const player = new Player(200 * index, 50, mapPixels, world, index);
         rooms[roomCode].playersData[playerNameData.userId].player = player;                   
     }) 
 
@@ -31,13 +31,11 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
         for (let x = 0; x < mapDimensions[0]; x++) {
             if (tilemapData[y * mapDimensions[0] + x] === 0) { continue; }
             const location = [(x + 0.5) * tileSize[0], (y + 0.5) * tileSize[1]];
-            const block = new Box(location[0], location[1], tileSize[0], tileSize[1], world);
-            const leftBlock = new Box(location[0] - mapPixels[0], location[1], tileSize[0], tileSize[1], world);
-            const rightBlock = new Box(location[0] + mapPixels[0], location[1], tileSize[0], tileSize[1], world);
+            const block = new Box(location[0], location[1], tileSize[0], tileSize[1], mapPixels, world);
         }
     }
 
-    const star = new Star(0, 0, world);
+    const star = new Star(0, 0, mapPixels, world);
     setRandomStarPosition(star.body);
 
     world.on('pre-solve', () => {

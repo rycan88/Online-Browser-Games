@@ -14,7 +14,7 @@ const normalSpeed = 5;
 const moveForce = 300;
 
 class Player {
-    constructor(x, y, mapDimensions, world, playerNum) {
+    constructor(x, y, mapPixels, world, playerNum) {
         this.body = world.createBody({
             type: "dynamic",
             position: planck.Vec2(x * SCALE, y * SCALE),
@@ -33,9 +33,7 @@ class Player {
         
 
         // Star Sensors
-        this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(-mapDimensions[0], 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
         this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(0, 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
-        this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(mapDimensions[0], 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
         
         this.body.topCollisions = [];
         this.body.starsCollected = 0;
@@ -45,6 +43,7 @@ class Player {
         this.respawning = {bool: false, startFrame: 0};
         this.jumping = {bool: false, startFrame: 0};
         this.groundPounding = {bool: false, startFrame: 0, position: [0, 0]};
+        this.lastGroundFrame = 0;
     }
 
     getPosition() {
@@ -85,7 +84,7 @@ class Player {
     }
 
     up(keyStatus) {
-        if (this.isOnGround() && keyStatus) {
+        if (keyStatus && (this.isOnGround() || (this.currentFrame - this.lastGroundFrame < 7 && !this.jumping.bool))) {
             this.jump();
         } else if (!keyStatus){
             this.stopJump();
@@ -161,6 +160,8 @@ class Player {
         }
 
         if (this.body.topCollisions.length !== 0) {
+            this.lastGroundFrame = this.currentFrame;
+
             if (this.groundPounding.bool && this.groundPounding.startFrame < this.currentFrame - 2) {
                 this.groundPounding.bool = false;
             }

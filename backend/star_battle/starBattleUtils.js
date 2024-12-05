@@ -51,6 +51,7 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
         const bodyB = fixtureB.getBody();
 
         beginGroundCollision(fixtureA, fixtureB, bodyA, bodyB);
+        beginWallCollision(fixtureA, fixtureB, bodyA, bodyB);        
         beginStarCollision(fixtureA, fixtureB, bodyA, bodyB);
 
 
@@ -64,7 +65,7 @@ const createStarBattleWorld = (io, socket, rooms, roomCode) => {
         const bodyB = fixtureB.getBody();
 
         endGroundCollision(fixtureA, fixtureB, bodyA, bodyB);
-
+        endWallCollision(fixtureA, fixtureB, bodyA, bodyB); 
     });    
 
     const fps = 80; // 80FPS
@@ -114,6 +115,16 @@ const isPlayerGroundSensor = (fixture) => {
     return fixture.getUserData() === "playerGroundSensor";
 }
 
+const isPlayerWallSensor = (fixture) => {
+    if (fixture.getUserData() === "playerLeftWallSensor") {
+        return "left";
+    } else if (fixture.getUserData() === "playerRightWallSensor") {
+        return "right";
+    } else {
+        return false
+    }
+}
+
 const isPlayerBodySensor = (fixture) => {
     return fixture.getUserData() === "playerBodySensor";
 }
@@ -142,17 +153,55 @@ const beginGroundCollision = (fixtureA, fixtureB, bodyA, bodyB) => {
     const characterBody = isPlayerGroundSensor(fixtureA) ? bodyA : isPlayerGroundSensor(fixtureB) ? bodyB : null;
     const otherBody = characterBody === bodyA ? bodyB : bodyA;
 
-    if (characterBody && otherBody) {
+    if (characterBody && !otherBody.isSensor) {
         characterBody.topCollisions.push(otherBody);
     }
 }
 
 const endGroundCollision = (fixtureA, fixtureB, bodyA, bodyB) => {
     const characterBody = isPlayerGroundSensor(fixtureA) ? bodyA : isPlayerGroundSensor(fixtureB) ? bodyB : null;
+    if (!characterBody) { return; }
+
     const otherBody = characterBody === bodyA ? bodyB : bodyA;
 
-    if (characterBody && otherBody) {
+    if (!otherBody.isSensor) {
         characterBody.topCollisions = characterBody.topCollisions.filter(body => body !== otherBody);
+    }
+}
+
+const beginWallCollision = (fixtureA, fixtureB, bodyA, bodyB) => {
+    const characterFixture = isPlayerWallSensor(fixtureA) ? fixtureA : isPlayerWallSensor(fixtureB) ? fixtureB : null;
+    if (!characterFixture) { return; }
+
+    const isLeft = isPlayerWallSensor(characterFixture) === "left";
+    const characterBody = characterFixture.getBody();
+    const otherBody = characterBody === bodyA ? bodyB : bodyA;
+
+    if (!otherBody.isSensor) {
+        if (isLeft) {
+            characterBody.leftCollisions.push(otherBody);
+        } else {
+            characterBody.rightCollisions.push(otherBody);
+        }
+
+    }
+}
+
+const endWallCollision = (fixtureA, fixtureB, bodyA, bodyB) => {
+    const characterFixture = isPlayerWallSensor(fixtureA) ? fixtureA : isPlayerWallSensor(fixtureB) ? fixtureB : null;
+    if (!characterFixture) { return; }
+
+    const isLeft = isPlayerWallSensor(characterFixture) === "left";
+    const characterBody = characterFixture.getBody();
+    const otherBody = characterBody === bodyA ? bodyB : bodyA;
+
+    if (otherBody) {
+        if (isLeft) {
+            characterBody.leftCollisions = characterBody.topCollisions.filter(body => body !== otherBody);
+        } else {
+            characterBody.rightCollisions = characterBody.topCollisions.filter(body => body !== otherBody);
+        }
+
     }
 }
 

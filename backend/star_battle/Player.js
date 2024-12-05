@@ -28,14 +28,22 @@ class Player {
         this.body.createFixture(planck.Circle(planck.Vec2(0, -SCALE * ((HEIGHT - WIDTH) / 2 + 0.5)), SCALE * WIDTH / 2), { density: 0, friction: 0, restitution: 0, userData: ""})
         this.body.createFixture(planck.Circle(planck.Vec2(0, SCALE * ((HEIGHT - WIDTH) / 2 + 0.5)), SCALE * WIDTH / 2), { density: 0, friction: 0, restitution: 0, userData: ""})
 
+        // SENSORS 
+
         // Ground Sensor
         this.body.createFixture(planck.Box(SCALE * (WIDTH / 2 - 0.5), SCALE * 2, planck.Vec2(0, SCALE * (HEIGHT / 2 + 1))), { density: 0, friction: 0, restitution: 0, userData: "playerGroundSensor", isSensor: true})
         
-
         // Star Sensors
         this.body.createFixture(planck.Box(SCALE * WIDTH / 2, SCALE * HEIGHT / 2, planck.Vec2(0, 0)), { density: 0, friction: 0, restitution: 0, userData: "playerBodySensor", isSensor: true})
         
+        // Wall Sensors
+        this.body.createFixture(planck.Box(SCALE * 2, SCALE * (HEIGHT / 4), planck.Vec2(-SCALE * (WIDTH / 2 + 1), 0)), { density: 0, friction: 0, restitution: 0, userData: "playerLeftWallSensor", isSensor: true})
+        this.body.createFixture(planck.Box(SCALE * 2, SCALE * (HEIGHT / 4), planck.Vec2(SCALE * (WIDTH / 2 + 1), 0)), { density: 0, friction: 0, restitution: 0, userData: "playerRightWallSensor", isSensor: true})
+        
+
         this.body.topCollisions = [];
+        this.body.leftCollisions = [];
+        this.body.rightCollisions = [];
         this.body.starsCollected = 0;
 
         this.playerNum = playerNum;
@@ -83,9 +91,17 @@ class Player {
         return this.body.topCollisions.length !== 0;
     }
 
+    isNearWall() {
+        return this.body.leftCollisions.length !== 0 || this.body.rightCollisions.length !== 0; 
+    }
+
     up(keyStatus) {
-        if (keyStatus && (this.isOnGround() || (this.currentFrame - this.lastGroundFrame < 7 && !this.jumping.bool))) {
-            this.jump();
+        if (keyStatus) {
+            if (this.isOnGround() || (this.currentFrame - this.lastGroundFrame < 7 && !this.jumping.bool)) { // Normal jump (includes coyote time)
+                this.jump();
+            } else if (this.isNearWall()) {
+                this.wallJump();
+            }
         } else if (!keyStatus){
             this.stopJump();
         }
@@ -128,6 +144,16 @@ class Player {
     jump() {
         this.jumping = {bool: true, startFrame: this.currentFrame};
         this.body.applyLinearImpulse(planck.Vec2(0, -1275 * SCALE), this.getPosition(), true);
+    }
+
+    wallJump() {
+        if (this.body.leftCollisions.length !== 0) {
+            this.setVelocityY(0);
+            this.body.applyLinearImpulse(planck.Vec2(1500 * SCALE, -700 * SCALE), this.getPosition(), true);
+        } else if (this.body.rightCollisions.length !== 0) {
+            this.setVelocityY(0);
+            this.body.applyLinearImpulse(planck.Vec2(-1500 * SCALE, -700 * SCALE), this.getPosition(), true);
+        }
     }
 
     stopJump() {

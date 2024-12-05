@@ -10,11 +10,9 @@ import OverlayScene from "./StarBattleOverlay.js";
 
 // TODO: 
 
-// Number line (Dec. 1st)
-
 // Show everyones star count (Dec. 3)
 // Wall jump
-// Coyote time
+
 // Player can steal stars (ground pound works on other players) (Dec. 3) 
 
 // Add Powerups (Mini, Fire Power) (Dec. 5-9)
@@ -123,8 +121,10 @@ export const StarBattle = ({roomCode}) => {
         totalFrames += 1;
         const currentTime = Date.now();
         const timeDiff = currentTime - previousTime;
-        minFPS = Math.min(minFPS, Math.floor((1 / timeDiff) * 1000));
-        previousTime = currentTime;
+        if (totalFrames % 5 === 0) {
+          minFPS = Math.min(minFPS, Math.floor(5 * 1000 / (timeDiff)));
+          previousTime = currentTime;
+        }
         if (totalFrames > 40) {
           overlayScene.events.emit("fps", minFPS);
           totalFrames = 0;

@@ -68,7 +68,7 @@
   }
 
   .oddColourPage .tile {
-    @apply rounded-lg sm:rounded-2xl;
+    @apply flex items-center justify-center rounded-lg sm:rounded-2xl;
   }
 
   .oddColourPage .tile:hover {

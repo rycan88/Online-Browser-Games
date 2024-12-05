@@ -4,10 +4,17 @@ import { OddColourOutGrid } from "../components/oddColourOut/OddColourOutGrid";
 import { Overlay } from "../components/Overlay";
 
 import '../css/OddColourOut.css';
+import { InfoButton } from "../components/InfoButton";
+import { OddColourOutSettings } from "../components/oddColourOut/OddColourOutSettings";
 
 export const OddColourOutContext = createContext();
 
 export const OddColourOut = () => {
+    const [rerender, setRerender] = useState(false);
+    const triggerRerender = () => {
+        setRerender(!rerender);
+    }
+
     const generateRandomColours = (offset) => {
         const h = Math.floor(Math.random() * 360);
         const s = Math.floor(25 + Math.random() * 50);
@@ -22,7 +29,6 @@ export const OddColourOut = () => {
         upLst[2] ? lst[2] -= offset : lst[2] += offset;
     
         const modified_color = `hsl(${lst[0]},${lst[1]}%,${lst[2]}%)`;
-        console.log(original_color, modified_color)
         return [original_color, modified_color];
     }
 
@@ -111,67 +117,13 @@ export const OddColourOut = () => {
         reconfigureBoard(startValues.offset, startValues.gridSize);
     }
 
-    // TODO: Style Overlays
-    const SettingsOverlay = () => {
-        return (
-            <>
-                <legend>Time Controls</legend>
-                <div>
-                    <div>
-                        <input type="radio" id="lightning" name="timeControl"/>
-                        <label for="lightning">Lightning</label>
-                    </div>
-                    <div>                        
-                        <input type="radio" id="min" name="timeControl"/>
-                        <label for="min">1 Min</label>
-                    </div>
-                    <div>
-                        <input type="radio" id="endless" name="timeControl" checked/>
-                        <label for="endless">Endless</label>
-                    </div>
-                </div>
-            </>
-        )
-    }
-
-    const InfoOverlay = () => {
-        return (
-            <>
-                <h1>Odd Colour Out Game</h1>
-                <p>
-                    Click on the tile that is a different colour from the rest. Every 10 levels, the difficulty will increase by increasing the grid size and decrease the difference in colours.
-                    You can change the time constraints in the settings.
-                </p>
-            </>
-        )
-    }
-
-    const settingsOverlay = SettingsOverlay();
-    const infoOverlay = InfoOverlay();
-    const [isOverlayOpen, setIsOverlayOpen] = useState(false);
-    const [overlay, setOverlay] = useState(InfoOverlay);
-
-    const toggleOverlay = () => {
-        setIsOverlayOpen(!isOverlayOpen);
-    }
-
     return (
-        <OddColourOutContext.Provider value={{ isGameRunning, correctAction, wrongAction}}>
+        <OddColourOutContext.Provider value={{ isGameRunning, correctAction, wrongAction, isShow, triggerRerender}}>
             <div className="oddColourPage entirePage">
-                <div className="topToolBar">
-                    <div className="infoIcon" 
-                        onClick={() => {
-                            setOverlay(infoOverlay);
-                            toggleOverlay();
-                        }}>
-                    </div>
-                    <div className="settingsIcon" 
-                        onClick={() => {
-                            setOverlay(settingsOverlay);
-                            toggleOverlay();
-                        }}>
-                    </div>
-                </div>
+                <InfoButton buttonStyle="absolute top-4 right-4" buttonType="settings">
+                    <OddColourOutSettings />
+                </InfoButton>
+
                 <div className="content">
                     <div className="gridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
                         <OddColourOutGrid colors={colors} oddOne={oddOne} gridSize={gridSize}/>
@@ -207,13 +159,6 @@ export const OddColourOut = () => {
                 </div>
                 <div className="entirePage bg-black/50 z-[-10]"></div>
             </div>
-
-            <Overlay
-                    isOpen={isOverlayOpen}
-                    onClose={() => setIsOverlayOpen(!isOverlayOpen)}
-                >
-                {overlay}
-            </Overlay>
         </OddColourOutContext.Provider>
     );
 }

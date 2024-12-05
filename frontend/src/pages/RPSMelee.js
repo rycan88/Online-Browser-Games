@@ -105,7 +105,7 @@ export const RPSMelee = ({roomCode}) => {
                 const timeDiff = Math.max((roundStartTime + roundDuration) - Date.now(), 0);
                 const percent = timeDiff * 100 / roundDuration;
                 setTimeBarPercent(percent);
-            }, 20);
+            }, 30);
 
         }
 

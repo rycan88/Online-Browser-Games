@@ -117,6 +117,7 @@ export const Room = (props) => {
                 </div>
 
             </div>
+            <div className="entirePage bg-black/70 z-[-10]"></div>
         </div>
     )
 

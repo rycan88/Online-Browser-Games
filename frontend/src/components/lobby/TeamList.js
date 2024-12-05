@@ -18,7 +18,8 @@ export const TeamList = (props) => {
     }
 
     return (
-        <div className="teamList">
+        <div className="teamList divide-y-2 divide-sky-800">
+            <h2 className="teamLabel">Teams</h2>
             {teamData.map((team, index) => {
                 if (team.length === 0 || team.length >= 3) {
                     console.log("TEAM ERROR");
@@ -27,7 +28,6 @@ export const TeamList = (props) => {
 
                 return (
                     <div className="teamContainer">
-                        <h2 className="teamLabel">Team {index + 1}</h2>
                         <div className="teamInfoContainer justify-between">
                             <h2 className={`playerLabel ${socket.userId === team[0].userId && "text-sky-700"}`}>{team[0].nickname}</h2>
                             {team.length === 2 
@@ -43,7 +43,6 @@ export const TeamList = (props) => {
             })}
             { canStart &&
                 <div className="teamContainer">
-                    <h2 className="teamLabel">Team {teamData.length + 1}</h2>
                     <div className="teamInfoContainer justify-center">
                         <button className="joinButton gradientButton" id={teamData.length + 1} onClick={joinAction}>Join</button>
                     </div>

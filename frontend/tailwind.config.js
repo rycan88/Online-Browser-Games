@@ -37,6 +37,7 @@ module.exports = {
         'hamburger': "url(../images/hamburger-icon.svg)",
         'cards': "url(../images/cards-bg.jpg)",
         'temple': "url(../images/temple-bg.png)",
+        'lobby': "url(../images/lobby-bg.jpg)",
         'poker-gradient': 'radial-gradient(circle at center, #006400, #013220)',
       },
       keyframes: {

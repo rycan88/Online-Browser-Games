@@ -10,7 +10,7 @@ import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
-const Titles = {"telepath": "Telepath", "thirty_one": "31"}
+const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {
@@ -102,7 +102,9 @@ export const Lobby = ({gameName}) => {
 
  
             </div>
+            <div className="entirePage bg-black/70 z-[-10]"></div>
         </div>
+        
     )
 
 }

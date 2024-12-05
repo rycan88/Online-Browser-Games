@@ -4,7 +4,7 @@
 
 @layer base {
   .lobbyPage {
-    @apply bg-gradient-to-bl from-slate-300 to-slate-800;
+    @apply bg-lobby z-[0];
   }
 
   .lobbyPage .lobbyBox {
@@ -39,11 +39,8 @@
     @apply text-red-600 text-lg my-auto h-5;
   }
 
-  .lobbyPage .teamContainer {
-    @apply flex flex-col h-[96px] justify-center md:px-4;
-  }
   .lobbyPage .teamInfoContainer {
-    @apply flex items-center h-[64px];
+    @apply flex items-center h-[64px] px-2 md:px-6;
   }
 
   .lobbyPage .joinButton {
@@ -51,7 +48,7 @@
   }
 
   .lobbyPage .teamLabel {
-    @apply text-2xl my-auto;
+    @apply text-2xl py-[6px];
   }
   .lobbyPage .playerLabel {
     @apply text-xl my-auto;

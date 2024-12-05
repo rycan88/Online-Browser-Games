@@ -9,22 +9,20 @@ export const OddColourOutContext = createContext();
 
 export const OddColourOut = () => {
     const generateRandomColours = (offset) => {
-        const r = Math.floor(Math.random() * 255);
-        const g = Math.floor(Math.random() * 255);
-        const b = Math.floor(Math.random() * 255);
+        const h = Math.floor(Math.random() * 360);
+        const s = Math.floor(25 + Math.random() * 50);
+        const l = Math.floor(25 + Math.random() * 50);
         
-        const original_color = `rgb(${r},${g},${b})`;
+        const original_color = `hsl(${h},${s}%,${l}%)`;
 
-        const lst = [r, g, b];
-        
-        const s_i = lst.indexOf(Math.min(r,g,b));
-        lst[s_i] > 255 - offset ? lst[s_i] -= offset : lst[s_i] += offset;
+        const lst = [h, s, l];
+        const upLst = [Math.floor(Math.random() * 2), Math.floor(Math.random() * 2), Math.floor(Math.random() * 2)];
+        upLst[0] ? lst[0] -= offset : lst[0] += offset;
+        upLst[1] ? lst[1] -= offset : lst[1] += offset;
+        upLst[2] ? lst[2] -= offset : lst[2] += offset;
     
-        const b_i = lst.indexOf(Math.max(r,g,b));
-        lst[b_i] < offset ? lst[b_i] += offset : lst[b_i] -= offset;            
-
-        const modified_color = `rgb(${lst[0]},${lst[1]},${lst[2]})`;
-        
+        const modified_color = `hsl(${lst[0]},${lst[1]}%,${lst[2]}%)`;
+        console.log(original_color, modified_color)
         return [original_color, modified_color];
     }
 
@@ -43,7 +41,7 @@ export const OddColourOut = () => {
         level: 1,
         score: 0,
         gridSize: 2,
-        offset: 22,
+        offset: 5,
     }
 
     const [level, setLevel] = useState(startValues.level);
@@ -69,7 +67,7 @@ export const OddColourOut = () => {
         setLevel(newLevel);
         if (newLevel % 10 === 1) {
             newGridSize = Math.min(7, ((newLevel - 1) / 10) + 2);
-            newOffset = Math.max(10, offset - 5);
+            newOffset = Math.max(2, offset - 1);
             setGridSize(newGridSize);
             setOffset(newOffset);
         }
@@ -207,7 +205,7 @@ export const OddColourOut = () => {
                         </div>
                     </div>
                 </div>
-                <div className="entirePage bg-black/40 z-[-10]"></div>
+                <div className="entirePage bg-black/50 z-[-10]"></div>
             </div>
 
             <Overlay

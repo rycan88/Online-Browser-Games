@@ -3,7 +3,7 @@ import getSocket from "../../socket";
 import { GoDash } from "react-icons/go";
 import { InfoButton } from "../InfoButton";
 import { RPSMeleeSettings } from "./RPSMeleeSettings";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { ReadyStatusIcon } from "../ReadyStatusIcon";
 
 const socket = getSocket();
 
@@ -24,10 +24,10 @@ export const RPSMeleeResults = ({myData, opponentData, isReady, roomCode}) => {
             </InfoButton>
             <div className="myContainerCard">
                 <div className="myContainerCardTitle">Results</div>
-                <div className="flex justify-between w-[90%] my-[1vh]">
-                    <div className="w-[30%]">{myData.nameData.nickname}</div>
-                    <div className="w-[40%]"></div>
-                    <div className="w-[30%]">{opponentData.nameData.nickname}</div>
+                <div className="flex justify-between w-[90%]">
+                    <div className="flex justify-center items-center w-[30%]">{myData.nameData.nickname}</div>
+                    <div className="w-[40%] text-[2em]">{`${myData.matchScore} - ${opponentData.matchScore}`}</div>
+                    <div className="flex justify-center items-center w-[30%]">{opponentData.nameData.nickname}</div>
                 </div>
                 <div className="flex justify-between w-[90%] my-[0.5vh] text-[1.5em]">
                     <div className="w-[30%]">{myData.score}</div>
@@ -58,9 +58,9 @@ export const RPSMeleeResults = ({myData, opponentData, isReady, roomCode}) => {
                     }
                 </div>
                 <div className="absolute flex justify-between items-center bottom-[5%] w-[calc(90%-4vw)] h-[clamp(50px,12%,100px)]">
-                    <div className="w-[30%] flex justify-center">{myData.isReady ? <FaCheck className="icons text-green-600"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-500"/>}</div>
+                    <div className="w-[30%] flex justify-center">{<ReadyStatusIcon isReady={myData.isReady}/>}</div>
                     <div className="w-[40%]"></div>
-                    <div className="w-[30%] flex justify-center">{opponentData.isReady ? <FaCheck className="icons text-green-600"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-500"/>}</div>
+                    <div className="w-[30%] flex justify-center">{<ReadyStatusIcon isReady={opponentData.isReady}/>}</div>
                 </div>
                 <button className="myContainerCardBottomButton gradientButton"
                         onClick={() => {

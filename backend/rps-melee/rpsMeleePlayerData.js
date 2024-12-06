@@ -1,4 +1,4 @@
-const rpsMeleePlayerData = (nameData, opponent, score=0, choiceHistory=[]) => {    
+const rpsMeleePlayerData = (nameData, opponent, matchScore=0, score=0, choiceHistory=[]) => {    
     return {
         nameData: nameData,
         score: score,
@@ -6,6 +6,7 @@ const rpsMeleePlayerData = (nameData, opponent, score=0, choiceHistory=[]) => {
         isReady: false,
         opponent: opponent,
         didWin: null,
+        matchScore: matchScore,
         choiceHistory: choiceHistory,
     }
 }

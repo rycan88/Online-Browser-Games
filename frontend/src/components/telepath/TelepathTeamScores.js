@@ -1,9 +1,7 @@
-import { FaCheck } from "react-icons/fa6";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
 import '../../css/Telepath.css';
 import getSocket from "../../socket";
 import { useEffect, useState } from "react";
+import { ReadyStatusIcon } from "../ReadyStatusIcon";
 
 const socket = getSocket();
 
@@ -37,10 +35,6 @@ export const TelepathTeamScores = (props) => {
         secondReady = showAdded ? player2.isReady : player2.hasPickedWords;
     }
 
-    const ReadyStatusIcon = (isReady) => {
-        return isReady ? <FaCheck className="icons text-green-400"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-600"/>;
-    }
-
     const clickAction = () => {
         if (showAdded) { 
             setMainUser(player1.nameData);
@@ -58,12 +52,12 @@ export const TelepathTeamScores = (props) => {
             <div className="flex h-full w-full">
                 <div className="flex flex-col justify-around items-start h-full gap-2">
                     <div className="playerNameContainer">
-                        { ReadyStatusIcon(firstReady) }
+                        <ReadyStatusIcon isReady={firstReady} />
                         <h3 className={`playerNames ${socket.userId === player1.nameData.userId && "text-yellow-300"}`}>{nickname1}</h3>
                     </div>
                     { teamMode &&
                         <div className="playerNameContainer">
-                            { ReadyStatusIcon(secondReady) }
+                            <ReadyStatusIcon isReady={secondReady} />
                             <h3 className="playerNames">{nickname2}</h3>
                         </div>
                     }

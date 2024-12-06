@@ -14,6 +14,7 @@ import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "./ThirtyOneRules";
 import { useEffect, useState } from "react";
 import { ThirtyOneCrownOverlay } from "./ThirtyOneCrownOverlay";
+import { ReadyStatusIcon } from "../ReadyStatusIcon";
 
 const socket = getSocket();
 const NAVBAR_HEIGHT = 60;
@@ -104,11 +105,10 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                     <div className="flex w-[8%] justify-center"> 
                                         { (playerData.lives > 0 || playersAlive.length <= 1) ?
                                             <>
-                                                {playerData.isReady ? <FaCheck className="icons text-green-600"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-500"/>}
+                                                <ReadyStatusIcon isReady={playerData.isReady} /> 
                                             </>
                                             :
                                             <FaSkull className="text-slate-500"/>
-
                                         }    
                                     </div>    
                                     

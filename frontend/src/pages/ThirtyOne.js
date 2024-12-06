@@ -20,6 +20,7 @@ import { BsInfoCircleFill } from "react-icons/bs";
 import { InfoButton } from "../components/InfoButton";
 import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
 import { ThirtyOneSelfCard } from "../components/thirty-one/ThirtyOneSelfCard";
+import { ThirtyOneKnockOverlay } from "../components/thirty-one/ThirtyOneKnockOverlay";
 
 // TODO
 // Allow users to drag cards
@@ -48,6 +49,9 @@ export const ThirtyOne = ({roomCode}) => {
     const [shouldShowResults, setShouldShowResults] = useState(false);
     const [playersData, setPlayersData] = useState({});
     const [deckCount, setDeckCount] = useState(52);
+
+    // Knock animation
+    const [knockAnimationPlayer, setKnockAnimationPlayer] = useState(null); // Animation plays only on the turn the player knocks
 
     // Card Animation
     const [arrayOfElements, setArrayOfElements] = useState([]);
@@ -134,7 +138,11 @@ export const ThirtyOne = ({roomCode}) => {
         });
 
         socket.on("player_knocked", (nickname) => {
-            //alert(`${nickname} has knocked. Everyone else gets 1 more turn`);
+            setKnockAnimationPlayer(nickname);
+            console.log(nickname)
+            setTimeout(() => {
+                setKnockAnimationPlayer(null);
+            }, 3000);
         });
 
         socket.on("receive_should_show_results", (shouldShowResults) => {
@@ -295,6 +303,10 @@ export const ThirtyOne = ({roomCode}) => {
 
     return (
         <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)]">   
+            { knockAnimationPlayer &&
+                <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} />
+            }
+
             <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
                 <ThirtyOneRules />
             </InfoButton>    

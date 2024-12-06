@@ -128,7 +128,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
         rooms[roomCode].playersData[socket.userId].didKnock = true;
         io.to(roomCode).emit('receive_turn', rooms[roomCode].gameData.turn);
         io.to(roomCode).emit('receive_knock_player', rooms[roomCode].gameData.roundEnd % playerCount);
-        socket.to(roomCode).emit('player_knocked', socket.nickname);
+        io.to(roomCode).emit('player_knocked', socket.nickname);
 
     });
 

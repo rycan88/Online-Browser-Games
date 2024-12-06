@@ -13,7 +13,7 @@ import { RPSMeleeSettings } from "../rps-melee/RPSMeleeSettings";
 
 const socket = getSocket();
 
-const Titles = {"telepath": "Telepath", "thirty_one": "31"}
+const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
 // roomCode: string
 // gameName: string
@@ -24,7 +24,7 @@ export const Room = (props) => {
     
     const [players, setPlayers] = useState([]);
     const [teamData, setTeamData] = useState([]);
-    const [teamMode, setTeamMode] = useState(true);
+    const [teamMode, setTeamMode] = useState(false);
 
     const canStart = teamMode ? teamData.length * 2 === players.length : players.length >= 2;
     useEffect(() => {

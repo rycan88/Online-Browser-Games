@@ -3,6 +3,7 @@ import getSocket from "../../socket";
 import { GoDash } from "react-icons/go";
 import { InfoButton } from "../InfoButton";
 import { RPSMeleeSettings } from "./RPSMeleeSettings";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const socket = getSocket();
 
@@ -55,6 +56,11 @@ export const RPSMeleeResults = ({myData, opponentData, isReady, roomCode}) => {
                     })
 
                     }
+                </div>
+                <div className="absolute flex justify-between items-center bottom-[5%] w-[calc(90%-4vw)] h-[clamp(50px,12%,100px)]">
+                    <div className="w-[30%] flex justify-center">{myData.isReady ? <FaCheck className="icons text-green-600"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-500"/>}</div>
+                    <div className="w-[40%]"></div>
+                    <div className="w-[30%] flex justify-center">{opponentData.isReady ? <FaCheck className="icons text-green-600"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-500"/>}</div>
                 </div>
                 <button className="myContainerCardBottomButton gradientButton"
                         onClick={() => {

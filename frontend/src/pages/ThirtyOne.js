@@ -142,7 +142,7 @@ export const ThirtyOne = ({roomCode}) => {
             console.log(nickname)
             setTimeout(() => {
                 setKnockAnimationPlayer(null);
-            }, 3000);
+            }, 2000);
         });
 
         socket.on("receive_should_show_results", (shouldShowResults) => {

@@ -12,11 +12,15 @@ import { SimplifiedCard } from "../card/SimplifiedCard";
 import { AnimatedBreakingHeart } from "../AnimatedBreakingHeart";
 import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "./ThirtyOneRules";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ThirtyOneCrownOverlay } from "./ThirtyOneCrownOverlay";
 
 const socket = getSocket();
 const NAVBAR_HEIGHT = 60;
 export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
+    const [winner, setWinner] = useState(null);
+    const [hasOverlayShown, setHasOverlayShown] = useState(null);
+
     useEffect(() => {
         window.scrollTo(0, NAVBAR_HEIGHT);
     }, []);
@@ -29,8 +33,22 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
         return {nameData: data.nameData, lives: data.lives};
     });
 
+    if (playersAlive.length <= 1 && !hasOverlayShown) {
+        setHasOverlayShown(true);
+        const winnerData = Object.values(playersData).find((data) => data.ranking === 1);
+
+        setWinner(winnerData.nameData.nickname);
+
+        setTimeout(() => {
+            setWinner(null);
+        }, 3000)
+    }
+    console.log("Winner", winner);
     return (
         <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)] flex items-center justify-center text-slate-200 text-[2vh]">
+            { winner &&
+                <ThirtyOneCrownOverlay winPlayer={winner}/>
+            }
             <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
                 <ThirtyOneRules />
             </InfoButton>   
@@ -67,7 +85,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                      
                 </div>
 
-                <div className="flex flex-col w-full h-[80%] justify-start gap-[4px] items-center overflow-y-auto overflow-x-visible"> 
+                <div className="flex flex-col w-full h-[80%] mt-[-1.5vh] pt-[3vh] justify-start gap-[4px] items-center overflow-y-auto overflow-x-visible"> 
                 { 
                     Object.values(playersData).sort((a, b) => a.ranking - b.ranking).map((playerData, index) => {
                         const isMyData = socket.userId === playerData.nameData.userId;
@@ -76,6 +94,8 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         const heartsLost = playerData.gotStrike ? (playerData.didKnock ? 2 : 1) : 0
                         const grayHearts = 3 - playerData.lives - heartsLost;
                         const breakPoint = !wasOut && heartsLost > 0;
+                        const brokenHearts = 3 - Math.max(0, playerData.lives) - grayHearts;
+
                         wasOut = heartsLost > 0;
                         return (
                             <>
@@ -93,8 +113,8 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                     </div>    
                                     
                                     <div className="flex gap-2 w-[45%] items-center justify-end">
-                                        <div className={`flex relative items-center justify-center text-[max(1.1vw,1em)] w-[60%] overflow-x-auto`}>
-                                            {playersAlive <= 1 && index === 0 && <div className="absolute bottom-[2vh] text-[4vh] animate-myBounce">👑</div>}
+                                        <div className={`flex relative items-center justify-center text-[max(1.1vw,1em)] w-[60%]`}>
+                                            {playersAlive.length <= 1 && index === 0 && <div className="absolute bottom-[3vh] text-[3.5vh] animate-myBounce">👑</div>}
                                             {playerData.nameData.nickname}
                                         </div>
 
@@ -108,7 +128,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                             }        
 
                                             {
-                                                [...Array(heartsLost)].map((_, index) => (
+                                                [...Array(brokenHearts)].map((_, index) => (
                                                     <AnimatedBreakingHeart animationDuration={1250}/>
                                                 )) 
                                             }  

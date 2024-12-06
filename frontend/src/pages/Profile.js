@@ -41,7 +41,7 @@ export const Profile = () => {
                 </div>
 
                 <div className="flex w-full h-[70px] justify-center">
-                    <input className="w-[200px] sm:w-[300px] text-center" onChange={handleTextChange} onKeyDown={ keyDownHandler } ref={fName} maxLength="16"></input>
+                    <input className="w-[200px] sm:w-[300px] text-center" onChange={handleTextChange} onKeyDown={ keyDownHandler } ref={fName} maxLength="12"></input>
                     <button className="w-[100px] sm:w-[100px] gradientButton text-white" onClick={changeNickname}>Change Username</button>
                 </div>
             </div>

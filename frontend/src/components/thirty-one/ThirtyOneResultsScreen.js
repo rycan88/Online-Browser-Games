@@ -108,7 +108,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                                 <ReadyStatusIcon isReady={playerData.isReady} /> 
                                             </>
                                             :
-                                            <FaSkull className="text-slate-500"/>
+                                            <FaSkull className="text-slate-400"/>
                                         }    
                                     </div>    
                                     
@@ -134,7 +134,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                             }  
                                             {
                                                 [...Array(grayHearts)].map((_, index) => (
-                                                    <div className="text-slate-500"><FaHeartBroken /></div>
+                                                    <div className="text-slate-400"><FaHeartBroken /></div>
                                                 ))
                                             }  
                                             { heartsLost > 0 &&

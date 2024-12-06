@@ -32,9 +32,10 @@ export const OddColourOutTile = ({gridSize, color, isOdd}) => {
             }
             }}>
 
-            { isOdd && !isGameRunning && isMarked && !isShow &&
-
-                <IoMdClose className="text-black w-[75%] h-[75%]"/>
+            { isOdd &&
+                <IoMdClose className="text-black w-[75%] h-[75%]" 
+                            style={{color: (!isGameRunning && isMarked && !isShow) ? "black" : color, transition: !isGameRunning ? "color 0.75s ease" : ""}}
+                />
             }
         </div>
     )

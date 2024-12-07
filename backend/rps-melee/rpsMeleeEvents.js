@@ -119,12 +119,11 @@ const startRound = (io, socket, rooms, roomCode) => {
         io.to(roomCode).emit("round_ended");
         io.to(roomCode).emit('receive_game_data', rooms[roomCode].gameData);
 
-
         setTimeout(() => {
             startRound(io, socket, rooms, roomCode);
         }, restInterval)
 
-    }, roundDuration + 120)
+    }, roundDuration + 240);
 }
 
 const losingMatchups = {"rock": ["scissors", "reflector"], "paper": ["rock", "reflector"], "scissors": ["paper", "reflector"], "reflector": ["gun"], "gun": ["rock", "paper", "scissors"], null: []}; // Outputs the choice that would lose to the input

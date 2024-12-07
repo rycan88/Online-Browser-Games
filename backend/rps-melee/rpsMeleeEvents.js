@@ -123,7 +123,7 @@ const startRound = (io, socket, rooms, roomCode) => {
             startRound(io, socket, rooms, roomCode);
         }, restInterval)
 
-    }, roundDuration + 2400);
+    }, roundDuration + 300);
 }
 
 const losingMatchups = {"rock": ["scissors", "reflector"], "paper": ["rock", "reflector"], "scissors": ["paper", "reflector"], "reflector": ["gun"], "gun": ["rock", "paper", "scissors"], null: []}; // Outputs the choice that would lose to the input

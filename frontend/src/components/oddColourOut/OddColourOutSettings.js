@@ -9,7 +9,6 @@ const isMarkedCookieName = "oddColourOutIsAnswerMarked";
 export const OddColourOutSettings = ({closeOverlay}) => {
     const { triggerRerender } = useContext(OddColourOutContext);
 
-    const [cookieState, setCookieState] = useState(false);
     const [isAnswerMarked, setIsAnswerMarked] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     

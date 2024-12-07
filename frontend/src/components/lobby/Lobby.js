@@ -22,6 +22,17 @@ export const Lobby = ({gameName}) => {
 
     const [typedCode, setTypedCode] = useState(""); 
     const [errorMessage, setErrorMessage] = useState(location.state?.error); 
+
+    useEffect(() => {
+        socket.on("room_created", (gameName, roomCode) => {
+            goToRoom(gameName, roomCode);
+        })
+
+        return () => {
+            socket.off('room_created');
+        };
+    }, []);
+
     const handleTextChange = (event) => {
         setErrorMessage("");
         const inp = event.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
@@ -33,7 +44,6 @@ export const Lobby = ({gameName}) => {
     }
     const createRoom = (gameName, roomCode) => {
         socket.emit('create_room', gameName, roomCode);
-        goToRoom(gameName, roomCode);
     };
   
     const joinRoom = (roomCode) => {

@@ -116,6 +116,8 @@ io.on("connection", (socket) => {
         if (gameName === "rock_paper_scissors_melee") {
             rooms[roomCode].gameData = {maxPoints: 5, roundDuration: 1000, withGun: true};   
         }
+
+        socket.emit('room_created', gameName, roomCode);
       });
     
     socket.on('join_room', (roomCode) => {

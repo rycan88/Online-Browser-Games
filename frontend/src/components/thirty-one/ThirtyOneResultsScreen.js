@@ -44,7 +44,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
             setWinner(null);
         }, 3000)
     }
-    console.log("Winner", winner);
+
     return (
         <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)] flex items-center justify-center text-slate-200 text-[2vh]">
             { winner &&

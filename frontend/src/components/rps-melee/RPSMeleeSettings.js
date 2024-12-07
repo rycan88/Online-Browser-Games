@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { ToggleSwitch } from "../ToggleSwitch";
 import getSocket from "../../socket";
+import { SettingsSaveButton } from "../SettingsSaveButton";
 
 const socket = getSocket()
-export const RPSMeleeSettings = ({roomCode}) => {
+export const RPSMeleeSettings = ({roomCode, closeOverlay}) => {
     const [maxPoints, setMaxPoints] = useState(5);
     const [roundDuration, setRoundDuration] = useState(1000);
     const [withGun, setWithGun] = useState(true);
-    const [isSaved, setIsSaved] = useState(false);
+
     const handleSave = () => {
         const settings = {
           maxPoints: maxPoints,
@@ -17,10 +18,6 @@ export const RPSMeleeSettings = ({roomCode}) => {
         };
 
         socket.emit("send_rps_melee_settings_data", roomCode, settings);
-        setIsSaved(true);
-        setTimeout(() => {
-            setIsSaved(false);
-        }, 2000)
     };
 
     useEffect(() => {
@@ -61,7 +58,7 @@ export const RPSMeleeSettings = ({roomCode}) => {
                         max="10"
                         value={maxPoints}
                         onChange={(e) => setMaxPoints(Number(e.target.value))}
-                        className="w-[60%]"
+                        className="w-[60%] accent-sky-600"
                     />
                 </div>
                 
@@ -74,28 +71,16 @@ export const RPSMeleeSettings = ({roomCode}) => {
                         step="100"
                         value={roundDuration}
                         onChange={(e) => setRoundDuration(Number(e.target.value))}
-                        className="w-[60%]"
+                        className="w-[60%] accent-sky-600"
                     />
                 </div>
                 <div className="myContainerCardInnerBox py-2 px-6 flex items-center justify-between">
                     <div>With Gun and Reflector</div>
-                    <ToggleSwitch isOn={withGun} onAction={() => {setWithGun(true)}} offAction={() => {setWithGun(false)}} bgColour="bg-blue-600"/>
+                    <ToggleSwitch isOn={withGun} onAction={() => {setWithGun(true)}} offAction={() => {setWithGun(false)}} bgColour="bg-sky-600"/>
                 </div>
             </div>
             
-
-            <button className="myContainerCardBottomButton gradientButton"
-                onClick={handleSave}
-            >
-                { isSaved ?
-                    <div className="flex justify-center items-center gap-2"><FaCheck className="text-green-400"/> Saved!</div>
-                :
-                    <div>Save</div>
-                }
-            </button>
-
-
-
+            <SettingsSaveButton handleSave={handleSave} closeOverlay={closeOverlay}/>
         </div>
     )
 }

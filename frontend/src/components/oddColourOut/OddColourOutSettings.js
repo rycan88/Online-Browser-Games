@@ -3,9 +3,10 @@ import { FaCheck } from "react-icons/fa";
 import { ToggleSwitch } from "../ToggleSwitch";
 import Cookies from "js-cookie";
 import { OddColourOutContext } from "../../pages/OddColourOut";
+import { SettingsSaveButton } from "../SettingsSaveButton";
 
 const isMarkedCookieName = "oddColourOutIsAnswerMarked";
-export const OddColourOutSettings = ({}) => {
+export const OddColourOutSettings = ({closeOverlay}) => {
     const { triggerRerender } = useContext(OddColourOutContext);
 
     const [cookieState, setCookieState] = useState(false);
@@ -39,19 +40,7 @@ export const OddColourOutSettings = ({}) => {
                 </div>
             </div>
             
-
-            <button className="myContainerCardBottomButton gradientButton"
-                onClick={handleSave}
-            >
-                { isSaved ?
-                    <div className="flex justify-center items-center gap-2"><FaCheck className="text-green-400"/> Saved!</div>
-                :
-                    <div>Save</div>
-                }
-            </button>
-
-
-
+            <SettingsSaveButton isSaved={isSaved} handleSave={handleSave} closeOverlay={closeOverlay}/>
         </div>
     )
 }

@@ -12,18 +12,25 @@ export const Games = () => {
                 {
                     GamesData.map((gameData) => {
                         return (
-                            <div className="myContainerCard w-[30%] h-[80vh] justify-around gap-4 z-[4] cursor-pointer text-[min(3vh,1em)]" 
+                            <div className="myContainerCard w-[25%] h-[60vh] pt-[3%] gap-[8%] z-[4] cursor-pointer text-[min(3vh,1em)]" 
                                 onClick={() => {
                                     navigate(gameData.link);
                                 }}
                             >
                                 <h1 className="myContainerCardTitle">{gameData.title}</h1>
+                                <div className="flex gap-2 w-full justify-center">
+                                    <div className="myContainerCardInnerBox px-[3%] py-[2%]">{gameData.playerLimitText}</div>
+                                    <div className="myContainerCardInnerBox px-[3%] py-[2%]">{gameData.duration}</div>
+                                </div>
                                 {gameData.logoLink &&      
-                                    <div className="logoContainer mt-4">
+                                    <div className="logoContainer">
                                         <img className="h-full rounded-[5%]" src={`${process.env.PUBLIC_URL}/images/${gameData.logoLink}`} alt="logo" />
                                     </div>    
                                 }
-                                <div className='myContainerCardInnerBox p-[10%]'>{gameData.description}</div>
+
+                                <div className='myContainerCardInnerBox px-[10%] py-[3%]'>
+                                    <div>{gameData.description}</div>
+                                </div>
 
                             </div>
                         );

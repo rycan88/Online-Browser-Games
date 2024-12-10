@@ -14,4 +14,8 @@
   .gamesPage .logoContainer {
     @apply h-[25vh] w-[25vh] shadow-xl rounded-[10%];
   }
+
+  .gamesDataInfoContainer {
+    @apply flex items-center gap-[5px];
+  }
 }

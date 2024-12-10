@@ -87,7 +87,7 @@ const setUpGameData = (rooms, roomCode) => {
             const roundDuration = rooms[roomCode].gameData.roundDuration;
             const withGun = rooms[roomCode].gameData.withGun;
 
-            rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration, withGun: withGun};            
+            rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration, withGun: withGun, turn: 0};            
         }
     }
 }

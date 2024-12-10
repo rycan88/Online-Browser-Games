@@ -139,7 +139,6 @@ export const ThirtyOne = ({roomCode}) => {
 
         socket.on("player_knocked", (nickname) => {
             setKnockAnimationPlayer(nickname);
-            console.log(nickname)
             setTimeout(() => {
                 setKnockAnimationPlayer(null);
             }, 2000);

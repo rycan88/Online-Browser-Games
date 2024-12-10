@@ -79,7 +79,8 @@ const rpsMeleeEvents = (io, socket, rooms) => {
 
 const startRound = (io, socket, rooms, roomCode) => {
     const maxPoints = rooms[roomCode].gameData.maxPoints;
-    
+    rooms[roomCode].gameData.turn += 1;
+
     const playersData = rooms[roomCode].playersData;
     for (const player of Object.keys(playersData)) {
         const opponent = playersData[player].opponent;
@@ -94,9 +95,13 @@ const startRound = (io, socket, rooms, roomCode) => {
 
 
     for (const player of Object.keys(playersData)) {
-        if (playersData[player].score >= maxPoints) {
+        if (playersData[player].score >= maxPoints || rooms[roomCode].gameData.turn >= maxPoints * 20) {
             rooms[roomCode].gameData.gameInProgress = false;
-            playersData[player].matchScore += 1;
+            if (playersData[player].score >= maxPoints) {
+                playersData[player].matchScore += 1;
+            }
+
+            rooms[roomCode].gameData.turn = 0;
             io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
             io.to(roomCode).emit('receive_game_data', rooms[roomCode].gameData);
             return;

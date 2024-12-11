@@ -12,13 +12,13 @@ export const Games = () => {
                 {
                     GamesData.map((gameData) => {
                         return (
-                            <div className="myContainerCard w-[25%] h-[60vh] pt-[3%] gap-[8%] z-[4] cursor-pointer text-[min(3vh,1em)]" 
+                            <div className="myContainerCard w-[calc(max(500px,25%))] h-[60vh] pt-[7vh] gap-[8%] z-[4] cursor-pointer text-[min(3vh,1em)]" 
                                 onClick={() => {
                                     navigate(gameData.link);
                                 }}
                             >
                                 <h1 className="myContainerCardTitle">{gameData.title}</h1>
-                                <div className="flex gap-2 w-full justify-center">
+                                <div className="flex gap-[16px] w-full justify-center">
                                     <div className="myContainerCardInnerBox px-[3%] py-[2%]">{gameData.playerLimitText}</div>
                                     <div className="myContainerCardInnerBox px-[3%] py-[2%]">{gameData.duration}</div>
                                 </div>

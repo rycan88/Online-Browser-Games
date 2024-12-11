@@ -4,6 +4,7 @@ import { GoDash } from "react-icons/go";
 import { InfoButton } from "../InfoButton";
 import { RPSMeleeSettings } from "./RPSMeleeSettings";
 import { ReadyStatusIcon } from "../ReadyStatusIcon";
+import { RPSMeleeRules } from "./RPSMeleeRules";
 
 const socket = getSocket();
 
@@ -19,9 +20,16 @@ export const RPSMeleeResults = ({myData, opponentData, isReady, roomCode}) => {
 
     return (
         <div className="RPSMeleePage entirePage justify-center select-none z-[0] text-slate-400">
-            <InfoButton buttonStyle="absolute top-4 right-4" buttonType="settings">
-                <RPSMeleeSettings roomCode={roomCode}/>
-            </InfoButton>
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    <RPSMeleeRules />
+                </InfoButton>
+                
+                <InfoButton buttonType="settings">
+                    <RPSMeleeSettings roomCode={roomCode}/>
+                </InfoButton>   
+            </div>
+
             <div className="myContainerCard">
                 <div className="myContainerCardTitle">Results</div>
                 <div className="flex justify-between w-[90%]">

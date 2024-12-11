@@ -187,9 +187,12 @@ export const OddColourOut = () => {
     return (
         <OddColourOutContext.Provider value={{ isGameRunning, correctAction, wrongAction, isShow, triggerRerender}}>
             <div className="oddColourPage entirePage">
-                <InfoButton buttonStyle="absolute top-4 right-4" buttonType="settings">
-                    <OddColourOutSettings />
-                </InfoButton>
+                <div className="topTaskBar">
+                    <InfoButton buttonType="settings">
+                        <OddColourOutSettings />
+                    </InfoButton>
+                </div>
+
 
                 <div className="content">
                     <div className="gridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>

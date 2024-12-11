@@ -50,9 +50,12 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
             { winner &&
                 <ThirtyOneCrownOverlay winPlayer={winner}/>
             }
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                <ThirtyOneRules />
-            </InfoButton>   
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    <ThirtyOneRules />
+                </InfoButton>   
+            </div>
+
             <div className="myContainerCard pb-[75px]">
                 <div className="myContainerCardTitle">
                     Results

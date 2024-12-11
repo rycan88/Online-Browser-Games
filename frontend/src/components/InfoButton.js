@@ -17,7 +17,7 @@ export const InfoButton = ({buttonStyle, buttonType="info", children}) => {
     }
 
     const childrenWithClose = React.Children.map(children, (child) => {
-        return React.cloneElement(child, { closeOverlay: closeOverlay, other: "HI" });
+        return React.cloneElement(child, { closeOverlay: closeOverlay});
     });
 
     return (

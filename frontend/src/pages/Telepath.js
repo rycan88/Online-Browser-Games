@@ -74,9 +74,12 @@ export const Telepath = (props) => {
 
     return (
         <div className="telepathPage entirePage">
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                <TelepathRules />
-            </InfoButton>   
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    <TelepathRules />
+                </InfoButton> 
+            </div>
+  
             <h2 className="telepathPrompt">{prompt + " " + wordLimit} </h2>
             <div className="containerHolder">
                 <div className="scoreDisplayContainer scrollbar-hide">

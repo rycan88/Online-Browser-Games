@@ -54,6 +54,10 @@
   .myContainerCardBottomButton {
     @apply p-2 absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[clamp(100px,25%,200px)] h-[clamp(50px,12%,100px)] rounded-lg text-[2vh];
   }
+
+  .topTaskBar { 
+    @apply flex absolute w-full justify-end gap-[calc(min(1%,8px))] top-[0] right-[0] pt-[1vh] pr-[calc(min(2%,8px))]
+  }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

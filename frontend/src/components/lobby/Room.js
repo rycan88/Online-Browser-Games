@@ -82,14 +82,17 @@ export const Room = (props) => {
 
     return (
         <div className="lobbyPage entirePage justify-center items-center">
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                {Rules[gameName]}
-            </InfoButton>
-            { gameName === "rock_paper_scissors_melee" &&
-                <InfoButton buttonStyle="absolute top-[2%] right-[4.5%]" buttonType="settings">
-                    <RPSMeleeSettings roomCode={roomCode}/>
-                </InfoButton>  
-            } 
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    {Rules[gameName]}
+                </InfoButton>
+                { gameName === "rock_paper_scissors_melee" &&
+                    <InfoButton buttonType="settings">
+                        <RPSMeleeSettings roomCode={roomCode}/>
+                    </InfoButton>  
+                } 
+            </div>
+
             <div className="lobbyBox">
                 { gameName === "telepath" &&
                     <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">

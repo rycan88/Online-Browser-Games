@@ -305,10 +305,12 @@ export const ThirtyOne = ({roomCode}) => {
             { knockAnimationPlayer &&
                 <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} />
             }
-
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                <ThirtyOneRules />
-            </InfoButton>    
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    <ThirtyOneRules />
+                </InfoButton> 
+            </div>
+   
 
             <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer} hasPicked={hasPicked}/>
 

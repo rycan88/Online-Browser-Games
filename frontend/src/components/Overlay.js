@@ -6,7 +6,7 @@ export function Overlay({ isOpen, onClose, children }) {
     return (
         <div>
             {isOpen ? (
-                <div className="overlay"> 
+                <div className="overlay entirePage"> 
                     <div className="background" 
                         onClick={(e) => {
                             if (e.target.classList.contains("overlayContainer")) {

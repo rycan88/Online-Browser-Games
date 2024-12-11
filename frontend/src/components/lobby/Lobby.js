@@ -79,9 +79,11 @@ export const Lobby = ({gameName}) => {
 
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                {Rules[gameName]}
-            </InfoButton>   
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    {Rules[gameName]}
+                </InfoButton>
+            </div>
 
             <div className="lobbyBox">
                 <h1 className="gameTitle">{Titles[gameName]}</h1>

@@ -18,7 +18,7 @@ export const GamesData = [
         link: "/telepath/lobby",
         playerLimitText: <div className="gamesDataInfoContainer"><IoPerson />2+ players</div>,
         duration: <div className="gamesDataInfoContainer"><FaClock />5-20 min</div>,
-        description: "Are you on the same wavelength as your friends? This fun word game will test your compatibility with your friends!"
+        description: "Are you on the same wavelength as your friends? This fun word game will test your compatibility with a partner!"
     },
     {
         id: "thirty_one",
@@ -27,7 +27,7 @@ export const GamesData = [
         link: "/thirty_one/lobby",
         playerLimitText: <div className="gamesDataInfoContainer"><IoPerson />2-8 players</div>,
         duration: <div className="gamesDataInfoContainer"><FaClock />5-15 min</div>,
-        description: "Collect cards of the same suit to reach 31!"
+        description: "Collect cards of the same suit to reach 31. Be the last one standing to earn the golden crown!"
     },
     {
         id: "rock_paper_scissors_melee",

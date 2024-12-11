@@ -1,13 +1,7 @@
 import getSocket from "../../socket";
-import { Card } from "../card/Card";
-import { FaCheck, FaHeart } from "react-icons/fa6";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { IoIosHeart } from "react-icons/io";
+import { FaHeart } from "react-icons/fa6";
 import { FaHeartBroken, FaSkull } from "react-icons/fa";
-import { FaHandBackFist } from "react-icons/fa6";
-import { cardChars, suitIcons, suitColours } from "../card/CardUtils";
-import { IoIosHeartEmpty } from "react-icons/io";
-import { FaUser } from "react-icons/fa";
+import { suitColours } from "../card/CardUtils";
 import { SimplifiedCard } from "../card/SimplifiedCard";
 import { AnimatedBreakingHeart } from "../AnimatedBreakingHeart";
 import { InfoButton } from "../InfoButton";

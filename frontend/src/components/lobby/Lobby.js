@@ -9,8 +9,9 @@ import { AppContext } from "../../App";
 import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { GamesData } from "../GamesData";
+import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 
 const socket = getSocket();

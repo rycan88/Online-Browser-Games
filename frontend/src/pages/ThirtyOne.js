@@ -1,6 +1,6 @@
 import "../css/ThirtyOne.css"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaHandBackFist } from "react-icons/fa6";
 
@@ -16,7 +16,6 @@ import { Pile } from "../components/card/Pile";
 import { getLastElementPosition, getPlayerCoord } from "../components/thirty-one/ThirtyOneUtils";
 import { MovingElement } from "../components/thirty-one/MovingElement";
 import CardOutline from "../components/card/CardOutline";
-import { BsInfoCircleFill } from "react-icons/bs";
 import { InfoButton } from "../components/InfoButton";
 import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
 import { ThirtyOneSelfCard } from "../components/thirty-one/ThirtyOneSelfCard";

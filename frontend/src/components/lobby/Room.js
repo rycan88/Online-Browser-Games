@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import { useEffect, useState} from "react";
 import getSocket from "../../socket";
-import { useNavigate, useLocation } from "react-router-dom";
-import { AppContext } from "../../App";
+import { useNavigate } from "react-router-dom";
 import { TeamList } from "./TeamList";
 import { ToggleSwitch } from "../ToggleSwitch";
 import { PlayerList } from "./PlayerList";
@@ -10,11 +9,12 @@ import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { TelepathRules } from "../telepath/TelepathRules";
 import { RPSMeleeSettings } from "../rps-melee/RPSMeleeSettings";
+import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 
 const socket = getSocket();
 
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
 // roomCode: string
 // gameName: string
 export const Room = (props) => {

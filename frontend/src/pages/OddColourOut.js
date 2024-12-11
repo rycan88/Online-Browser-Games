@@ -1,7 +1,6 @@
 import { useState, createContext, useEffect, useRef, useCallback } from "react"
 import Cookies from "js-cookie";
 import { OddColourOutGrid } from "../components/oddColourOut/OddColourOutGrid";
-import { Overlay } from "../components/Overlay";
 
 import '../css/OddColourOut.css';
 import { InfoButton } from "../components/InfoButton";

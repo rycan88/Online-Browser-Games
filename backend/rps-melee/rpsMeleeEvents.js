@@ -22,17 +22,9 @@ const rpsMeleeEvents = (io, socket, rooms) => {
         const maxPoints = settingsData.maxPoints;
         const withGun = settingsData.withGun;
         
-        if (roundDuration) {
-            rooms[roomCode].gameData.roundDuration = roundDuration; 
-        }
-
-        if (maxPoints) {
-            rooms[roomCode].gameData.maxPoints = maxPoints; 
-        }
-
-        if (withGun !== null) {
-            rooms[roomCode].gameData.withGun = withGun; 
-        }
+        rooms[roomCode].gameData.roundDuration = roundDuration; 
+        rooms[roomCode].gameData.maxPoints = maxPoints; 
+        rooms[roomCode].gameData.withGun = withGun; 
 
         io.to(roomCode).emit('receive_settings_data', {roundDuration: roundDuration, maxPoints: maxPoints, withGun: withGun});
     });
@@ -49,11 +41,12 @@ const rpsMeleeEvents = (io, socket, rooms) => {
             io.to(roomCode).emit('start_count_down');
 
             const playersData = rooms[roomCode].playersData;
-            for (const player of Object.keys(playersData)) {
+            for (const player of Object.keys(playersData)) { // Start new round
                 const opponent = playersData[player].opponent;
                 const myNameData = playersData[player].nameData;
+                const matchScore = playersData[player].matchScore;
 
-                playersData[player] = rpsMeleePlayerData(myNameData, opponent, 0);           
+                playersData[player] = rpsMeleePlayerData(myNameData, opponent, matchScore, 0);           
             }
 
             setTimeout(() => {
@@ -78,22 +71,30 @@ const rpsMeleeEvents = (io, socket, rooms) => {
 
 const startRound = (io, socket, rooms, roomCode) => {
     const maxPoints = rooms[roomCode].gameData.maxPoints;
-    
+    rooms[roomCode].gameData.turn += 1;
+
     const playersData = rooms[roomCode].playersData;
     for (const player of Object.keys(playersData)) {
         const opponent = playersData[player].opponent;
         const myNameData = playersData[player].nameData;
+        const matchScore = playersData[player].matchScore;
         const score = playersData[player].score;
         const choiceHistory = playersData[player].choiceHistory;
 
-        playersData[player] = rpsMeleePlayerData(myNameData, opponent, score, choiceHistory);
+        playersData[player] = rpsMeleePlayerData(myNameData, opponent, matchScore, score, choiceHistory);
     }
 
-    io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
+
 
     for (const player of Object.keys(playersData)) {
-        if (playersData[player].score >= maxPoints) {
+        if (playersData[player].score >= maxPoints || rooms[roomCode].gameData.turn >= maxPoints * 20) {
             rooms[roomCode].gameData.gameInProgress = false;
+            if (playersData[player].score >= maxPoints) {
+                playersData[player].matchScore += 1;
+            }
+
+            rooms[roomCode].gameData.turn = 0;
+            io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
             io.to(roomCode).emit('receive_game_data', rooms[roomCode].gameData);
             return;
         }
@@ -104,6 +105,7 @@ const startRound = (io, socket, rooms, roomCode) => {
 
     rooms[roomCode].gameData.roundInProgress = true;
 
+    io.to(roomCode).emit('receive_players_data', rooms[roomCode].playersData);
     io.to(roomCode).emit("round_started", Date.now());
     io.to(roomCode).emit('receive_game_data', rooms[roomCode].gameData);
 
@@ -114,12 +116,11 @@ const startRound = (io, socket, rooms, roomCode) => {
         io.to(roomCode).emit("round_ended");
         io.to(roomCode).emit('receive_game_data', rooms[roomCode].gameData);
 
-
         setTimeout(() => {
             startRound(io, socket, rooms, roomCode);
         }, restInterval)
 
-    }, roundDuration)
+    }, roundDuration + 300);
 }
 
 const losingMatchups = {"rock": ["scissors", "reflector"], "paper": ["rock", "reflector"], "scissors": ["paper", "reflector"], "reflector": ["gun"], "gun": ["rock", "paper", "scissors"], null: []}; // Outputs the choice that would lose to the input

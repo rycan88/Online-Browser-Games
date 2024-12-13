@@ -26,6 +26,8 @@ export const TelepathListContainers = (props) => {
     const hasPickedWords = playersData[socket.userId].hasPickedWords;
     const isReady = playersData[socket.userId].isReady;
 
+    const [dataInitialized, setDataInitialized] = useState(false);
+
     const [myWords, setMyWords] = useState([]);
 
     const addWord = (typedWord) => {
@@ -64,9 +66,9 @@ export const TelepathListContainers = (props) => {
     const submitAction = () => {
         if (!shouldShowResults) {
             if (hasPickedWords) {
-                unsendWords();
+                unsendWordsReady();
             } else {
-                sendWords();
+                sendWordsReady();
             }
 
         } else {
@@ -95,6 +97,24 @@ export const TelepathListContainers = (props) => {
         return <h2>{label}</h2>
     }
     
+    useEffect(() => {
+        socket.on('time_limit_reached', () => {
+            sendWordsReady();                
+        });
+        socket.on('receive_my_words', (words) => {
+            setDataInitialized(true);
+
+            setMyWords(words);               
+        });
+
+        socket.emit("telepath_get_my_words", roomCode);
+
+        return () => {
+            socket.off('time_limit_reached');
+            socket.off("receive_my_words");
+        };
+    }, [])
+
     // Refresh the words that are the same
     useEffect(() => {
         if (shouldShowResults) {
@@ -110,14 +130,22 @@ export const TelepathListContainers = (props) => {
         socket.emit("send_telepath_ready", roomCode);
     };
 
-    const unsendWords = () => {
-        socket.emit("unsend_telepath_words", roomCode);
+    const sendWordsReady = () => {
+        socket.emit("send_telepath_words_ready", roomCode);
+    };
+
+    const unsendWordsReady = () => {
+        socket.emit("unsend_telepath_words_ready", roomCode);
     };
 
     // Unsend word when we change the wordList after sent
     useEffect(() => {
+        if (dataInitialized && !shouldShowResults) {
+            sendWords()
+        }
+
         if (hasPickedWords && !shouldShowResults) {
-            unsendWords();
+            unsendWordsReady();
         }
     }, [myWords]);
 

@@ -48,8 +48,8 @@ module.exports = {
         },
         loseHeartFrame: {
           '0%': { color: colors.red[700], transform: 'scale(1)'},
-          '60%, 80%': { color: colors.slate[500], transform: 'scale(0.5)'},
-          '100%': { color: colors.slate[500], transform: 'scale(1)'}, 
+          '60%, 80%': { color: colors.slate[400], transform: 'scale(0.5)'},
+          '100%': { color: colors.slate[400], transform: 'scale(1)'}, 
         },
         riseUpFrame: {
           '0%': { transform: 'translateY(80%) scale(0.5)', opacity: 0 },

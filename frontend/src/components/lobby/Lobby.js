@@ -8,8 +8,10 @@ import { TelepathRules } from "../telepath/TelepathRules";
 import { AppContext } from "../../App";
 import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
+import { GamesData } from "../GamesData";
+import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 
 const socket = getSocket();
@@ -22,6 +24,19 @@ export const Lobby = ({gameName}) => {
 
     const [typedCode, setTypedCode] = useState(""); 
     const [errorMessage, setErrorMessage] = useState(location.state?.error); 
+
+    const gameData = GamesData.find(data => data.id === gameName);
+
+    useEffect(() => {
+        socket.on("room_created", (gameName, roomCode) => {
+            goToRoom(gameName, roomCode);
+        })
+
+        return () => {
+            socket.off('room_created');
+        };
+    }, []);
+
     const handleTextChange = (event) => {
         setErrorMessage("");
         const inp = event.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
@@ -33,7 +48,6 @@ export const Lobby = ({gameName}) => {
     }
     const createRoom = (gameName, roomCode) => {
         socket.emit('create_room', gameName, roomCode);
-        goToRoom(gameName, roomCode);
     };
   
     const joinRoom = (roomCode) => {
@@ -56,7 +70,7 @@ export const Lobby = ({gameName}) => {
     };
 
     const generateRoomCode = () => {
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWYZ"; // NO GOOD X WORDS
         let code = "";
         for (let i = 0; i < 4; i++) {
             code += letters[Math.floor(Math.random() * letters.length)];
@@ -66,13 +80,23 @@ export const Lobby = ({gameName}) => {
 
     return (
         <div className="lobbyPage entirePage place-content-center items-center">
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                {Rules[gameName]}
-            </InfoButton>   
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    {Rules[gameName]}
+                </InfoButton>
+            </div>
 
             <div className="lobbyBox">
                 <h1 className="gameTitle">{Titles[gameName]}</h1>
-                <p className="rules"></p>
+
+                <div className="flex gap-[16px] w-full h-[15%] pt-[5%] justify-center items-center text-black">
+                    <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg">{gameData.playerLimitText}</div>
+                    <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg ">{gameData.duration}</div>
+                </div>
+
+                <div className="flex flex-col gap-[4%] h-[45%] my-4 px-2 text-[1.5em] overflow-y-auto">
+                    <div>{gameData.description}</div>
+                </div>
                 <input className="lobbyInput"
                         type="text" 
                         value={typedCode}

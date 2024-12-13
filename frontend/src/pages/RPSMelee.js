@@ -102,8 +102,8 @@ export const RPSMelee = ({roomCode}) => {
         let intervalId;
         if (roundInProgress && roundStartTime && roundDuration) {
             intervalId = setInterval(() => {
-                const timeDiff = Math.max((roundStartTime + roundDuration) - Date.now(), 0);
-                const percent = timeDiff * 100 / roundDuration;
+                const timeDiff = Math.max((roundStartTime + roundDuration + 60) - Date.now(), 0);
+                const percent = Math.min(timeDiff * 100 / roundDuration, 100);
                 setTimeBarPercent(percent);
             }, 30);
 

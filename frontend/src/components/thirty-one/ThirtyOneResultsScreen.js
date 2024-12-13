@@ -1,22 +1,21 @@
 import getSocket from "../../socket";
-import { Card } from "../card/Card";
-import { FaCheck, FaHeart } from "react-icons/fa6";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { IoIosHeart } from "react-icons/io";
+import { FaHeart } from "react-icons/fa6";
 import { FaHeartBroken, FaSkull } from "react-icons/fa";
-import { FaHandBackFist } from "react-icons/fa6";
-import { cardChars, suitIcons, suitColours } from "../card/CardUtils";
-import { IoIosHeartEmpty } from "react-icons/io";
-import { FaUser } from "react-icons/fa";
+import { suitColours } from "../card/CardUtils";
 import { SimplifiedCard } from "../card/SimplifiedCard";
 import { AnimatedBreakingHeart } from "../AnimatedBreakingHeart";
 import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "./ThirtyOneRules";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ThirtyOneCrownOverlay } from "./ThirtyOneCrownOverlay";
+import { ReadyStatusIcon } from "../ReadyStatusIcon";
 
 const socket = getSocket();
 const NAVBAR_HEIGHT = 60;
 export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
+    const [winner, setWinner] = useState(null);
+    const [hasOverlayShown, setHasOverlayShown] = useState(null);
+
     useEffect(() => {
         window.scrollTo(0, NAVBAR_HEIGHT);
     }, []);
@@ -29,11 +28,28 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
         return {nameData: data.nameData, lives: data.lives};
     });
 
+    if (playersAlive.length <= 1 && !hasOverlayShown) {
+        setHasOverlayShown(true);
+        const winnerData = Object.values(playersData).find((data) => data.ranking === 1);
+
+        setWinner(winnerData.nameData.nickname);
+
+        setTimeout(() => {
+            setWinner(null);
+        }, 3000)
+    }
+
     return (
         <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)] flex items-center justify-center text-slate-200 text-[2vh]">
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                <ThirtyOneRules />
-            </InfoButton>   
+            { winner &&
+                <ThirtyOneCrownOverlay winPlayer={winner}/>
+            }
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    <ThirtyOneRules />
+                </InfoButton>   
+            </div>
+
             <div className="myContainerCard pb-[75px]">
                 <div className="myContainerCardTitle">
                     Results
@@ -67,7 +83,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                      
                 </div>
 
-                <div className="flex flex-col w-full h-[80%] justify-start gap-[4px] items-center overflow-y-auto overflow-x-visible"> 
+                <div className="flex flex-col w-full h-[80%] mt-[-1.5vh] pt-[3vh] justify-start gap-[4px] items-center overflow-y-auto overflow-x-visible"> 
                 { 
                     Object.values(playersData).sort((a, b) => a.ranking - b.ranking).map((playerData, index) => {
                         const isMyData = socket.userId === playerData.nameData.userId;
@@ -76,6 +92,8 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         const heartsLost = playerData.gotStrike ? (playerData.didKnock ? 2 : 1) : 0
                         const grayHearts = 3 - playerData.lives - heartsLost;
                         const breakPoint = !wasOut && heartsLost > 0;
+                        const brokenHearts = 3 - Math.max(0, playerData.lives) - grayHearts;
+
                         wasOut = heartsLost > 0;
                         return (
                             <>
@@ -84,17 +102,16 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                     <div className="flex w-[8%] justify-center"> 
                                         { (playerData.lives > 0 || playersAlive.length <= 1) ?
                                             <>
-                                                {playerData.isReady ? <FaCheck className="icons text-green-600"/> : <AiOutlineLoading3Quarters className="icons animate-spin text-red-500"/>}
+                                                <ReadyStatusIcon isReady={playerData.isReady} /> 
                                             </>
                                             :
-                                            <FaSkull className="text-slate-500"/>
-
+                                            <FaSkull className="text-slate-400"/>
                                         }    
                                     </div>    
                                     
                                     <div className="flex gap-2 w-[45%] items-center justify-end">
-                                        <div className={`flex relative items-center justify-center text-[max(1.1vw,1em)] w-[60%] overflow-x-auto`}>
-                                            {playersAlive <= 1 && index === 0 && <div className="absolute bottom-[2vh] text-[4vh] animate-myBounce">👑</div>}
+                                        <div className={`flex relative items-center justify-center text-[max(1.1vw,1em)] w-[60%]`}>
+                                            {playersAlive.length <= 1 && index === 0 && <div className="absolute bottom-[3vh] text-[3.5vh] animate-myBounce">👑</div>}
                                             {playerData.nameData.nickname}
                                         </div>
 
@@ -108,13 +125,13 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                                             }        
 
                                             {
-                                                [...Array(heartsLost)].map((_, index) => (
+                                                [...Array(brokenHearts)].map((_, index) => (
                                                     <AnimatedBreakingHeart animationDuration={1250}/>
                                                 )) 
                                             }  
                                             {
                                                 [...Array(grayHearts)].map((_, index) => (
-                                                    <div className="text-slate-500"><FaHeartBroken /></div>
+                                                    <div className="text-slate-400"><FaHeartBroken /></div>
                                                 ))
                                             }  
                                             { heartsLost > 0 &&

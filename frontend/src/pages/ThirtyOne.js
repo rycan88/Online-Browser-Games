@@ -1,6 +1,6 @@
 import "../css/ThirtyOne.css"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaHandBackFist } from "react-icons/fa6";
 
@@ -16,7 +16,6 @@ import { Pile } from "../components/card/Pile";
 import { getLastElementPosition, getPlayerCoord } from "../components/thirty-one/ThirtyOneUtils";
 import { MovingElement } from "../components/thirty-one/MovingElement";
 import CardOutline from "../components/card/CardOutline";
-import { BsInfoCircleFill } from "react-icons/bs";
 import { InfoButton } from "../components/InfoButton";
 import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
 import { ThirtyOneSelfCard } from "../components/thirty-one/ThirtyOneSelfCard";
@@ -139,10 +138,9 @@ export const ThirtyOne = ({roomCode}) => {
 
         socket.on("player_knocked", (nickname) => {
             setKnockAnimationPlayer(nickname);
-            console.log(nickname)
             setTimeout(() => {
                 setKnockAnimationPlayer(null);
-            }, 3000);
+            }, 2000);
         });
 
         socket.on("receive_should_show_results", (shouldShowResults) => {
@@ -306,10 +304,12 @@ export const ThirtyOne = ({roomCode}) => {
             { knockAnimationPlayer &&
                 <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} />
             }
-
-            <InfoButton buttonStyle={"absolute top-[2%] right-[2%]"}>
-                <ThirtyOneRules />
-            </InfoButton>    
+            <div className="topTaskBar">
+                <InfoButton buttonType="info">
+                    <ThirtyOneRules />
+                </InfoButton> 
+            </div>
+   
 
             <ThirtyOnePlayerDisplay selfIndex={selfIndex} currentPlayers={currentPlayers} playerTurn={playerTurn} knockPlayer={knockPlayer} hasPicked={hasPicked}/>
 

@@ -1,16 +1,17 @@
-import { useState, createContext, useEffect } from "react"
+import { useState, createContext, useEffect, useRef, useCallback } from "react"
 import Cookies from "js-cookie";
 import { OddColourOutGrid } from "../components/oddColourOut/OddColourOutGrid";
-import { Overlay } from "../components/Overlay";
 
 import '../css/OddColourOut.css';
 import { InfoButton } from "../components/InfoButton";
-import { OddColourOutSettings } from "../components/oddColourOut/OddColourOutSettings";
+import { getOddColourOutTimeMode, OddColourOutSettings } from "../components/oddColourOut/OddColourOutSettings";
+import { RiTimerLine } from "react-icons/ri";
 
 export const OddColourOutContext = createContext();
 
 export const OddColourOut = () => {
     const [rerender, setRerender] = useState(false);
+
     const triggerRerender = () => {
         setRerender(!rerender);
     }
@@ -54,15 +55,64 @@ export const OddColourOut = () => {
     const [score, setScore] = useState(startValues.score);
     const [bestScore, setBestScore] = useState(getBestScore());
     const [colorTransition, setColorTransition] = useState(startValues.transition);
-    const [isGameRunning, setIsGameRunning] = useState("true");
-    const [isShow, setIsShow] = useState("false");
+    const [isGameRunning, setIsGameRunning] = useState(true);
+    const [isShow, setIsShow] = useState(false);
     const [gridSize, setGridSize] = useState(startValues.gridSize);
     const [offset, setOffset] = useState(startValues.offset);
     const [colors, setColors] = useState(generateRandomColours(startValues.offset));
     const [oddOne, setOddOne] = useState(Math.floor(Math.random() * (startValues.gridSize ** 2)));
     const [boxBgColor, setBoxBgColor] = useState(startValues.bgColor);
 
+    const [timeMode, setTimeMode] = useState("unlimited");
+    const [timeRemaining, setTimeRemaining] = useState(0);
+    const timerId = useRef(null);
+
+    useEffect(() => {
+        const mode = getOddColourOutTimeMode();
+        if (level === 1) {
+            setTimeMode(mode)
+            switch (mode) {
+                case "increment":
+                    setTimeRemaining(10);
+                    break
+                case "30sec":
+                    setTimeRemaining(30);
+                    break
+                case "1min":
+                    setTimeRemaining(60);
+                    break
+                case "2min":
+                    setTimeRemaining(120);
+                    break
+                default:
+                    break
+            }
+
+        } else if (level > 1) {
+
+        }
+    }, [rerender, level]);
+
     const correctAction = () => {
+        if (level === 1 && timeMode !== "unlimited") {
+            const intervalId = setInterval(() => {
+                setTimeRemaining((previous) => {
+                    if (previous <= 1) {
+                        clearInterval(intervalId);
+                        wrongActionRef.current()
+                        return 0;
+                    } 
+                    return previous - 1
+                });
+            }, 1000);
+
+            timerId.current = intervalId;
+        }
+
+        if (timeMode === "increment" && level > 1) {
+            setTimeRemaining(timeRemaining + 1)
+        }
+
         setIsGameRunning(true);
         const newScore = score + level * 10;
         const newLevel = level + 1;
@@ -84,22 +134,26 @@ export const OddColourOut = () => {
         reconfigureBoard(newOffset, newGridSize);
     }
 
-    const wrongAction = () => {
+    const showSolution = useCallback(() => {
+        setColorTransition(startValues.transition);
+        setBoxBgColor(colors[0]);
+        setIsShow(false);
+    }, [colors]);
+
+    const wrongAction = useCallback(() => {
+        if (timerId.current) {
+            clearInterval(timerId.current);
+        }
+
         setIsGameRunning(false);
         showSolution();
-    }
+    }, [showSolution]);
 
     const reconfigureBoard = (offset, gridSize) => {
         setColorTransition("none");
         setColors(generateRandomColours(offset))
         setOddOne(Math.floor(Math.random() * (gridSize ** 2)));
         setBoxBgColor(startValues.bgColor);
-    }
-
-    const showSolution = () => {
-        setColorTransition(startValues.transition);
-        setBoxBgColor(colors[0]);
-        setIsShow(false);
     }
 
     const hideSolution = () => {
@@ -117,12 +171,28 @@ export const OddColourOut = () => {
         reconfigureBoard(startValues.offset, startValues.gridSize);
     }
 
+    const wrongActionRef = useRef(wrongAction)
+    useEffect(() => {
+        wrongActionRef.current = wrongAction;
+    }, [wrongAction])
+
+    useEffect(() => {
+        return () => {
+            if (timerId.current) {
+                clearInterval(timerId.current);
+            }
+        };
+    }, []);
+
     return (
         <OddColourOutContext.Provider value={{ isGameRunning, correctAction, wrongAction, isShow, triggerRerender}}>
             <div className="oddColourPage entirePage">
-                <InfoButton buttonStyle="absolute top-4 right-4" buttonType="settings">
-                    <OddColourOutSettings />
-                </InfoButton>
+                <div className="topTaskBar">
+                    <InfoButton buttonType="settings">
+                        <OddColourOutSettings />
+                    </InfoButton>
+                </div>
+
 
                 <div className="content">
                     <div className="gridBox" style={{backgroundColor: boxBgColor, transition: colorTransition}}>
@@ -137,10 +207,9 @@ export const OddColourOut = () => {
                             </div>
                             <div>
                                 { isGameRunning ?
-                                    // TODO: Add timer
-                                    <div className="timer">
-                                        <div className="timerClockIcon"></div>
-                                        <h3>&infin;</h3>
+                                    <div className="flex items-center">
+                                        <RiTimerLine className="h-[60px] w-[60px] sm:h-[96px] sm:w-[96px]"/>
+                                        <h3 className="text-6xl sm:text-8xl font-semibold -mt-1 sm:-mt-2 w-[80px] sm:w-[120px]">{timeMode === "unlimited" ? "∞" : timeRemaining}</h3>
                                     </div>
                                 : 
                                 <div className="flex flex-col">

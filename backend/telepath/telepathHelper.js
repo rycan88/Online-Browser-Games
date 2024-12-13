@@ -1,3 +1,4 @@
+const { telepathPlayerData } = require('./telepathPlayerData');
 
 const telepathWords = require('./telepathWords').telepathWords;
 
@@ -6,7 +7,7 @@ const generateNewWord = () => {
 }
 
 const generateWordLimit = () => {
-    return Math.floor(Math.random() * 5) + 5;
+    return Math.floor(Math.random() * 4) + 5;
 }
 
 const objectSort = (obj) => {
@@ -76,9 +77,53 @@ const setNewPrompt = (gameData) => {
     gameData.wordLimit = generateWordLimit()
 }
 
+const endRound = (io, rooms, roomCode) => {
+    if (!rooms[roomCode]) { return; }
+
+    const gameData = rooms[roomCode].gameData;
+    const playersData = rooms[roomCode].playersData;
+
+    gameData.shouldShowResults = true; 
+    
+    calculateScores(playersData, rooms[roomCode].teamMode);
+
+    Object.values(playersData).forEach((userData) => {
+        playersData[userData.nameData.userId].hasPickedWords = true;
+    })
+
+    io.to(roomCode).emit("receive_game_data", gameData); 
+    io.to(roomCode).emit("receive_players_data", playersData); 
+}
+
+const startRound = (io, rooms, roomCode) => {
+    if (!rooms[roomCode]) { return; }
+
+    const playersData = rooms[roomCode].playersData;
+
+    Object.values(playersData).forEach((userData) => {
+        playersData[userData.nameData.userId] = telepathPlayerData(userData.nameData, userData.partner, userData.totalScore);
+    })
+    const gameData = rooms[roomCode].gameData;
+    gameData.shouldShowResults = false;
+    setNewPrompt(gameData);
+
+    gameData.roundStartTime = Date.now() + 1000; // Gives the players 1 more second
+    timeControls = {"15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90};
+
+    if (Object.keys(timeControls).includes(gameData.timeLimit)) {
+        setTimeout(() => {
+            endRound(io, rooms, roomCode)
+        }, (timeControls[gameData.timeLimit] + 1) * 1000);
+    }
+
+    io.to(roomCode).emit("receive_game_data", gameData);    
+}
+
 module.exports = {
     generateNewWord,
     generateWordLimit,
     calculateScores,
     setNewPrompt,
+    endRound,
+    startRound,
 };

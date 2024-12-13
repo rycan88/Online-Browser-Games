@@ -70,7 +70,7 @@ export const Lobby = ({gameName}) => {
     };
 
     const generateRoomCode = () => {
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWYZ"; // NO GOOD X WORDS
         let code = "";
         for (let i = 0; i < 4; i++) {
             code += letters[Math.floor(Math.random() * letters.length)];

@@ -11,6 +11,7 @@ import { TelepathRules } from "../telepath/TelepathRules";
 import { RPSMeleeSettings } from "../rps-melee/RPSMeleeSettings";
 import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 import { TelepathSettings } from "../telepath/TelepathSettings";
+import { RoomCodeWords } from "./RoomCodeWords";
 
 const socket = getSocket();
 
@@ -73,6 +74,18 @@ export const Room = (props) => {
         navigate(`/${gameName}/lobby`);
     }
 
+    const getPhrase = (roomCode) => {
+        let string = "(";
+        for (let i = 0; i < roomCode.length; i++) {
+            string += RoomCodeWords[roomCode[i]][i];
+            if (i != roomCode.length - 1) {
+                string += " ";
+            }
+        }
+        string += ")"
+        return string;
+    }
+
     return (
         <div className="lobbyPage entirePage justify-center items-center">
             <div className="topTaskBar">
@@ -90,8 +103,11 @@ export const Room = (props) => {
                 <div className="absolute left-1 top-3 sm:left-3 sm:top-3">
                     <CopyLinkButton/>
                 </div>
-                <h1 className="text-2xl sm:text-3xl">{Titles[gameName]}</h1>                    
-                <h2 className="text-6xl sm:text-8xl py-3 my-auto">{roomCode}</h2>
+                <h1 className="text-2xl sm:text-3xl -mt-1 mb-1">{Titles[gameName]}</h1> 
+                    
+                <h2 className="text-6xl sm:text-8xl my-auto">{roomCode}</h2>
+                <h1 className="text-xl sm:text-2xl text-sky-700 pb-3">{getPhrase(roomCode)}</h1>
+
                 <div className="flex flex-col h-[45%] w-full overflow-y-auto">
                     { teamMode 
                     ?

@@ -90,8 +90,8 @@ export const Lobby = ({gameName}) => {
                 <h1 className="gameTitle">{Titles[gameName]}</h1>
 
                 <div className="flex gap-[16px] w-full h-[15%] pt-[5%] justify-center items-center text-black">
-                    <div className="myContainerCardInnerBox px-[3%] py-[2%] shadow-lg">{gameData.playerLimitText}</div>
-                    <div className="myContainerCardInnerBox px-[3%] py-[2%] shadow-lg">{gameData.duration}</div>
+                    <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg">{gameData.playerLimitText}</div>
+                    <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg ">{gameData.duration}</div>
                 </div>
 
                 <div className="flex flex-col gap-[4%] h-[45%] my-4 px-2 text-[1.5em] overflow-y-auto">

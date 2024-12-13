@@ -115,6 +115,8 @@ io.on("connection", (socket) => {
 
         if (gameName === "rock_paper_scissors_melee") {
             rooms[roomCode].gameData = {maxPoints: 5, roundDuration: 1000, withGun: true};   
+        } else if (gameName === "telepath") {
+            rooms[roomCode].gameData = {timeLimit: "unlimited"}
         }
 
         socket.emit('room_created', gameName, roomCode);
@@ -172,7 +174,7 @@ io.on("connection", (socket) => {
     socket.on('start_game', (roomCode) => {
         if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
             setUpPlayerData(rooms, roomCode);
-            setUpGameData(rooms, roomCode);
+            setUpGameData(io, rooms, roomCode);
             rooms[roomCode].gameStarted = true;
             io.to(roomCode).emit('game_started');
         }

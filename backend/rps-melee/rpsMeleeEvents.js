@@ -22,17 +22,9 @@ const rpsMeleeEvents = (io, socket, rooms) => {
         const maxPoints = settingsData.maxPoints;
         const withGun = settingsData.withGun;
         
-        if (roundDuration) {
-            rooms[roomCode].gameData.roundDuration = roundDuration; 
-        }
-
-        if (maxPoints) {
-            rooms[roomCode].gameData.maxPoints = maxPoints; 
-        }
-
-        if (withGun !== null) {
-            rooms[roomCode].gameData.withGun = withGun; 
-        }
+        rooms[roomCode].gameData.roundDuration = roundDuration; 
+        rooms[roomCode].gameData.maxPoints = maxPoints; 
+        rooms[roomCode].gameData.withGun = withGun; 
 
         io.to(roomCode).emit('receive_settings_data', {roundDuration: roundDuration, maxPoints: maxPoints, withGun: withGun});
     });

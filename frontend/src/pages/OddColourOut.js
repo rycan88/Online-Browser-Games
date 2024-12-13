@@ -5,6 +5,7 @@ import { OddColourOutGrid } from "../components/oddColourOut/OddColourOutGrid";
 import '../css/OddColourOut.css';
 import { InfoButton } from "../components/InfoButton";
 import { getOddColourOutTimeMode, OddColourOutSettings } from "../components/oddColourOut/OddColourOutSettings";
+import { RiTimerLine } from "react-icons/ri";
 
 export const OddColourOutContext = createContext();
 
@@ -206,10 +207,9 @@ export const OddColourOut = () => {
                             </div>
                             <div>
                                 { isGameRunning ?
-                                    // TODO: Add timer
-                                    <div className="timer">
-                                        <div className="timerClockIcon"></div>
-                                        <h3 className="w-[80px] sm:w-[120px]">{timeMode === "unlimited" ? "∞" : timeRemaining}</h3>
+                                    <div className="flex items-center">
+                                        <RiTimerLine className="h-[60px] w-[60px] sm:h-[96px] sm:w-[96px]"/>
+                                        <h3 className="text-6xl sm:text-8xl font-semibold -mt-1 sm:-mt-2 w-[80px] sm:w-[120px]">{timeMode === "unlimited" ? "∞" : timeRemaining}</h3>
                                     </div>
                                 : 
                                 <div className="flex flex-col">

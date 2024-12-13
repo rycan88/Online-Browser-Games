@@ -78,12 +78,4 @@
   .oddColourPage .timerClockIcon {
     @apply bg-timer w-[60px] sm:w-[100px] h-[60px] sm:h-[100px] bg-cover;
   }
-
-  .oddColourPage .timer {
-    @apply flex flex-row;
-  }
-
-  .oddColourPage .timer h3 {
-    @apply text-6xl sm:text-8xl font-semibold -mt-1 sm:-mt-2;
-  }
 }

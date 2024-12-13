@@ -60,7 +60,7 @@ const addToTeamList = (rooms, roomCode, currentUser) => {
             return;            
         }    
     }
-    if (firstEmptySpot !== null) {
+    if (firstEmptySpot != null) {
         teamData[firstEmptySpot].push(currentUser);
     } else {
         teamData.push([currentUser])

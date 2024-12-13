@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react";
+import React, { createContext, useEffect, useState} from "react";
 import getSocket from "../../socket";
 import { useNavigate } from "react-router-dom";
 import { TeamList } from "./TeamList";
@@ -10,13 +10,17 @@ import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { TelepathRules } from "../telepath/TelepathRules";
 import { RPSMeleeSettings } from "../rps-melee/RPSMeleeSettings";
 import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
+import { TelepathSettings } from "../telepath/TelepathSettings";
 
 const socket = getSocket();
 
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
+const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />}
+
 // roomCode: string
 // gameName: string
+
 export const Room = (props) => {
     const gameName = props.gameName;
     const roomCode = props.roomCode;
@@ -37,7 +41,7 @@ export const Room = (props) => {
         });
 
         socket.on('update_team_mode', (teamMode) => {
-            setTeamMode(teamMode)
+            setTeamMode(teamMode);
         });
 
         socket.on('game_started', () => {
@@ -57,7 +61,6 @@ export const Room = (props) => {
             socket.off('update_team_mode');
             socket.off('game_started');
             socket.off('room_error');
-            socket.off('start_error');
         };
     }, []);
 
@@ -70,36 +73,20 @@ export const Room = (props) => {
         navigate(`/${gameName}/lobby`);
     }
 
-    const onAction = () => {
-        setTeamMode(true);
-        socket.emit('set_team_mode', roomCode, true);
-    }
-
-    const offAction = () => {
-        setTeamMode(false);
-        socket.emit('set_team_mode', roomCode, false);
-    }
-
     return (
         <div className="lobbyPage entirePage justify-center items-center">
             <div className="topTaskBar">
                 <InfoButton buttonType="info">
                     {Rules[gameName]}
                 </InfoButton>
-                { gameName === "rock_paper_scissors_melee" &&
+                { Settings[gameName] &&
                     <InfoButton buttonType="settings">
-                        <RPSMeleeSettings roomCode={roomCode}/>
+                        {React.cloneElement(Settings[gameName], { roomCode: roomCode})}
                     </InfoButton>  
                 } 
             </div>
 
             <div className="lobbyBox">
-                { gameName === "telepath" &&
-                    <div className="absolute right-3 top-3 sm:right-5 sm:top-5 flex flex-col">
-                        <h6 className="text-lg">Teams</h6>
-                        <ToggleSwitch className="fixed right-1 top-1" onAction={onAction} offAction={offAction} isOn={teamMode}/>
-                    </div>
-                }
                 <div className="absolute left-1 top-3 sm:left-3 sm:top-3">
                     <CopyLinkButton/>
                 </div>

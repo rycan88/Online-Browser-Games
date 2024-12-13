@@ -33,7 +33,7 @@ export const RPSMeleeSettings = ({roomCode, closeOverlay}) => {
             if (roundDuration) {
                 setRoundDuration(roundDuration)
             }
-            if (withGun !== null) {
+            if (withGun != null) {
                 setWithGun(withGun);
             }
         });

@@ -140,7 +140,7 @@ export const Telepath = (props) => {
                 } 
             </div>
             {timeMode !== "unlimited" &&
-                <div className="absolute top-[2%] left-[30px]">
+                <div className="absolute top-[2%] left-[2%]">
                     <div className="flex items-center">
                         <RiTimerLine className="h-[30px] w-[30px] sm:h-[36px] sm:w-[36px] md:h-[48px] md:w-[48px]"/>
                         <div className="text-[24px] sm:text-[30px] md:text-[40px] font-semibold w-[40px] sm:w-[60px]">

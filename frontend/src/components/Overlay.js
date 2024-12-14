@@ -2,12 +2,12 @@ import { useState } from "react";
 import "../css/Overlay.css";
 import { IoMdClose } from "react-icons/io";
 
-export function Overlay({ isOpen, onClose, children }) {
+export function Overlay({ isOpen, onClose, children, fullScreen=false }) {
     return (
         <div>
             {isOpen ? (
-                <div className="overlay entirePage"> 
-                    <div className="background" 
+                <div className={`overlay entirePage ${fullScreen && "h-[100vh] md:h-[calc(100vh-60px)]"}`}> 
+                    <div className={`background ${fullScreen && "h-[100vh] md:h-[calc(100vh-60px)]"}`} 
                         onClick={(e) => {
                             if (e.target.classList.contains("overlayContainer")) {
                                 if (onClose) {

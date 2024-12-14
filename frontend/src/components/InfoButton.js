@@ -5,7 +5,7 @@ import { FaGear } from "react-icons/fa6";
 
 const buttonIcon = {"info": <BsInfoCircleFill />, "settings": <FaGear className="text-slate-400"/>}
 
-export const InfoButton = ({buttonStyle, buttonType="info", children}) => {
+export const InfoButton = ({buttonStyle, buttonType="info", children, fullScreen=false}) => {
     const [isOpen, setIsOpen] = useState(false)
 
     const toggleOverlay = () => {
@@ -29,7 +29,7 @@ export const InfoButton = ({buttonStyle, buttonType="info", children}) => {
             >
                 {buttonIcon[buttonType]}
             </div>
-            <Overlay isOpen={isOpen} onClose={toggleOverlay}>
+            <Overlay isOpen={isOpen} onClose={toggleOverlay} fullScreen={fullScreen}>
                 { childrenWithClose }
             </Overlay>
         </>

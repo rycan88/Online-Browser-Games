@@ -305,7 +305,7 @@ export const ThirtyOne = ({roomCode}) => {
                 <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} />
             }
             <div className="topTaskBar">
-                <InfoButton buttonType="info">
+                <InfoButton buttonType="info" fullScreen={true}>
                     <ThirtyOneRules />
                 </InfoButton> 
             </div>

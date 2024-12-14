@@ -42,7 +42,7 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
     return (
         <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)] flex items-center justify-center text-slate-200 text-[2vh]">
             { winner &&
-                <ThirtyOneCrownOverlay winPlayer={winner}/>
+                <ThirtyOneCrownOverlay winPlayer={winner} />
             }
             <div className="topTaskBar">
                 <InfoButton buttonType="info">

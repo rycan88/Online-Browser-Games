@@ -12,7 +12,7 @@
   }
 
   .standardCard .cardCornerContainer {
-    @apply flex flex-col items-center text-[50%] w-[15%];
+    @apply flex flex-col items-center;
   }
   .standardCard .cardMiddleContainer {
     @apply w-[70%] h-[80%];

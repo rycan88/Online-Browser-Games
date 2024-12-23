@@ -38,6 +38,7 @@ module.exports = {
         'cards': "url(../images/cards-bg.jpg)",
         'temple': "url(../images/temple-bg.png)",
         'lobby': "url(../images/lobby-bg.jpg)",
+        'flowers': "url(../images/flowers-bg.jpg)",
         'poker-gradient': 'radial-gradient(circle at center, #006400, #013220)',
       },
       keyframes: {

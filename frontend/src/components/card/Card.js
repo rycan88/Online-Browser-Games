@@ -1,23 +1,22 @@
 import "../../css/Card.css"
-import { CardMiddle } from "./CardMiddle";
-import { suitIcons, suitColours, cardChars } from "./CardUtils";
 
-export const Card = ({number, suit, width = 200}) => {
-    const cardNumber = cardChars[number] ?? number;
-    const suitIcon = suitIcons[suit];
-
+export const Card = ({number, suitIcon, suitColour, cardMiddle, cornerFontSize, cornerWidth, width = 200, withBorder=false}) => {
     return (
-        <div className={`standardCard`} 
-            style={{color: suitColours[suit], width: `${width}px`, height: `${width * 1.5}px`, fontSize: `${width/4}px`, padding: `${width / 25}px`}}>
-            <div className="cardCornerContainer mb-auto">
-                <h1 className="font-bold">{cardNumber}</h1>
+        <div className={`standardCard ${withBorder && "border-[1px] border-slate-500/50"}`} 
+            style={{color: suitColour, width: `${width}px`, height: `${width * 1.5}px`, fontSize: `${width/4}px`, padding: `${width / 100}px ${width / 25}px`}}>
+            <div className="cardCornerContainer mb-auto"
+                 style={{fontSize: cornerFontSize, width: cornerWidth}}    
+            >
+                <h1 className="font-bold">{number}</h1>
                 <div>{suitIcon}</div>
             </div>
             <div className={`cardMiddleContainer my-auto`}>
-                <CardMiddle number={number} suit={suit}/>
+                {cardMiddle}
             </div>
-            <div className="cardCornerContainer mt-auto rotate-180">
-                <h1 className="font-bold">{cardNumber}</h1>
+            <div className="cardCornerContainer mt-auto rotate-180"
+                 style={{fontSize: cornerFontSize, width: cornerWidth}} 
+            >
+                <h1 className="font-bold">{number}</h1>
                 <div className="">{suitIcon}</div>
             </div>
         </div>

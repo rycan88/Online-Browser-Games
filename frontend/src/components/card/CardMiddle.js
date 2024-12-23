@@ -1,6 +1,9 @@
-import { suitIcons, cardChars } from "./CardUtils";
+import { GiClubs, GiDiamonds, GiSpades } from "react-icons/gi";
 import { CardFigureContent } from "./CardFigureContent";
-export const CardMiddle = ({number, suit}) => {
+import { IoIosHeart } from "react-icons/io";
+
+const suitIcons = {"spades": <GiSpades />, "hearts": <IoIosHeart />, "clubs": <GiClubs />, "diamonds": <GiDiamonds />}
+export const StandardCardMiddle = ({number, suit}) => {
     const suitIcon = suitIcons[suit];
     if (1 <= number && number <= 3) {
         return (

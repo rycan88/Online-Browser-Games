@@ -6,7 +6,6 @@ import { FaHandBackFist } from "react-icons/fa6";
 
 import getSocket from "../socket";
 
-import { Card } from "../components/card/Card";
 import LoadingScreen from "../components/LoadingScreen";
 import { ThirtyOnePlayer } from "../components/thirty-one/ThirtyOnePlayer";
 import { ThirtyOnePlayerDisplay } from "../components/thirty-one/ThirtyOnePlayerDisplay";
@@ -20,6 +19,7 @@ import { InfoButton } from "../components/InfoButton";
 import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
 import { ThirtyOneSelfCard } from "../components/thirty-one/ThirtyOneSelfCard";
 import { ThirtyOneKnockOverlay } from "../components/thirty-one/ThirtyOneKnockOverlay";
+import { StandardCard } from "../components/card/StandardCard";
 
 // TODO
 // Allow users to drag cards
@@ -214,7 +214,7 @@ export const ThirtyOne = ({roomCode}) => {
 
             const cardId = Date.now();
             const element = <MovingElement id={cardId} 
-                                            element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
+                                            element={<StandardCard number={card.number} suit={card.suit} width={cardWidth}/>} 
                                             startPosition={getLastElementPosition(".thirtyOneDiscardPile")}
                                             animationEndPosition={selfCardsPosition} 
                                             animationEndCall={() => {
@@ -236,7 +236,7 @@ export const ThirtyOne = ({roomCode}) => {
 
             const cardId = Date.now();
             const element = <MovingElement id={cardId} 
-                                            element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
+                                            element={<StandardCard number={card.number} suit={card.suit} width={cardWidth}/>} 
                                             startPosition={selfCardsPosition}
                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                             animationEndCall={() => {
@@ -343,7 +343,7 @@ export const ThirtyOne = ({roomCode}) => {
 
                         }}
                         pileElement={(card, index) => {
-                            return <Card number={card.number} suit={card.suit} width={MIDDLE_CARD_WIDTH}/>
+                            return <StandardCard number={card.number} suit={card.suit} width={MIDDLE_CARD_WIDTH}/>
                         }}
                         cardOutline={<CardOutline width={MIDDLE_CARD_WIDTH}/>}
                         width={MIDDLE_CARD_WIDTH}
@@ -390,7 +390,7 @@ export const ThirtyOne = ({roomCode}) => {
                             const rect = e.target.getBoundingClientRect();
                             const cardId = Date.now();
                             const element = <MovingElement id={cardId} 
-                                                            element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
+                                                            element={<StandardCard number={card.number} suit={card.suit} width={cardWidth}/>} 
                                                             startPosition={{left: rect.left, top: rect.top}}
                                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                                             animationEndCall={() => {

@@ -6,8 +6,4 @@
   .hanabiPage {
     @apply bg-flowers relative flex flex-col items-center;
   }
-
-  .hanabiPage .middleVerticalPile {
-    @apply flex flex-col -space-y-[118px] w-[20%] items-center;
-  }
 }

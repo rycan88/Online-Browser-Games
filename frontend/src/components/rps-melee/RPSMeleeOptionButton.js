@@ -32,7 +32,7 @@ export const RPSMeleeOptionButton = ({roomCode, icon, direction="Down", type="ro
 
 
     return (
-        <div className={`optionButton  ${colours[type]} ${!isDisabled ? "cursor-pointer hover:scale-[110%]" : "opacity-[50%]"} transition transform `}
+        <button className={`optionButton  ${colours[type]} ${!isDisabled ? "cursor-pointer hover:scale-[110%]" : "opacity-[50%]"} transition transform `}
             onClick={ buttonClickAction }
         >   
             { icon }
@@ -41,7 +41,7 @@ export const RPSMeleeOptionButton = ({roomCode, icon, direction="Down", type="ro
                     {keyLetter[direction]}   
                 </div>             
             </div>
-        </div>
+        </button>
     );
 
 }

@@ -17,6 +17,20 @@ export const Hanabi = ({roomCode}) => {
     const selfCardWidth = 100;
     const cardsRemaining = 12;
 
+    const playerCount = 5;
+    const selfIndex = 0;
+    const playersData = [
+                            {username: "Rycan88", cards: [{suit: "green", number: 5}, {suit: "yellow", number: 1}, {suit: "blue", number: 3}, {suit: "red", number: 4}]},
+                            {username: "Meeteehee", cards: [{suit: "purple", number: 3}, {suit: "blue", number: 5}, {suit: "blue", number: 2}, {suit: "blue", number: 1}]},
+                            {username: "Cire365", cards: [{suit: "red", number: 1}, {suit: "yellow", number: 5}, {suit: "blue", number: 3}, {suit: "green", number: 3}]},
+                            {username: "McPenquin", cards: [{suit: "red", number: 2}, {suit: "green", number: 3}, {suit: "purple", number: 2}, {suit: "green", number: 2}]},
+                            {username: "Bjorn", cards: [{suit: "yellow", number: 1}, {suit: "red", number: 1}, {suit: "red", number: 3}, {suit: "red", number: 4}]},
+                        ]
+
+    const adjustedIndex = (index) => {
+        return (selfIndex + index) % playerCount
+    }
+
     return (
         <div className="hanabiPage entirePage select-none z-[0] text-slate-200">
             <div className="absolute flex flex-col left-[3%] gap-[2%] w-full h-[30%]">
@@ -40,13 +54,21 @@ export const Hanabi = ({roomCode}) => {
             </div>
 
             <div className="flex justify-evenly items-center w-full h-[30vh]">
-                <HanabiPlayer />
-                <HanabiPlayer />               
+                <HanabiPlayer playerData={playerCount >= 4 ? playersData[adjustedIndex(2)] : playersData[adjustedIndex(1)]}/>
+                { (playerCount === 3 || playerCount === 5) &&
+                    <HanabiPlayer playerData={playerCount === 3 ? playersData[adjustedIndex(2)] : playersData[adjustedIndex(3)]}/>
+                }               
             </div>
             <div className="flex justify-evenly items-center w-full h-[38vh]">
-                <HanabiPlayer />
+                { playerCount >= 4 &&
+                    <HanabiPlayer playerData={playersData[adjustedIndex(1)]}/>
+                }
+
                 <HanabiPlayPile />
-                <HanabiPlayer />
+
+                { playerCount >= 4 &&
+                    <HanabiPlayer playerData={playersData[adjustedIndex(playerCount - 1)]}/>
+                }
             </div>
 
             <div className="flex h-[32%] w-full">

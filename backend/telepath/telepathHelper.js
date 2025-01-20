@@ -1,5 +1,7 @@
 const { telepathPlayerData } = require('./telepathPlayerData');
 
+const pluralize = require('pluralize');
+
 const telepathWords = require('./telepathWords').telepathWords;
 
 const generateNewWord = () => {    
@@ -23,11 +25,20 @@ const getCombinedShared = (playersData) => {
     const combined = {}
     Object.values(playersData).forEach((userData) => {
         userData.chosenWords.forEach((word) => {
-            combined[word] = (combined[word] + 1 || 0);
+            const singular = pluralize.singular(word);
+            const plural = pluralize(word);
+            if (singular !== word && singular in combined) {
+                combined[singular] = (combined[singular] + 1 || 0);
+            } else if (plural !== word && plural in combined) {
+                combined[plural] = (combined[plural] + 1 || 0);
+            } else {
+                combined[word] = (combined[word] + 1 || 0);
+            }
         });
     });
 
     const combinedSorted = objectSort(combined);
+
     return combinedSorted;
 }
 
@@ -35,13 +46,17 @@ const calculateScores = (playersData, teamMode) => {
     if (!teamMode) {
         const combinedShared = getCombinedShared(playersData);
         const combinedSharedMap = new Map(combinedShared);
+
         Object.values(playersData).forEach((userData) => {
             const myWords = userData.chosenWords;
             let addedScore = 0;
             const sortedWords = {}
             myWords.forEach((word) => {
-                sortedWords[word] = combinedSharedMap.get(word);
-                addedScore += combinedSharedMap.get(word);
+                const singular = pluralize.singular(word);
+                const plural = pluralize(word);              
+                const wordScore = combinedSharedMap.has(singular) ? combinedSharedMap.get(singular) : combinedSharedMap.has(plural) ? combinedSharedMap.get(plural) : combinedSharedMap.get(word)
+                sortedWords[word] = wordScore;
+                addedScore += wordScore;
             });
 
             userData.addedScore = addedScore;
@@ -58,7 +73,7 @@ const calculateScores = (playersData, teamMode) => {
         let addedScore = 0;
         const sortedWords = {};
         myWords.forEach((word) => {
-            if (partnerWords.includes(word)) {
+            if (partnerWords.includes(word) || partnerWords.includes(pluralize(word)) || partnerWords.includes(pluralize.singular(word))) {
                 addedScore += 1;
                 sortedWords[word] = 1;
             } else {

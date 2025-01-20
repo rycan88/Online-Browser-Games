@@ -4,6 +4,8 @@ import { TelepathInputBar } from "./TelepathInputBar";
 import { useEffect, useState } from "react";
 import getSocket from "../../socket";
 
+import pluralize from "pluralize";
+
 const socket = getSocket();
 
 // props
@@ -34,6 +36,10 @@ export const TelepathListContainers = (props) => {
         // We make the words uppercase to avoid repeated words and to make it look nicer
         const reformattedWord = typedWord.toUpperCase().trim();
         const uppercasePrompt = prompt.toUpperCase();
+
+        const singular = pluralize.singular(reformattedWord).toUpperCase();
+        const plural =   pluralize(reformattedWord).toUpperCase();
+
         if (reformattedWord === "") {
             return false;
         } else if (reformattedWord.includes(uppercasePrompt)) {
@@ -45,6 +51,22 @@ export const TelepathListContainers = (props) => {
         } else if (myWords.includes(reformattedWord)) {
             alert("ERROR: " + reformattedWord + " is already on the list");
             return false;
+        } else if (singular !== "" && singular !== reformattedWord) { // Checks if the singular was in the list or part of the prompt
+            if (myWords.includes(singular)) {
+                alert("ERROR: " + singular + " and " + reformattedWord + " count as the same word and is already in the list");
+                return false;
+            } else if (uppercasePrompt.includes(singular) || singular.includes(uppercasePrompt)) {
+                alert("ERROR: " + reformattedWord + " is too similar to the prompt");
+                return false;
+            }        
+        } else if (plural !== "" && plural !== reformattedWord) { // Checks if the plural was in the list or part of the prompt
+            if (myWords.includes(plural)) {
+                alert("ERROR: " + plural + " and " + reformattedWord + " count as the same word and is already in the list");
+                return false;
+            } else if (uppercasePrompt.includes(plural) || plural.includes(uppercasePrompt)) {
+                alert("ERROR: " + reformattedWord + " is too similar to the prompt");
+                return false;
+            } 
         }
 
         setMyWords([...myWords, reformattedWord]);

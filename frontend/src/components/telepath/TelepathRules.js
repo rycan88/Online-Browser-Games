@@ -29,6 +29,9 @@ export const TelepathRules = () => {
                         You cannot enter a word that contains the prompt or that is contained in the prompt<br/>eg.
                         If the prompt is BRAINWASH then you cannot enter BRAINWASH, BRAIN, WASH, RAIN, ASH, etc.
                         Similarly, if the prompt is RAIN then you cannot enter RAIN, BRAIN, RAIN COAT, BRAINSTORM, etc.
+                        <br/>
+                        Words must match exactly except for singular and plural. eg. DOG and DOGS match.
+
                     </div>
                 </div>
             </div>

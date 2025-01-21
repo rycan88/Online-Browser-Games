@@ -6,4 +6,8 @@
   .hanabiPage {
     @apply bg-flowers relative flex flex-col items-center;
   }
+
+  .dropZoneHighlight {
+    @apply transition-colors duration-200 bg-[rgba(49,170,245,0.4)];
+  }
 }

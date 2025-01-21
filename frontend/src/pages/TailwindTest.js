@@ -4,41 +4,6 @@ import { arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyb
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
 
-/*
-const initialCards = [
-    { id: "card-1", content: "Card 1" },
-    { id: "card-2", content: "Card 2" },
-    { id: "card-3", content: "Card 3" },
-  ];
-
-
-export const SortableItem = ({ id, children }) => {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-    } = useSortable({ id });
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        padding: "10px",
-        border: "1px solid black",
-        borderRadius: "5px",
-        background: "white",
-        cursor: "grab",
-    };
-
-    return (
-        <div ref={setNodeRef} className="w-[100px] h-[150px]" style={style} {...attributes} {...listeners}>
-        {children}
-        </div>
-    );
-};
-*/
-
 const DropZone = ({ id, color, children }) => {
   const { isOver, setNodeRef } = useDroppable({ id });
   return (

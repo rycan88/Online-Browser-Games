@@ -46,6 +46,12 @@ export const SidebarData = [
     {
         title: "Hana",
         icon: <LuFlower />,
+        link: "/hana/lobby",
+        isMain: false,
+    },
+    {
+        title: "Hana",
+        icon: <LuFlower />,
         link: "/hana",
         isMain: false,
     },

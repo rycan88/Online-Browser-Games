@@ -1,4 +1,4 @@
-const { Deck } = require("../cards/Deck");
+const { StandardDeck } = require("../cards/StandardDeck");
 const { thirtyOnePlayerData } = require("./thirtyOnePlayerData");
 
 
@@ -104,7 +104,7 @@ const setUpNewRound = (rooms, roomCode) => {
         playersData[playerUserId] = thirtyOnePlayerData(playerData.nameData, Math.max(0, playerData.lives), playerData.ranking)
     }
 
-    const deck = new Deck();
+    const deck = new StandardDeck();
     const discardPile = [];
     deck.shuffle();
     const playerDataArray = Object.values(rooms[roomCode].playersData)

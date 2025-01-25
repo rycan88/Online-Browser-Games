@@ -12,7 +12,6 @@ import { GamesData } from "../GamesData";
 import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
-const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {
@@ -87,7 +86,7 @@ export const Lobby = ({gameName}) => {
             </div>
 
             <div className="lobbyBox">
-                <h1 className="gameTitle">{Titles[gameName]}</h1>
+                <h1 className="gameTitle">{gameData.title}</h1>
 
                 <div className="flex gap-[16px] w-full h-[15%] pt-[5%] justify-center items-center text-black">
                     <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg">{gameData.playerLimitText}</div>

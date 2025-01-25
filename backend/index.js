@@ -38,16 +38,16 @@ const io = new Server(server, {
 
 
 const { User, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms} = require("./serverUtils");
-const { Deck } = require("./cards/Deck");
 const { setUpPlayerData, setUpGameData } = require("./gameUtils");
 const { telepathEvents } = require("./telepath/telepathEvents");
 const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
 const { rpsMeleeEvents } = require("./rps-melee/rpsMeleeEvents");
+const { hanabiEvents } = require("./hanabi/hanabiEvents");
 
 // Lobby Rooms
 const rooms = {};
 const teamGames = ["telepath"];
-const gamePlayerLimits = {"telepath": 100, "thirty_one": 8, "rock_paper_scissors_melee": 2};
+const gamePlayerLimits = {"telepath": 100, "thirty_one": 8, "rock_paper_scissors_melee": 2, "hana": 5};
 const deleteTimers = {};
 // Our socket has a socketId, userId, and nickname
 // socketId changes per tab, while userId changes per browser
@@ -229,6 +229,7 @@ io.on("connection", (socket) => {
     telepathEvents(io, socket, rooms);
     thirtyOneEvents(io, socket, rooms);
     rpsMeleeEvents(io, socket, rooms);
+    hanabiEvents(io, socket, rooms);
 
 })
 

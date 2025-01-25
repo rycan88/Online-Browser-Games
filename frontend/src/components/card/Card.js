@@ -3,7 +3,7 @@ import "../../css/Card.css"
 export const Card = ({number, suitIcon, suitColour, cardMiddle, cornerFontSize, cornerWidth, width = 200, withBorder=false}) => {
     return (
         <div className={`standardCard ${withBorder && "border-[1px] border-slate-500/50"}`} 
-            style={{color: suitColour, width: `${width}px`, height: `${width * 1.5}px`, fontSize: `${width/4}px`, padding: `${width / 100}px ${width / 25}px`}}>
+            style={{color: suitColour, width: `${width}px`, height: `${width * 1.4}px`, fontSize: `${width/4}px`, padding: `${width / 50}px 0px`}}>
             <div className="cardCornerContainer mb-auto"
                  style={{fontSize: cornerFontSize, width: cornerWidth}}    
             >

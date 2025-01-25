@@ -4,20 +4,23 @@ import { BsFlower1 } from "react-icons/bs";
 import { IoFlowerSharp } from "react-icons/io5";
 import { Card } from "../card/Card";
 
-const suitIcons = {"red": <RiFlowerFill />, "yellow": <GiFlowerEmblem />, "green": <GiLotusFlower />, "purple": <GiTwirlyFlower />, "blue": <BsFlower1 />}
-const suitColours = {"red": "#991b1b", "yellow": "#d97706", "green": "#16a34a", "purple": "#7e22ce", "blue": "#1d4ed8"} // red-800
+export const hanabiSuitIcons = {"red": <RiFlowerFill />, "yellow": <GiFlowerEmblem />, "green": <GiLotusFlower />, "purple": <GiTwirlyFlower />, "blue": <BsFlower1 />}
+export const hanabiSuitColours = {"red": "#991b1b", "yellow": "#d97706", "green": "#16a34a", "purple": "#7e22ce", "blue": "#1d4ed8"} // red-800
 
 export const HanabiCard = ({number, suit, width = 200, withBorder=true}) => {
-    const cardNumber = number;
+    const cardNumber = number === "unknown" ? "?" : number;
+    const suitColour = suit === "unknown" ? "black" : hanabiSuitColours[suit]
+
     const cardMiddle = (
         <div className="flex w-full h-full justify-center items-center"
             style={{fontSize: width / 1.5}}>
-                {number}
+                {cardNumber}
         </div>
     )
+    
     return <Card number={cardNumber} 
-                suitIcon={suitIcons[suit]}
-                suitColour={suitColours[suit]} 
+                suitIcon={hanabiSuitIcons[suit]}
+                suitColour={suitColour} 
                 width={width} 
                 withBorder={withBorder}
                 cornerWidth={"20%"}

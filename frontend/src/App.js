@@ -27,7 +27,7 @@ import { Hanabi } from './pages/Hanabi';
 export const AppContext = createContext();
 const socket = getSocket();
 
-const gameNames = ["telepath", "thirty_one", "rock_paper_scissors_melee"]
+const gameNames = ["telepath", "thirty_one", "rock_paper_scissors_melee", "hana"]
 
 function App() {
   const client = new QueryClient();
@@ -40,7 +40,9 @@ function App() {
     } else if (gameName === "thirty_one") {
       return <ThirtyOne roomCode={roomCode} />
     } else if (gameName === "rock_paper_scissors_melee") {
-      return <RPSMelee roomCode={roomCode}/>
+      return <RPSMelee roomCode={roomCode} />
+    } else if (gameName === "hana") {
+      return <Hanabi roomCode={roomCode} />
     }
     return <></>
   }

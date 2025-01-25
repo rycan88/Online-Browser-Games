@@ -10,4 +10,12 @@
   .dropZoneHighlight {
     @apply transition-colors duration-200 bg-[rgba(49,170,245,0.4)];
   }
+
+  .hanabiClueButton {
+    @apply flex items-center justify-center w-[60px] h-[60px] rounded-full bg-slate-300 disabled:opacity-60
+  }
+
+  .hanabiChosenLiftedCard {
+    @apply -translate-y-1/4 outline outline-[4px] outline-amber-500
+  }
 }

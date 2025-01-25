@@ -1,23 +1,28 @@
 import { useDroppable } from "@dnd-kit/core";
 import { HanabiCard } from "./HanabiCard";
+import getSocket from "../../socket";
 
-export const HanabiPlayer = ({playerData}) => {
-    const id = playerData.username;
-    const { active, isOver, setNodeRef } = useDroppable({ id });
-
+const socket = getSocket();
+export const HanabiPlayer = ({playerData, turnPlayer}) => {
+    const id = playerData.nameData.userId;
+    const { active, isOver, setNodeRef } = useDroppable({ id, data: {type: "player"} });
+    
     if (!playerData) { return <></> }
 
-    const shouldHighlight = isOver && active && active.data.current.type === "token";
+
+    const shouldHighlight = isOver && active && active.data.current.type === "token" && turnPlayer === socket.userId;
 
     const nameCardWidth = Math.min((window.innerHeight * 0.12) * (2/3), window.innerWidth * 0.04); // 75px
-    const username = playerData.username;
+    const username = playerData.nameData.nickname;
     const cards = playerData.cards;
+    const cardCount = cards.length;
+    const isTurn = turnPlayer === playerData.nameData.userId;
     return (
         <div ref={setNodeRef}
-            className={`flex flex-col w-[25vw] border-slate-400 border-[2px] h-[20vh] ${shouldHighlight && "dropZoneHighlight"}`}
+            className={`flex flex-col border-[2px] h-[20vh] border-slate-400 ${cardCount >= 5 ? "w-[30vw]" : "w-[25vw]"} ${shouldHighlight && "dropZoneHighlight"}`}
         >
             <div className="flex flex-col items-center justify-center gap-[10%] h-full">
-                <div className="flex items-center justify-center w-full">{username}</div>
+                <div className={`flex items-center justify-center w-full ${isTurn && "text-yellow-300"}`}>{username}</div>
                 <div className="flex items-center justify-center gap-[5%] w-full">
                     {
                         cards.map((card) => {

@@ -19,7 +19,7 @@ export const StandardCard = ({number, suit, width = 200, withBorder=true}) => {
                 width={width} 
                 withBorder={withBorder}
                 cornerWidth={"15%"}
-                cornerFontSize={"60%"}
+                cornerFontSize={"50%"}
                 cardMiddle={<StandardCardMiddle number={number} suit={suit}/>}
             />
 }

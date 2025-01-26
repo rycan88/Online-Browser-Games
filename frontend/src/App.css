@@ -60,6 +60,22 @@
   }
 }
 
+.hanabi-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hanabi-scrollbar::-webkit-scrollbar-track {
+  background: #888;
+}
+
+.hanabi-scrollbar::-webkit-scrollbar-thumb {
+  background: #f1f1f1;
+}
+
+.hanabi-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d0d5db;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

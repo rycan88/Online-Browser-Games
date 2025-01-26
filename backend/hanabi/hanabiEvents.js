@@ -5,9 +5,11 @@ const hanabiEvents = (io, socket, rooms) => {
             socket.emit("receive_play_pile", rooms[roomCode].gameData.playPile);
             socket.emit("receive_discard_pile", rooms[roomCode].gameData.discardPile);
             socket.emit("receive_history", rooms[roomCode].gameData.history);
+            socket.emit("receive_deck_count", rooms[roomCode].gameData.deck.getCount());  
+            socket.emit("receive_token_count", rooms[roomCode].gameData.tokenCount); 
+            socket.emit("receive_turn", rooms[roomCode].gameData.turn); 
+            socket.emit("receive_lives", rooms[roomCode].gameData.lives);
             socket.emit("receive_players_data", rooms[roomCode].playersData);
-
-
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         }
@@ -79,13 +81,16 @@ const hanabiEvents = (io, socket, rooms) => {
         let isSuccessful = playPile[card.suit] + 1 === card.number;
 
         if (playPile[card.suit] + 1 === card.number) { // If can be played in the play pile
+            if (card.number === 5) {
+                rooms[roomCode].gameData.tokenCount = Math.min(rooms[roomCode].gameData.tokenCount + 1, 8);
+            }
             playPile[card.suit] += 1;
         } else {
             const discardPile = rooms[roomCode].gameData.discardPile;
             discardPile.push(card)
 
             rooms[roomCode].gameData.lives -= 1;
-            io.to(roomCode).emit("receive_lives", rooms[roomCode].gameData.lives)
+            io.to(roomCode).emit("receive_lives", rooms[roomCode].gameData.lives);
             io.to(roomCode).emit("receive_discard_pile", discardPile)
         }
 
@@ -103,7 +108,8 @@ const hanabiEvents = (io, socket, rooms) => {
         io.to(roomCode).emit("receive_deck_count", deck.getCount());  
         io.to(roomCode).emit("receive_play_pile", playPile);
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
-        io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);  
+        io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);
+        io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);  
         io.to(roomCode).emit("receive_turn", rooms[roomCode].gameData.turn); 
 
     })

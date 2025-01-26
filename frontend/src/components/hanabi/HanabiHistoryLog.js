@@ -9,16 +9,15 @@ export const HanabiHistoryLog = ({history, playersData}) => {
         }
     }, [history]);
 
-    const lastIndex = history.length - 1;
     return (
         <div className="flex flex-col gap-[10px] -mt-[15px] w-full h-full items-center justify-center">
             <div>History Log</div>
             <div className="border-slate-400 border-[2px] w-[80%] h-[80%]">
 
                 <div ref={containerRef} 
-                    className="flex-col h-full overflow-y-scroll">
+                    className="hanabi-scrollbar flex flex-col-reverse h-full overflow-y-scroll">
                     {
-                        history.map((action, index) => {
+                        history.slice().reverse().map((action, index) => {
                             let message = <></>;
                             let backgroundColor = "bg-sky-600/60";
                             if (action.type === "start") {
@@ -32,7 +31,7 @@ export const HanabiHistoryLog = ({history, playersData}) => {
                                 message = (
                                     <div className="flex gap-[10px] justify-center items-center">
                                         <div className="flex justify-start items-center w-[80%]"> 
-                                            {`${senderName} clued ${receiverName}: `}
+                                            {`${senderName} clued to ${receiverName}: `}
                                         </div>
                                         <div className="flex justify-center items-center w-[20%]">
                                             <div className={`hanabiClueButton text-black text-[35px] w-[56px] h-[56px]`}
@@ -82,7 +81,7 @@ export const HanabiHistoryLog = ({history, playersData}) => {
                             }
 
                             return (
-                                <div className={`w-full border-b-slate-400 border-b-[2px] py-[10px] pl-[60px] pr-[40px] ${backgroundColor} ${index !== lastIndex && "opacity-70"} hover:opacity-100`}>
+                                <div className={`w-full border-t-slate-400 border-t-[2px] py-[10px] pl-[60px] pr-[40px] ${backgroundColor} ${index !== 0 && "opacity-70"} hover:opacity-100`}>
                                     {message}
                                 </div>
                             );

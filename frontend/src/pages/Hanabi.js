@@ -24,11 +24,14 @@ import { HanabiHistoryLog } from "../components/hanabi/HanabiHistoryLog";
 
 // TODO
 /*
-Implement turn system
-Let player play card into the play pile and then get a new card
-Let player discard card and then get a new card
-Let player give hint to other players (with an overlay)
-Display hint to players
+Option to sort discard pile
+Animation to know whos turn it is (hourglass thing)
+
+Add endgame and play again screen
+Animation for playing and discarding cards
+Better swap card animation
+
+
 Write rules
 
 

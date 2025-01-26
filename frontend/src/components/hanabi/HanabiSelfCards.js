@@ -12,7 +12,7 @@ export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
     return (
         <SortableContext items={selfCardIds} strategy={horizontalListSortingStrategy}>
             <div ref={setNodeRef}
-                 className={`flex flex-col items-center justify-center w-[45%] h-[90%] border-[2px] border-slate-400`}
+                 className={`flex flex-col items-center justify-center w-[40%] h-[90%] border-[2px] border-slate-400`}
             >
                 <div className={`relative -top-[10%] ${isMyTurn && "text-yellow-300"}`}>
                     {socket.nickname}
@@ -20,10 +20,14 @@ export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
                 <div className="selfCards gap-[30px] flex justify-center items-center">
                     {selfCardIds.map((id) => {
                         const card = cards.find((c) => `Card${c.id}` === id);
+                        const hasData = card.numberVisible || card.suitVisible;
+                        const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
+                        const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
+                        
                         return (
                             <SortableItem key={id} id={id} type={"card"}>
-                                <HanabiCard number={card.number} 
-                                        suit={card.suit}
+                                <HanabiCard number={number} 
+                                        suit={suit}
                                         width={cardWidth}
                                 />
                             </SortableItem>

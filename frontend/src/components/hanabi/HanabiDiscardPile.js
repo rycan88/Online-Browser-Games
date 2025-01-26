@@ -9,20 +9,26 @@ export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth}) => {
     const shouldHighlight = isOver && active && active.data.current.type === "card" && turnPlayer === socket.userId;
     return (
         <div ref={setNodeRef}
-             className={`relative flex items-center justify-start px-5 mx-[3.75vw] -mt-[10px] mb-[10px] border-slate-400 border-[2px] -space-x-[60px] w-[25vw] h-full ${shouldHighlight && "dropZoneHighlight"}`}
+             className={`relative px-5 mx-[3.75vw] -mt-[10px] mb-[10px] border-slate-400 border-[2px]  w-[25vw] h-[60%] ${shouldHighlight && "dropZoneHighlight"}`}
         >
-            {
-                cards.map((card) => {
-                    return (
-                        <HanabiCard number={card.number} 
-                                    suit={card.suit}
-                                    width={cardWidth} 
-                        />    
-                    )
-                })
-            }
+            <div className="absolute inset-0 flex items-enter justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[50px] opacity-40">
+                DISCARD PILE
+            </div>
+            <div className="flex items-center justify-start h-full -space-x-[60px]">
+                {
+                    cards.map((card) => {
+                        return (
+                            <HanabiCard number={card.number} 
+                                        suit={card.suit}
+                                        width={cardWidth} 
+                            />    
+                        )
+                    })
+                }
+            </div>
+
       
-            <div className="absolute right-[0] top-[0]">DISCARD</div>
+
         </div>
     )
 }

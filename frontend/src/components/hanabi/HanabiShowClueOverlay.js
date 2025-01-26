@@ -30,12 +30,14 @@ export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataA
                     {
                         cards.map((card) => {
                             const isChosen = chosenClue && ([card.number, card.suit].includes(chosenClue));
-                            const isColour = Object.keys(hanabiSuitColours).includes(chosenClue);
 
+                            const hasData = card.numberVisible || card.suitVisible;
+                            const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
+                            const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
                             return(
                                 <div className={`transition rounded-[4%] ${isChosen && "hanabiChosenLiftedCard"}`}>
-                                    <HanabiCard number={!isReceiver ? card.number : isChosen && (isColour ? "unknown" : card.number)}
-                                                suit={!isReceiver ? card.suit : isChosen && (isColour ? card.suit : "unknown")}
+                                    <HanabiCard number={!isReceiver ? card.number : number}
+                                                suit={!isReceiver ? card.suit : suit}
                                                 width={150} 
                                     />
                                 </div>

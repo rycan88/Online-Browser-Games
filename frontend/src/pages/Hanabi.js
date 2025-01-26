@@ -20,6 +20,7 @@ import { set } from "react-hook-form";
 import { Overlay } from "../components/Overlay";
 import { HanabiGiveClueOverlay } from "../components/hanabi/HanabiGiveClueOverlay";
 import { HanabiShowClueOverlay } from "../components/hanabi/HanabiShowClueOverlay";
+import { HanabiHistoryLog } from "../components/hanabi/HanabiHistoryLog";
 
 // TODO
 /*
@@ -35,7 +36,7 @@ Write rules
 
 const socket = getSocket();
 
-const tokenSize = 50;
+const tokenSize = 45;
 const discardCardWidth = 80;
 const selfCardWidth = 100;
 export const Hanabi = ({roomCode}) => {
@@ -47,12 +48,14 @@ export const Hanabi = ({roomCode}) => {
     const [tokenCount, setTokenCount] = useState(8);
     const [cluePlayer, setCluePlayer] = useState(null);
     const [currentClue, setCurrentClue] = useState(null);
+    const [history, setHistory] = useState([]);
     const [turn, setTurn] = useState(0);
 
     const maxClueTokens = 8;
 
     const [cardsRemaining, setCardsRemaining] = useState(50);
 
+    const [playersData, setPlayersData] = useState({})
     const [playersDataArray, setPlayersDataArray] = useState([])
     const [playPile, setPlayPile] = useState({"red": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0});
     const [discardPileCards, setDiscardPileCards] = useState([]);
@@ -68,7 +71,7 @@ export const Hanabi = ({roomCode}) => {
 
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
-            //setPlayersData(playersData);
+            setPlayersData(playersData);
             setPlayersDataArray(Object.values(playersData));
             const myCards = playersData[socket.userId].cards
             setMyCards(myCards);
@@ -97,12 +100,15 @@ export const Hanabi = ({roomCode}) => {
             setLives(lives);
         });
 
+        socket.on('receive_history', (history) => {
+            setHistory(history);
+        });
+
         socket.on('receive_turn', (turn) => {
             setTurn(turn);
         });
 
         socket.on('receive_clue', (sender, receiver, chosenClue) => { // Sender is the senders nickname while receiver is the receivers userId
-            console.log(sender, receiver, chosenClue)
             setCurrentClue({sender, receiver, chosenClue})
         })
 
@@ -123,11 +129,13 @@ export const Hanabi = ({roomCode}) => {
             socket.off('receive_lives');
             socket.off('receive_clue');
             socket.off('receive_turn');
+            socket.off('receive_history');
         }
     }, [])
 
     const [activeId, setActiveId] = useState(null);
     const [activeType, setActiveType] = useState(null);
+    const [activeCard, setActiveCard] = useState(null);
     const [draggingStyle, setDraggingStyle] = useState({});
 
     /*
@@ -175,6 +183,10 @@ export const Hanabi = ({roomCode}) => {
         setActiveId(event.active.id);
         if (event.active.data.current.type) {
             setActiveType(event.active.data.current.type);
+            if (event.active.data.current.type === "card") {
+                const card = myCards.find((card) => `Card${card.id}` === event.active.id);
+                setActiveCard(card);
+            }
         } else {
             setActiveType(null);
         }
@@ -227,6 +239,7 @@ export const Hanabi = ({roomCode}) => {
         setDraggingStyle({});
         setActiveId(null);
         setActiveType(null);
+        setActiveCard(null)
     }
 
     if (!dataInitialized) {
@@ -302,19 +315,27 @@ export const Hanabi = ({roomCode}) => {
                 </div>
 
                 <div className="flex items-center h-[32%] w-full">
-                    <HanabiDiscardPile cards={discardPileCards} 
-                                       cardWidth={discardCardWidth}
-                                       turnPlayer={turnPlayer} 
-                    />
+                    <div className="flex flex-col gap-[30px] w-[30vw] h-full">
+
+                        <HanabiTokenArea tokenCount={tokenCount}
+                                        tokenSize={tokenSize}
+                        />
+                        <HanabiDiscardPile cards={discardPileCards} 
+                                            cardWidth={discardCardWidth}
+                                            turnPlayer={turnPlayer} 
+                        />
+                    </div>
+
 
                     <HanabiSelfCards cardWidth={selfCardWidth}
                                      cards={myCards}
                                      selfCardIds={selfCardIds}
                                      isMyTurn={isMyTurn}
                     />
-                    <HanabiTokenArea tokenCount={tokenCount}
-                                     tokenSize={tokenSize}
-                    />
+                    <div className="flex w-[30vw] h-full items-center justify-center">
+                        <HanabiHistoryLog history={history} playersData={playersData}/>
+                    </div>
+
                 </div>
 
                 <DragOverlay>
@@ -330,9 +351,9 @@ export const Hanabi = ({roomCode}) => {
                         }}
                         >
                             {
-                            activeType === "card" ?
-                                <HanabiCard number={""} 
-                                        suit={""}
+                            (activeType === "card" && activeCard) ?
+                                <HanabiCard number={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.numberVisible ? activeCard.number : "unknown")} 
+                                        suit={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.suitVisible ? activeCard.suit : "unknown")}
                                         width={selfCardWidth}
                                 />
                             : activeType === "token" ?

@@ -4,7 +4,7 @@ const hanabiEvents = (io, socket, rooms) => {
         if (rooms[roomCode]) {
             socket.emit("receive_play_pile", rooms[roomCode].gameData.playPile);
             socket.emit("receive_discard_pile", rooms[roomCode].gameData.discardPile);
-
+            socket.emit("receive_history", rooms[roomCode].gameData.history);
             socket.emit("receive_players_data", rooms[roomCode].playersData);
 
 
@@ -53,10 +53,14 @@ const hanabiEvents = (io, socket, rooms) => {
 
         rooms[roomCode].gameData.turn = (rooms[roomCode].gameData.turn + 1) % rooms[roomCode].gameData.playerDataArray.length;
 
+        const action = {type: "discard", player: socket.userId, card: card};
+        rooms[roomCode].gameData.history.push(action);
+
         io.to(roomCode).emit("receive_deck_count", deck.getCount());  
         io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);       
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
         io.to(roomCode).emit("receive_discard_pile", discardPile)
+        io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);  
         io.to(roomCode).emit("receive_turn", rooms[roomCode].gameData.turn);  
     })
 
@@ -71,6 +75,9 @@ const hanabiEvents = (io, socket, rooms) => {
         myData.cards = myData.cards.filter((card) => `Card${card.id}` !== cardId)
 
         const playPile = rooms[roomCode].gameData.playPile;
+        
+        let isSuccessful = playPile[card.suit] + 1 === card.number;
+
         if (playPile[card.suit] + 1 === card.number) { // If can be played in the play pile
             playPile[card.suit] += 1;
         } else {
@@ -89,23 +96,41 @@ const hanabiEvents = (io, socket, rooms) => {
         }
 
         rooms[roomCode].gameData.turn = (rooms[roomCode].gameData.turn + 1) % rooms[roomCode].gameData.playerDataArray.length;
+        
+        const action = {type: "play", player: socket.userId, card: card, isSuccessful: isSuccessful};
+        rooms[roomCode].gameData.history.push(action);
 
         io.to(roomCode).emit("receive_deck_count", deck.getCount());  
         io.to(roomCode).emit("receive_play_pile", playPile);
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
+        io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);  
         io.to(roomCode).emit("receive_turn", rooms[roomCode].gameData.turn); 
 
     })
 
     socket.on("hanabi_give_clue", (roomCode, cluePlayer, chosenClue) => {
-        if (!rooms[roomCode] || rooms[roomCode].gameData.tokenCount <= 0 || rooms[roomCode].gameData.turn !== myData.index) { return; }
+        if (!rooms[roomCode] || rooms[roomCode].gameData.tokenCount <= 0 || rooms[roomCode].gameData.turn !== rooms[roomCode].playersData[socket.userId].index) { return; }
 
         rooms[roomCode].gameData.tokenCount -= 1
         rooms[roomCode].gameData.turn = (rooms[roomCode].gameData.turn + 1) % rooms[roomCode].gameData.playerDataArray.length;
 
+        const cluePlayerData = rooms[roomCode].playersData[cluePlayer];
+
+        cluePlayerData.cards.forEach((card) => {
+            if (card.number === chosenClue) {
+                card.numberVisible = true;
+            } else if (card.suit === chosenClue) {
+                card.suitVisible = true;
+            }
+        });
+
+        const action = {type: "clue", sender: socket.userId, receiver: cluePlayer, chosenClue: chosenClue};
+        rooms[roomCode].gameData.history.push(action);
 
         io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);
         socket.to(roomCode).emit("receive_clue", socket.nickname, cluePlayer, chosenClue);
+        io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
+        io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);
         io.to(roomCode).emit("receive_turn", rooms[roomCode].gameData.turn); 
     });
 }

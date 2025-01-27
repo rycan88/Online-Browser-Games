@@ -14,8 +14,8 @@ export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
             <div ref={setNodeRef}
                  className={`flex flex-col items-center justify-center w-[40%] h-[90%] border-[2px] border-slate-400`}
             >
-                <div className={`relative -top-[10%] ${isMyTurn && "text-yellow-300"}`}>
-                    {socket.nickname}
+                <div className={`relative flex items-center justify-center -top-[10%] ${isMyTurn && "text-yellow-300"}`}>
+                    <div className="absolute right-0 left-0">{socket.nickname}</div>
                 </div>
                 <div className="selfCards gap-[30px] flex justify-center items-center">
                     {selfCardIds.map((id) => {

@@ -21,10 +21,11 @@ import { Overlay } from "../components/Overlay";
 import { HanabiGiveClueOverlay } from "../components/hanabi/HanabiGiveClueOverlay";
 import { HanabiShowClueOverlay } from "../components/hanabi/HanabiShowClueOverlay";
 import { HanabiHistoryLog } from "../components/hanabi/HanabiHistoryLog";
+import { HanabiSettings } from "../components/hanabi/HanabiSettings";
+import { InfoButton } from "../components/InfoButton";
 
 // TODO
 /*
-Option to sort discard pile
 Animation to know whos turn it is (hourglass thing)
 
 Add endgame and play again screen
@@ -43,6 +44,12 @@ const tokenSize = 45;
 const discardCardWidth = 80;
 const selfCardWidth = 100;
 export const Hanabi = ({roomCode}) => {
+    const [rerender, setRerender] = useState(false);
+
+    const triggerRerender = () => {
+        setRerender(!rerender);
+    }
+
     const [dataInitialized, setDataInitialized] = useState(false);
 
     const navigate = useNavigate();
@@ -295,8 +302,10 @@ export const Hanabi = ({roomCode}) => {
                     </div>
                 </div>
 
-                <div className="absolute top-[2%] right-[2%]">
-                    <GiNotebook className="text-[40px] text-slate-300"/>
+                <div className="topTaskBar">
+                    <InfoButton buttonType="settings">
+                        <HanabiSettings triggerRerender={triggerRerender}/>
+                    </InfoButton>
                 </div>
 
                 <div className="flex justify-evenly items-center w-full h-[30vh]">

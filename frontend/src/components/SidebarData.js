@@ -50,12 +50,6 @@ export const SidebarData = [
         isMain: false,
     },
     {
-        title: "Hana",
-        icon: <LuFlower />,
-        link: "/hana",
-        isMain: false,
-    },
-    {
         title: "About",
         icon: <FaInfoCircle/>,
         link: "/about",

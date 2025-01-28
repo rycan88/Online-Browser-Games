@@ -16,7 +16,7 @@ export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth}) => {
         <div ref={setNodeRef}
              className={`relative px-5 mx-[3.75vw] -mt-[10px] mb-[10px] border-slate-400 border-[2px]  w-[25vw] h-[60%] ${shouldHighlight && "discardPileHighlight"}`}
         >
-            <div className="absolute inset-0 flex items-enter justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[50px] opacity-40">
+            <div className="absolute inset-0 flex items-enter justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[min(4vh,2.6vw)] opacity-40">
                 DISCARD PILE
             </div>
             <div className="flex items-center justify-start h-full -space-x-[60px]">

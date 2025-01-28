@@ -25,13 +25,7 @@ export const HanabiPlayer = ({playerData, turnPlayer}) => {
         >
             <div className="flex flex-col items-center justify-center gap-[10%] h-full">
                 <div className={`flex gap-[10px] items-center justify-center w-full`}>
-                    <div className="w-[10%]"></div>
-                    <div className="">{username}</div>
-                    <div className="w-[10%]">
-                        { isTurn &&
-                            <></>
-                        }
-                    </div>
+                    <div className="text-[1.9vh]">{username}</div>
                 </div>
                 <div className="flex items-center justify-center gap-[5%] w-full">
                     {

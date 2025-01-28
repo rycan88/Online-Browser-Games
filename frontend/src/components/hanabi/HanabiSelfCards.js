@@ -14,19 +14,14 @@ export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
     return (
         <SortableContext items={selfCardIds} strategy={horizontalListSortingStrategy}>
             <div ref={setNodeRef}
-                 className={`flex flex-col items-center justify-center w-[40%] h-[90%] border-[2px] border-slate-400 ${isMyTurn && "bg-sky-600/20"}`}
+                 className={`flex flex-col items-center justify-center gap-[10%] w-[40%] h-[90%] border-[2px] border-slate-400 ${isMyTurn && "bg-sky-600/20"}`}
             >
-                <div className={`relative flex gap-[10px] items-center justify-center -top-[10%] w-full`}>
-                    <div className="w-[10%]"></div>
-                    <div className="">{socket.nickname}</div>
-                    <div className="w-[10%]">
-                        { isMyTurn &&
-                            <></>
-                        }
-
-                    </div>
+                <div className={`relative flex items-center justify-center w-full -mt-[3vh]`}>
+                    <div className="text-[1.9vh]">{socket.nickname}</div>
                 </div>
-                <div className="selfCards gap-[30px] flex justify-center items-center">
+                <div className="selfCards flex justify-center items-center"
+                     style={{gap: cardWidth * 0.3}}
+                >
                     {selfCardIds.map((id) => {
                         const card = cards.find((c) => `Card${c.id}` === id);
                         const hasData = card.numberVisible || card.suitVisible;

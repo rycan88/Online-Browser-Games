@@ -5,14 +5,13 @@ import { HanabiCard } from "./HanabiCard"
 import getSocket from "../../socket"
 
 const socket = getSocket();
-let cardWidth = 100
-cardWidth = Math.min((window.innerHeight * 0.16) * (2/3), window.innerWidth * 0.053);
 
 const borderColors = {"red": "border-red-500", "yellow": "border-yellow-500", "green": "border-green-500", "blue": "border-blue-500", "purple": "border-purple-500"}
-export const HanabiPlayPile = ({playPile, turnPlayer}) => {
+export const HanabiPlayPile = ({playPile, turnPlayer, cardWidth}) => {
     const id = "playPileArea";
     const { active, isOver, setNodeRef } = useDroppable({ id })
     const shouldHighlight = isOver && active && active.data.current.type === "card" && turnPlayer === socket.userId;
+    const cardHeight = cardWidth * 1.4;
 
     return (
         <div ref={setNodeRef} 
@@ -24,16 +23,21 @@ export const HanabiPlayPile = ({playPile, turnPlayer}) => {
                     let borderColor = borderColors[colour];
                     
                     return (
-                        <div className="flex flex-col pt-[15px] -space-y-[85%] w-[20%] items-center">
+                        <div className="relative flex flex-col pt-[15px] w-[20%] items-center"
+                             style={{paddingTop: cardWidth * 0.15}}
+                        >
                             { num === 0 ?
                                 <CardOutline width={cardWidth} borderColor={borderColor}/>
                                 :
                                 [...Array(Number(num))].map((_, index) => {
                                     return (
-                                        <HanabiCard number={index + 1} 
-                                                    suit={colour}
-                                                    width={cardWidth} 
-                                        />   
+                                        <div style={{marginTop: index !== 0 && -cardHeight * 0.78}}
+                                        >
+                                            <HanabiCard number={index + 1} 
+                                                        suit={colour}
+                                                        width={cardWidth} 
+                                            />   
+                                        </div>
                                     );   
                                 })
                             }  

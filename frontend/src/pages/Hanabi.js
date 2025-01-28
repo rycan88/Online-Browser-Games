@@ -26,8 +26,6 @@ import { InfoButton } from "../components/InfoButton";
 
 // TODO
 /*
-Animation to know whos turn it is (hourglass thing)
-
 Add endgame and play again screen
 Animation for playing and discarding cards
 Better swap card animation
@@ -40,9 +38,6 @@ Write rules
 
 const socket = getSocket();
 
-const tokenSize = 45;
-const discardCardWidth = 80;
-const selfCardWidth = 100;
 export const Hanabi = ({roomCode}) => {
     const [rerender, setRerender] = useState(false);
 
@@ -78,6 +73,22 @@ export const Hanabi = ({roomCode}) => {
 
     const [myCards, setMyCards] = useState([])
     const [selfCardIds, setSelfCardIds] = useState([]);
+
+    const [selfCardWidth, setSelfCardWidth] = useState(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05)) //100px
+    const [playCardWidth, setPlayCardWidth] = useState(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05)) //100px
+    const [discardCardWidth, setDiscardCardWidth] = useState(Math.min((window.innerHeight * 0.126) * (2/3), window.innerWidth * 0.041)) //80px
+    const [tokenSize, setTokenSizeWidth] = useState(Math.min((window.innerHeight * 0.75) * (2/3), window.innerWidth * 0.025)); // 50px
+    useEffect(() => {
+        const handleResize = () => {
+            setSelfCardWidth(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05));
+            setPlayCardWidth(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05));
+            setDiscardCardWidth(Math.min((window.innerHeight * 0.126) * (2/3), window.innerWidth * 0.041));
+            setTokenSizeWidth(Math.min((window.innerHeight * 0.075) * (2/3), window.innerWidth * 0.025));
+        }
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [])
 
     useEffect(() => {
         socket.on('receive_players_data', (playersData) => {
@@ -286,18 +297,18 @@ export const Hanabi = ({roomCode}) => {
                 }
 
 
-                <div className="absolute flex flex-col left-[3%] gap-[2%] h-[30%]">
-                    <div className="flex h-full items-center gap-[10px] text-[30px]">
-                        <FaHeart className="text-red-500"/>
+                <div className="absolute flex flex-col left-[3%] gap-[2%] h-[30%] w-[min(120px,6vw)]">
+                    <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
+                        <div className="flex w-[40%] justify-center items-center text-[3.5vh]"><FaHeart className="text-red-500"/></div>
                         <div>{lives}</div>
                     </div>
-                    <div className="flex h-full items-center gap-[10px] text-[30px]">
-                        <HanabiClueToken />
+                    <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
+                        <div className="flex w-[40%] justify-center items-center"><HanabiClueToken tokenSize={tokenSize}/></div>
 
                         <div>{tokenCount}/{maxClueTokens}</div>
                     </div>
-                    <div className="flex h-full items-center gap-[10px] text-[30px]">
-                        <CardBacking width={30}/>
+                    <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
+                        <div className="flex w-[40%] justify-center items-center"><CardBacking width={tokenSize * 0.8}/></div>
                         <div>{cardsRemaining}</div>
                     </div>
                 </div>
@@ -319,7 +330,7 @@ export const Hanabi = ({roomCode}) => {
                         <HanabiPlayer playerData={playersDataArray[adjustedIndex(1)]} turnPlayer={turnPlayer}/>
                     }
 
-                    <HanabiPlayPile playPile={playPile} turnPlayer={turnPlayer}/>
+                    <HanabiPlayPile playPile={playPile} turnPlayer={turnPlayer} cardWidth={playCardWidth}/>
 
                     { playerCount >= 4 &&
                         <HanabiPlayer playerData={playersDataArray[adjustedIndex(playerCount - 1)]} turnPlayer={turnPlayer}/>
@@ -327,7 +338,9 @@ export const Hanabi = ({roomCode}) => {
                 </div>
 
                 <div className="flex items-center h-[32%] w-full">
-                    <div className="flex flex-col gap-[30px] w-[30vw] h-full">
+                    <div className="flex flex-col w-[30vw] h-full" 
+                         style={{gap: Math.max(tokenSize * 0.8, 20)}}
+                    >
 
                         <HanabiTokenArea tokenCount={tokenCount}
                                         tokenSize={tokenSize}

@@ -23,6 +23,8 @@ import { HanabiShowClueOverlay } from "../components/hanabi/HanabiShowClueOverla
 import { HanabiHistoryLog } from "../components/hanabi/HanabiHistoryLog";
 import { HanabiSettings } from "../components/hanabi/HanabiSettings";
 import { InfoButton } from "../components/InfoButton";
+import { MdVisibility } from "react-icons/md";
+import { HanabiHintVisibilityButton } from "../components/hanabi/HanabiHintVisibilityButton";
 
 // TODO
 /*
@@ -67,6 +69,8 @@ export const Hanabi = ({roomCode}) => {
     const playerCount = playersDataArray.length;
     const selfIndex = playersDataArray.findIndex((player) => player.nameData.userId === socket.userId);
 
+    const [showTeammateHints, setShowTeammateHints] = useState(false);
+
     const adjustedIndex = (index) => {
         return (selfIndex + index) % playerCount
     }
@@ -74,15 +78,18 @@ export const Hanabi = ({roomCode}) => {
     const [myCards, setMyCards] = useState([])
     const [selfCardIds, setSelfCardIds] = useState([]);
 
+    // Sizing
     const [selfCardWidth, setSelfCardWidth] = useState(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05)) //100px
     const [playCardWidth, setPlayCardWidth] = useState(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05)) //100px
     const [discardCardWidth, setDiscardCardWidth] = useState(Math.min((window.innerHeight * 0.126) * (2/3), window.innerWidth * 0.041)) //80px
-    const [tokenSize, setTokenSizeWidth] = useState(Math.min((window.innerHeight * 0.75) * (2/3), window.innerWidth * 0.025)); // 50px
+    const [clueCardWidth, setClueCardWidth] = useState(Math.min((window.innerHeight * 0.236) * (2/3), window.innerWidth * 0.078)) //150px
+    const [tokenSize, setTokenSizeWidth] = useState(Math.min((window.innerHeight * 0.075) * (2/3), window.innerWidth * 0.025)); // 50px
     useEffect(() => {
         const handleResize = () => {
             setSelfCardWidth(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05));
             setPlayCardWidth(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05));
             setDiscardCardWidth(Math.min((window.innerHeight * 0.126) * (2/3), window.innerWidth * 0.041));
+            setClueCardWidth(Math.min((window.innerHeight * 0.236) * (2/3), window.innerWidth * 0.078));
             setTokenSizeWidth(Math.min((window.innerHeight * 0.075) * (2/3), window.innerWidth * 0.025));
         }
 
@@ -286,13 +293,15 @@ export const Hanabi = ({roomCode}) => {
                                            cluePlayer={cluePlayer} 
                                            setCluePlayer={setCluePlayer} 
                                            playersDataArray={playersDataArray} 
+                                           cardWidth={clueCardWidth}
                     />
                 }
 
                 { currentClue &&
                     <HanabiShowClueOverlay currentClue={currentClue}  
                                            setCurrentClue={setCurrentClue}
-                                           playersDataArray={playersDataArray} 
+                                           playersDataArray={playersDataArray}
+                                           cardWidth={clueCardWidth} 
                     />
                 }
 
@@ -303,7 +312,7 @@ export const Hanabi = ({roomCode}) => {
                         <div>{lives}</div>
                     </div>
                     <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
-                        <div className="flex w-[40%] justify-center items-center"><HanabiClueToken tokenSize={tokenSize}/></div>
+                        <div className="flex w-[40%] justify-center items-center"><HanabiClueToken size={tokenSize}/></div>
 
                         <div>{tokenCount}/{maxClueTokens}</div>
                     </div>
@@ -314,26 +323,27 @@ export const Hanabi = ({roomCode}) => {
                 </div>
 
                 <div className="topTaskBar">
+                    <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
                     <InfoButton buttonType="settings">
                         <HanabiSettings triggerRerender={triggerRerender}/>
                     </InfoButton>
                 </div>
 
                 <div className="flex justify-evenly items-center w-full h-[30vh]">
-                    <HanabiPlayer playerData={playerCount >= 4 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(1)]} turnPlayer={turnPlayer}/>
+                    <HanabiPlayer playerData={playerCount >= 4 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(1)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
                     { (playerCount === 3 || playerCount === 5) &&
-                        <HanabiPlayer playerData={playerCount === 3 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(3)]} turnPlayer={turnPlayer}/>
+                        <HanabiPlayer playerData={playerCount === 3 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(3)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
                     }               
                 </div>
                 <div className="flex justify-evenly items-center w-full h-[38vh]">
                     { playerCount >= 4 &&
-                        <HanabiPlayer playerData={playersDataArray[adjustedIndex(1)]} turnPlayer={turnPlayer}/>
+                        <HanabiPlayer playerData={playersDataArray[adjustedIndex(1)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
                     }
 
                     <HanabiPlayPile playPile={playPile} turnPlayer={turnPlayer} cardWidth={playCardWidth}/>
 
                     { playerCount >= 4 &&
-                        <HanabiPlayer playerData={playersDataArray[adjustedIndex(playerCount - 1)]} turnPlayer={turnPlayer}/>
+                        <HanabiPlayer playerData={playersDataArray[adjustedIndex(playerCount - 1)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
                     }
                 </div>
 

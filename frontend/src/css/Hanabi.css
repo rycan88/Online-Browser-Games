@@ -20,7 +20,7 @@
   }
 
   .hanabiClueButton {
-    @apply flex items-center justify-center w-[60px] h-[60px] rounded-full bg-slate-300 disabled:opacity-60
+    @apply flex items-center justify-center rounded-full bg-slate-300 disabled:opacity-60
   }
 
   .hanabiChosenLiftedCard {

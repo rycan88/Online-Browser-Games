@@ -4,7 +4,7 @@ import getSocket from "../../socket";
 import { FaHourglass } from "react-icons/fa6";
 
 const socket = getSocket();
-export const HanabiPlayer = ({playerData, turnPlayer}) => {
+export const HanabiPlayer = ({playerData, turnPlayer, showTeammateHints}) => {
     const id = playerData.nameData.userId;
     const { active, isOver, setNodeRef } = useDroppable({ id, data: {type: "player"} });
     
@@ -30,8 +30,11 @@ export const HanabiPlayer = ({playerData, turnPlayer}) => {
                 <div className="flex items-center justify-center gap-[5%] w-full">
                     {
                         cards.map((card) => {
-                            return <HanabiCard number={card.number} 
-                                suit={card.suit}
+                            const hasData = card.numberVisible || card.suitVisible;
+                            const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
+                            const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
+                            return <HanabiCard number={showTeammateHints ? card.number : number} 
+                                suit={showTeammateHints ? card.suit : suit}
                                 width={nameCardWidth} 
                             />   
                         })

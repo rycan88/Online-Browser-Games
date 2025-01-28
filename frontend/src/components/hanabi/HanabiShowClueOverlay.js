@@ -3,7 +3,7 @@ import { Overlay } from "../Overlay";
 import { HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
 
 const socket = getSocket();
-export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataArray}) => {
+export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataArray, cardWidth}) => {
     const chosenClue = currentClue.chosenClue;
     const receiver = currentClue.receiver;
     const sender = currentClue.sender;
@@ -20,8 +20,8 @@ export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataA
         <Overlay isOpen={true} fullScreen={true} onClose={()=>{ setCurrentClue(null)}}>
             <div className="flex flex-col h-full justify-center items-center text-white text-[5vh]">
                 <div className="pb-[30px]">{`${sender} sent a clue to ${userName}: `}</div>
-                <div className={`hanabiClueButton text-black text-[100px] w-[150px] h-[150px]`}
-                        style={{color: isColorClue && hanabiSuitColours[chosenClue]}}
+                <div className={`hanabiClueButton text-black`}
+                        style={{color: isColorClue && hanabiSuitColours[chosenClue], height: cardWidth, width: cardWidth, fontSize: cardWidth * 2/3}}
                 >
                     {isColorClue ? hanabiSuitIcons[chosenClue] : chosenClue}
                 </div>
@@ -38,7 +38,7 @@ export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataA
                                 <div className={`transition rounded-[4%] ${isChosen && "hanabiChosenLiftedCard"}`}>
                                     <HanabiCard number={!isReceiver ? card.number : number}
                                                 suit={!isReceiver ? card.suit : suit}
-                                                width={150} 
+                                                width={cardWidth} 
                                     />
                                 </div>
 

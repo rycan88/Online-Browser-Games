@@ -21,7 +21,8 @@ export const HanabiHistoryLog = ({history, playersData}) => {
                             let message = <></>;
                             let backgroundColor = "bg-sky-600/60";
                             if (action.type === "start") {
-                                message = <div>Game has begun</div>
+                                const startPlayer = playersData[action.player].nameData.nickname;
+                                message = <div>Game has begun: {startPlayer} starts</div>
                             } else if (action.type === "clue") {
                                 const senderName = playersData[action.sender].nameData.nickname;
                                 const receiverName = playersData[action.receiver].nameData.nickname;

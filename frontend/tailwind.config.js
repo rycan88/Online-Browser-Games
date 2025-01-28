@@ -63,6 +63,17 @@ module.exports = {
         fadeOutFrame: {
           '0%, 50%': { opacity: 1 },
           '100%': { opacity: 0 },          
+        },
+        hourglassSpinFrame: {
+          '0%': { transform: 'rotate(0deg)'},
+          '12.5%, 62.5%': {transform: 'rotate(180deg)'},
+          '25%, 75%': {transform: 'rotate(180deg)'},
+          '37.5%, 87.5%': {transform: 'rotate(360deg)'},
+          '50%, 100%': { transform: 'rotate(360deg)' },   
+          '62.5%': {transform: 'rotate(540deg)'},
+          '75%': {transform: 'rotate(540deg)'},
+          '87.5%': {transform: 'rotate(720deg)'},
+          '100%': { transform: 'rotate(720deg)' },        
         }
       },
       animation: {
@@ -71,6 +82,7 @@ module.exports = {
         riseUp: 'riseUpFrame',
         zBounce: 'zBounceFrame',
         fadeOut: 'fadeOutFrame',
+        hourglassSpin: 'hourglassSpinFrame 8s linear infinite',
       },
 
     },

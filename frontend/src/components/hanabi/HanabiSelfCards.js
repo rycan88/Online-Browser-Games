@@ -3,6 +3,7 @@ import { HanabiCard } from "./HanabiCard"
 import { SortableItem } from "./SortableItem";
 import { useDroppable } from "@dnd-kit/core";
 import getSocket from "../../socket";
+import { FaHourglass } from "react-icons/fa6";
 
 const socket = getSocket();
 export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
@@ -12,10 +13,17 @@ export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
     return (
         <SortableContext items={selfCardIds} strategy={horizontalListSortingStrategy}>
             <div ref={setNodeRef}
-                 className={`flex flex-col items-center justify-center w-[40%] h-[90%] border-[2px] border-slate-400`}
+                 className={`flex flex-col items-center justify-center w-[40%] h-[90%] border-[2px] border-slate-400 ${isMyTurn && "bg-sky-600/20"}`}
             >
-                <div className={`relative flex items-center justify-center -top-[10%] ${isMyTurn && "text-yellow-300"}`}>
-                    <div className="absolute right-0 left-0">{socket.nickname}</div>
+                <div className={`relative flex gap-[10px] items-center justify-center -top-[10%] w-full`}>
+                    <div className="w-[10%]"></div>
+                    <div className="">{socket.nickname}</div>
+                    <div className="w-[10%]">
+                        { isMyTurn &&
+                            <FaHourglass className="animate-hourglassSpin"/>
+                        }
+
+                    </div>
                 </div>
                 <div className="selfCards gap-[30px] flex justify-center items-center">
                     {selfCardIds.map((id) => {

@@ -16,7 +16,7 @@ export const HanabiPlayPile = ({playPile, turnPlayer}) => {
 
     return (
         <div ref={setNodeRef} 
-             className={`flex w-[35%] h-full border-yellow-600/80 border-[8px] ${shouldHighlight && "dropZoneHighlight"}`}
+             className={`flex w-[35%] h-full border-[#F8C8DC]/80 border-[4px] rounded-[10px] ${shouldHighlight && "dropZoneHighlight"}`}
         >
             {
                 Object.keys(playPile).map((colour) => {
@@ -24,7 +24,7 @@ export const HanabiPlayPile = ({playPile, turnPlayer}) => {
                     let borderColor = borderColors[colour];
                     
                     return (
-                        <div className="flex flex-col pt-[10px] -space-y-[85%] w-[20%] items-center">
+                        <div className="flex flex-col pt-[15px] -space-y-[85%] w-[20%] items-center">
                             { num === 0 ?
                                 <CardOutline width={cardWidth} borderColor={borderColor}/>
                                 :

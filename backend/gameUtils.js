@@ -123,8 +123,10 @@ const setUpGameData = (io, rooms, roomCode) => {
                 }
             }
             const playPile = {"red": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0}
-            const history = [{"type": "start"}];
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: 0, lives: 3, playerDataArray: playerDataArray, history: history};
+            const startingTurn = Math.floor(Math.random() * playerDataArray.length);
+            const history = [{"type": "start", "player": playerDataArray[startingTurn].nameData.userId}];
+ 
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history};
         }
     }
 }

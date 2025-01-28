@@ -1,10 +1,9 @@
 import { RiFlowerFill } from "react-icons/ri";
-import { GiFlowerEmblem, GiFlowers, GiLotusFlower, GiTwirlyFlower } from "react-icons/gi";
-import { BsFlower1 } from "react-icons/bs";
-import { IoFlowerSharp } from "react-icons/io5";
+import { GiFlowerEmblem, GiFlowers, GiLotus, GiLotusFlower, GiSpotedFlower, GiTwirlyFlower } from "react-icons/gi";
+
 import { Card } from "../card/Card";
 
-export const hanabiSuitIcons = {"red": <RiFlowerFill />, "yellow": <GiFlowerEmblem />, "green": <GiLotusFlower />, "purple": <GiTwirlyFlower />, "blue": <BsFlower1 />}
+export const hanabiSuitIcons = {"red": <RiFlowerFill />, "yellow": <GiFlowerEmblem />, "green": <GiLotusFlower />, "purple": <GiSpotedFlower />, "blue": <GiLotus />}
 export const hanabiSuitColours = {"red": "#991b1b", "yellow": "#d97706", "green": "#16a34a", "purple": "#7e22ce", "blue": "#1d4ed8"} // red-800
 
 export const HanabiCard = ({number, suit, width = 200, withBorder=true}) => {

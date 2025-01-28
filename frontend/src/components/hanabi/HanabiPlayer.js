@@ -29,7 +29,7 @@ export const HanabiPlayer = ({playerData, turnPlayer}) => {
                     <div className="">{username}</div>
                     <div className="w-[10%]">
                         { isTurn &&
-                            <FaHourglass className="animate-hourglassSpin"/>
+                            <></>
                         }
                     </div>
                 </div>

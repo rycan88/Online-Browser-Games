@@ -4,6 +4,7 @@ import { SortableItem } from "./SortableItem";
 import { useDroppable } from "@dnd-kit/core";
 import getSocket from "../../socket";
 import { FaHourglass } from "react-icons/fa6";
+import { ReadyStatusIcon } from "../ReadyStatusIcon";
 
 const socket = getSocket();
 export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
@@ -20,7 +21,7 @@ export const HanabiSelfCards = ({selfCardIds, cards, cardWidth, isMyTurn}) => {
                     <div className="">{socket.nickname}</div>
                     <div className="w-[10%]">
                         { isMyTurn &&
-                            <FaHourglass className="animate-hourglassSpin"/>
+                            <></>
                         }
 
                     </div>

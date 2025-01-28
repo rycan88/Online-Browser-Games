@@ -16,7 +16,7 @@ export const HanabiPlayPile = ({playPile, turnPlayer}) => {
 
     return (
         <div ref={setNodeRef} 
-             className={`flex w-[35%] h-full border-[#F8C8DC]/80 border-[4px] rounded-[10px] ${shouldHighlight && "dropZoneHighlight"}`}
+             className={`flex w-[35%] h-full border-[#F8C8DC]/80 border-[4px] rounded-[10px] ${shouldHighlight && "playPileHighlight"}`}
         >
             {
                 Object.keys(playPile).map((colour) => {

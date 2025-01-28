@@ -11,6 +11,14 @@
     @apply transition-colors duration-200 bg-[rgba(49,170,245,0.4)];
   }
 
+  .playPileHighlight {
+    @apply transition-colors duration-200 bg-green-500/40;
+  }
+
+  .discardPileHighlight {
+    @apply transition-colors duration-200 bg-red-500/40;
+  }
+
   .hanabiClueButton {
     @apply flex items-center justify-center w-[60px] h-[60px] rounded-full bg-slate-300 disabled:opacity-60
   }

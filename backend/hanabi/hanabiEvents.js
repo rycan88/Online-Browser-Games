@@ -71,7 +71,7 @@ const hanabiEvents = (io, socket, rooms) => {
             rooms[roomCode].gameData.history.push(action);
 
             rooms[roomCode].gameData.gameInProgress = false;
-            io.to(roomCode).emit("game_has_ended", rooms[roomCode].gameData.gameInProgress, totalPoints);
+            io.to(roomCode).emit("game_has_ended", totalPoints);
         }
 
         io.to(roomCode).emit("receive_deck_count", deck.getCount());  
@@ -181,7 +181,7 @@ const hanabiEvents = (io, socket, rooms) => {
             rooms[roomCode].gameData.history.push(action);
 
             rooms[roomCode].gameData.gameInProgress = false;
-            io.to(roomCode).emit("game_has_ended", rooms[roomCode].gameData.gameInProgress, totalPoints);
+            io.to(roomCode).emit("game_has_ended", totalPoints);
         }
 
         io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);

@@ -29,13 +29,14 @@ import { HanabiEndOverlay } from "../components/hanabi/HanabiEndOverlay";
 
 // TODO
 /*
-Add endgame and play again screen
+
 Animation for playing and discarding cards
 Better swap card animation
 
 
 Write rules
-
+BUGS:
+Bottom cards and history moves when history is filled
 
 */
 

@@ -3,6 +3,7 @@ const hanabiPlayerData = (nameData) => {
     return {
         nameData: nameData,
         cards: [],
+        isReady: false,
     }
 }
 

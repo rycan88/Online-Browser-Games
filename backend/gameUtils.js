@@ -109,15 +109,15 @@ const setUpGameData = (io, rooms, roomCode) => {
         } else if (gameName === "hana") {
             const deck = new HanabiDeck();
             const discardPile = [];
-            deck.shuffle()
+            deck.shuffle();
 
             const playerDataArray = Object.values(rooms[roomCode].playersData);
             const playerCount = playerDataArray.length;
             const cardsPerPlayer = playerCount <= 3 ? 5 : 4;
-            let index = 0
+            let index = 0;
             for (const playerData of playerDataArray) {
                 playerData.index = index;
-                index++
+                index++;
                 for (let i = 0; i < cardsPerPlayer; i++) {
                     playerData.cards.push(deck.drawCard());
                 }
@@ -126,7 +126,7 @@ const setUpGameData = (io, rooms, roomCode) => {
             const startingTurn = Math.floor(Math.random() * playerDataArray.length);
             const history = [{"type": "start", "player": playerDataArray[startingTurn].nameData.userId}];
  
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history};
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history, gameInProgress: true, finalTurn: null};
         }
     }
 }

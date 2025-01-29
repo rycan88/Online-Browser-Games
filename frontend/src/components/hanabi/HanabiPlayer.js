@@ -33,8 +33,8 @@ export const HanabiPlayer = ({playerData, turnPlayer, showTeammateHints}) => {
                             const hasData = card.numberVisible || card.suitVisible;
                             const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
                             const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
-                            return <HanabiCard number={showTeammateHints ? card.number : number} 
-                                suit={showTeammateHints ? card.suit : suit}
+                            return <HanabiCard number={showTeammateHints ? number : card.number} 
+                                suit={showTeammateHints ? suit : card.suit}
                                 width={nameCardWidth} 
                             />   
                         })

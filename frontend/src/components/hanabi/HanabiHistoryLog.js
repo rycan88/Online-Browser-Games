@@ -36,6 +36,9 @@ export const HanabiHistoryLog = ({history, playersData}) => {
                             if (action.type === "start") {
                                 const startPlayer = playersData[action.player].nameData.nickname;
                                 message = <div>Game has begun: {startPlayer} starts</div>
+                            } else if (action.type === "end") {
+                                const endScore = action.points;
+                                message = <div>{`Game has ended: ${endScore} ${endScore === 1 ? "flower was" : "flowers were"} collected!`}</div>
                             } else if (action.type === "clue") {
                                 const senderName = playersData[action.sender].nameData.nickname;
                                 const receiverName = playersData[action.receiver].nameData.nickname;

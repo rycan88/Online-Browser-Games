@@ -1,3 +1,4 @@
+const { setUpPlayerData, setUpGameData } = require("../gameUtils");
 
 const hanabiEvents = (io, socket, rooms) => {    
     socket.on("get_all_hanabi_data", (roomCode) => {
@@ -9,7 +10,9 @@ const hanabiEvents = (io, socket, rooms) => {
             socket.emit("receive_token_count", rooms[roomCode].gameData.tokenCount); 
             socket.emit("receive_turn", rooms[roomCode].gameData.turn); 
             socket.emit("receive_lives", rooms[roomCode].gameData.lives);
+            socket.emit("receive_game_in_progress", rooms[roomCode].gameData.gameInProgress);
             socket.emit("receive_players_data", rooms[roomCode].playersData);
+            
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         }
@@ -48,6 +51,9 @@ const hanabiEvents = (io, socket, rooms) => {
         if (deck.getCount() > 0) {
             const newCard = deck.drawCard();
             myData.cards.push(newCard);
+            if (deck.getCount() === 0) {
+                rooms[roomCode].gameData.finalTurn = rooms[roomCode].gameData.turn + playerCount;
+            }
         }
 
         const tokenCount = rooms[roomCode].gameData.tokenCount;
@@ -57,6 +63,16 @@ const hanabiEvents = (io, socket, rooms) => {
 
         const action = {type: "discard", player: socket.userId, card: card};
         rooms[roomCode].gameData.history.push(action);
+
+        if (rooms[roomCode].gameData.gameInProgress && rooms[roomCode].gameData.finalTurn && rooms[roomCode].gameData.turn > rooms[roomCode].gameData.finalTurn) {
+            const totalPoints = Object.values(playPile).reduce((acc, num) => acc + num, 0);
+            
+            const action = {type: "end", points: totalPoints};
+            rooms[roomCode].gameData.history.push(action);
+
+            rooms[roomCode].gameData.gameInProgress = false;
+            io.to(roomCode).emit("game_has_ended", rooms[roomCode].gameData.gameInProgress, totalPoints);
+        }
 
         io.to(roomCode).emit("receive_deck_count", deck.getCount());  
         io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);       
@@ -90,20 +106,45 @@ const hanabiEvents = (io, socket, rooms) => {
             discardPile.push(card)
 
             rooms[roomCode].gameData.lives -= 1;
+
             io.to(roomCode).emit("receive_lives", rooms[roomCode].gameData.lives);
             io.to(roomCode).emit("receive_discard_pile", discardPile)
         }
 
+        const playerCount = rooms[roomCode].gameData.playerDataArray.length;
         const deck = rooms[roomCode].gameData.deck;
         if (deck.getCount() > 0) {
             const newCard = deck.drawCard();
             myData.cards.push(newCard);
+            if (deck.getCount() === 0) {
+                rooms[roomCode].gameData.finalTurn = rooms[roomCode].gameData.turn + playerCount;
+            }
         }
 
-        rooms[roomCode].gameData.turn = (rooms[roomCode].gameData.turn + 1) % rooms[roomCode].gameData.playerDataArray.length;
+        rooms[roomCode].gameData.turn = (rooms[roomCode].gameData.turn + 1) % playerCount;
         
         const action = {type: "play", player: socket.userId, card: card, isSuccessful: isSuccessful};
         rooms[roomCode].gameData.history.push(action);
+
+        if (rooms[roomCode].gameData.lives === 0 && rooms[roomCode].gameData.gameInProgress) {
+            const totalPoints = Object.values(playPile).reduce((acc, num) => acc + num, 0);
+
+            const action = {type: "end", points: totalPoints};
+            rooms[roomCode].gameData.history.push(action);
+
+            rooms[roomCode].gameData.gameInProgress = false;
+            io.to(roomCode).emit("game_has_ended", totalPoints);
+        }
+
+        if (rooms[roomCode].gameData.gameInProgress && rooms[roomCode].gameData.finalTurn && rooms[roomCode].gameData.turn > rooms[roomCode].gameData.finalTurn) {
+            const totalPoints = Object.values(playPile).reduce((acc, num) => acc + num, 0);
+
+            const action = {type: "end", points: totalPoints};
+            rooms[roomCode].gameData.history.push(action);
+
+            rooms[roomCode].gameData.gameInProgress = false;
+            io.to(roomCode).emit("game_has_ended", totalPoints);
+        }
 
         io.to(roomCode).emit("receive_deck_count", deck.getCount());  
         io.to(roomCode).emit("receive_play_pile", playPile);
@@ -133,12 +174,36 @@ const hanabiEvents = (io, socket, rooms) => {
         const action = {type: "clue", sender: socket.userId, receiver: cluePlayer, chosenClue: chosenClue};
         rooms[roomCode].gameData.history.push(action);
 
+        if (rooms[roomCode].gameData.gameInProgress && rooms[roomCode].gameData.finalTurn && rooms[roomCode].gameData.turn > rooms[roomCode].gameData.finalTurn) {
+            const totalPoints = Object.values(playPile).reduce((acc, num) => acc + num, 0);
+            
+            const action = {type: "end", points: totalPoints};
+            rooms[roomCode].gameData.history.push(action);
+
+            rooms[roomCode].gameData.gameInProgress = false;
+            io.to(roomCode).emit("game_has_ended", rooms[roomCode].gameData.gameInProgress, totalPoints);
+        }
+
         io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);
         socket.to(roomCode).emit("receive_clue", socket.nickname, cluePlayer, chosenClue);
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
         io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);
         io.to(roomCode).emit("receive_turn", rooms[roomCode].gameData.turn); 
     });
+
+    socket.on("hanabi_new_game_ready", (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+
+        const playersData = rooms[roomCode].playersData;
+        playersData[socket.userId].isReady = true;
+
+        if (!Object.values(playersData).find((data) => data.isReady === false)) {
+            setUpPlayerData(rooms, roomCode);
+            setUpGameData(io, rooms, roomCode);
+            io.to(roomCode).emit('start_new_round');
+        } 
+        socket.emit("receive_players_data", rooms[roomCode].playersData);
+    })
 }
 
 module.exports = {

@@ -25,6 +25,7 @@ import { HanabiSettings } from "../components/hanabi/HanabiSettings";
 import { InfoButton } from "../components/InfoButton";
 import { MdVisibility } from "react-icons/md";
 import { HanabiHintVisibilityButton } from "../components/hanabi/HanabiHintVisibilityButton";
+import { HanabiEndOverlay } from "../components/hanabi/HanabiEndOverlay";
 
 // TODO
 /*
@@ -56,7 +57,9 @@ export const Hanabi = ({roomCode}) => {
     const [cluePlayer, setCluePlayer] = useState(null);
     const [currentClue, setCurrentClue] = useState(null);
     const [history, setHistory] = useState([]);
+    const [gameInProgress, setGameInProgress] = useState(true);
     const [turn, setTurn] = useState(0);
+    const [endScore, setEndScore] = useState(null);
 
     const maxClueTokens = 8;
 
@@ -140,6 +143,22 @@ export const Hanabi = ({roomCode}) => {
             setCurrentClue({sender, receiver, chosenClue})
         })
 
+        socket.on('receive_game_in_progress', (gameInProgress) => {
+            setGameInProgress(gameInProgress);
+        });
+
+        socket.on('game_has_ended', (totalPoints) => {
+            setGameInProgress(false);
+            setEndScore(totalPoints);
+            setTimeout(() => {
+                setEndScore(null);
+            }, 3000);
+        });
+
+        socket.on('start_new_round', () => {
+            socket.emit('get_all_hanabi_data', roomCode);
+        })
+
         socket.on('room_error', (errorMessage) => {
             navigate(`/hana/lobby`, { state: {error: errorMessage}});
         });
@@ -158,6 +177,9 @@ export const Hanabi = ({roomCode}) => {
             socket.off('receive_clue');
             socket.off('receive_turn');
             socket.off('receive_history');
+            socket.off('receive_game_in_progress');
+            socket.off('game_has_ended');
+            socket.off('start_new_round');
         }
     }, [])
 
@@ -165,13 +187,6 @@ export const Hanabi = ({roomCode}) => {
     const [activeType, setActiveType] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
     const [draggingStyle, setDraggingStyle] = useState({});
-
-    /*
-    let draggingCard = null;
-    if (activeId && indeces.includes(activeId)) {
-        draggingCard = myCards[indeces.indexOf(activeId)];
-    }
-    */
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -304,24 +319,33 @@ export const Hanabi = ({roomCode}) => {
                                            cardWidth={clueCardWidth} 
                     />
                 }
-
-
-                <div className="absolute flex flex-col left-[3%] gap-[2%] h-[30%] w-[min(120px,6vw)]">
+                {
+                    (endScore !== null) && 
+                        <HanabiEndOverlay endScore={endScore}/>
+                }
+                
+                <div className="absolute flex flex-col gap-[2%] left-[3%] h-[20%] w-[min(120px,6vw)]">
                     <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                         <div className="flex w-[40%] justify-center items-center text-[3.5vh]"><FaHeart className="text-red-500"/></div>
                         <div>{lives}</div>
                     </div>
-                    <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
-                        <div className="flex w-[40%] justify-center items-center"><HanabiClueToken size={tokenSize}/></div>
 
-                        <div>{tokenCount}/{maxClueTokens}</div>
-                    </div>
                     <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                         <div className="flex w-[40%] justify-center items-center"><CardBacking width={tokenSize * 0.8}/></div>
                         <div>{cardsRemaining}</div>
                     </div>
                 </div>
-
+                { !gameInProgress &&
+                    <button className={"gradientButton absolute text-white w-[20vh] h-[8vh] text-[2vh] rounded-lg shadow-xl"}
+                            style={{top: "10vh", right: (playerCount === 2 || playerCount === 4) && "10vw"}} 
+                            onClick={() => {
+                                socket.emit("hanabi_new_game_ready", roomCode);
+                            }}
+                            disabled={playersData[socket.userId].isReady}
+                    >
+                        {(playersData[socket.userId].isReady) ? "Waiting for others" : "New Game"}
+                    </button>
+                }
                 <div className="topTaskBar">
                     <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
                     <InfoButton buttonType="settings">

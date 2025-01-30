@@ -35,10 +35,13 @@ export const HanabiHistoryLog = ({history, playersData}) => {
                             let backgroundColor = "bg-sky-600/60";
                             if (action.type === "start") {
                                 const startPlayer = playersData[action.player].nameData.nickname;
-                                message = <div>Game has begun: {startPlayer} starts</div>
+                                message = <div>{"Game has begun: "} <span className="font-bold">{startPlayer}</span> {" starts"}</div>
                             } else if (action.type === "end") {
                                 const endScore = action.points;
-                                message = <div>{`Game has ended: ${endScore} ${endScore === 1 ? "flower was" : "flowers were"} collected!`}</div>
+                                message = <div>{"Game has ended: "} <span className="font-bold">{endScore}</span> {endScore === 1 ? "flower was" : "flowers were"} {"collected!"}</div>
+                            } else if (action.type === "lastCardPicked") {
+                                const player = playersData[action.player].nameData.nickname;
+                                message = <div> <span className="font-bold">{player}</span> has drawn the last card! <br/> Everyone gets one more turn!</div>
                             } else if (action.type === "clue") {
                                 const senderName = playersData[action.sender].nameData.nickname;
                                 const receiverName = playersData[action.receiver].nameData.nickname;
@@ -47,8 +50,8 @@ export const HanabiHistoryLog = ({history, playersData}) => {
 
                                 message = (
                                     <div className="flex justify-center items-center">
-                                        <div className="flex justify-start items-center w-[80%]"> 
-                                            {`${senderName} clued to ${receiverName}: `}
+                                        <div className="text-left w-[80%]"> 
+                                            <span className="font-bold">{senderName}</span> {" clued to "} <span className="font-bold">{receiverName}</span>: 
                                         </div>
                                         <div className="flex justify-center items-center w-[20%]">
                                             <div className={`hanabiClueButton text-black`}
@@ -65,8 +68,8 @@ export const HanabiHistoryLog = ({history, playersData}) => {
                                 const card = action.card;
                                 message = (
                                     <div className="flex items-center w-full">
-                                        <div className="flex justify-start items-center w-[80%]"> 
-                                            {`${player} discarded: `} 
+                                        <div className="text-left w-[80%]"> 
+                                            <span className="font-bold">{player}</span> {" discarded: "}  
                                         </div>
                                         <div className="flex justify-center items-center w-[20%]">
                                             <HanabiCard number={card.number}
@@ -84,8 +87,8 @@ export const HanabiHistoryLog = ({history, playersData}) => {
                                 backgroundColor = isSuccessful ? "bg-green-500/60" : "bg-red-500/60"
                                 message = (
                                     <div className="flex justify-around items-center">
-                                        <div className="flex justify-start items-center w-[80%]">
-                                            {isSuccessful ? `${player} successfully played: ` : `${player} failed to play: `}
+                                        <div className="text-left w-[80%]">
+                                            <span className="font-bold">{player}</span> {isSuccessful ? " successfully played: " : " failed to play: "}
                                         </div>
                                         <div className="flex justify-center items-center w-[20%]">
                                             <HanabiCard number={card.number}

@@ -9,14 +9,13 @@ import { GiNotebook } from "react-icons/gi";
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, pointerWithin, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { HanabiSelfCards } from "../components/hanabi/HanabiSelfCards";
 import { HanabiDiscardPile } from "../components/hanabi/HanabiDiscardPile";
 import { HanabiTokenArea } from "../components/hanabi/HanabiTokenArea";
 import getSocket from "../socket";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../components/LoadingScreen";
-import { set } from "react-hook-form";
 import { Overlay } from "../components/Overlay";
 import { HanabiGiveClueOverlay } from "../components/hanabi/HanabiGiveClueOverlay";
 import { HanabiShowClueOverlay } from "../components/hanabi/HanabiShowClueOverlay";
@@ -29,6 +28,11 @@ import { HanabiEndOverlay } from "../components/hanabi/HanabiEndOverlay";
 
 // TODO
 /*
+Add lose life animation
+Maybe add discard pile toggle
+
+Pop up for if trying to discard and there are 8 tokens
+History rewind
 
 Animation for playing and discarding cards
 Better swap card animation
@@ -41,6 +45,7 @@ Bottom cards and history moves when history is filled
 */
 
 const socket = getSocket();
+export const HanabiContext = createContext();
 
 export const Hanabi = ({roomCode}) => {
     const [rerender, setRerender] = useState(false);
@@ -61,6 +66,7 @@ export const Hanabi = ({roomCode}) => {
     const [gameInProgress, setGameInProgress] = useState(true);
     const [turn, setTurn] = useState(0);
     const [endScore, setEndScore] = useState(null);
+    const [finalPlayer, setFinalPlayer] = useState(null);
 
     const maxClueTokens = 8;
 
@@ -88,6 +94,7 @@ export const Hanabi = ({roomCode}) => {
     const [discardCardWidth, setDiscardCardWidth] = useState(Math.min((window.innerHeight * 0.126) * (2/3), window.innerWidth * 0.041)) //80px
     const [clueCardWidth, setClueCardWidth] = useState(Math.min((window.innerHeight * 0.236) * (2/3), window.innerWidth * 0.078)) //150px
     const [tokenSize, setTokenSizeWidth] = useState(Math.min((window.innerHeight * 0.075) * (2/3), window.innerWidth * 0.025)); // 50px
+
     useEffect(() => {
         const handleResize = () => {
             setSelfCardWidth(Math.min((window.innerHeight * 0.157) * (2/3), window.innerWidth * 0.05));
@@ -140,6 +147,10 @@ export const Hanabi = ({roomCode}) => {
             setTurn(turn);
         });
 
+        socket.on('receive_final_player', (finalPlayer) => {
+            setFinalPlayer(finalPlayer);
+        });
+
         socket.on('receive_clue', (sender, receiver, chosenClue) => { // Sender is the senders nickname while receiver is the receivers userId
             setCurrentClue({sender, receiver, chosenClue})
         })
@@ -177,6 +188,7 @@ export const Hanabi = ({roomCode}) => {
             socket.off('receive_lives');
             socket.off('receive_clue');
             socket.off('receive_turn');
+            socket.off('receive__final_turn');
             socket.off('receive_history');
             socket.off('receive_game_in_progress');
             socket.off('game_has_ended');
@@ -294,142 +306,146 @@ export const Hanabi = ({roomCode}) => {
     const isMyTurn = turn === selfIndex;
 
     return (
-        <DndContext
-            modifiers={[restrictToWindowEdges]}
-            sensors={sensors}
-            collisionDetection={customCollisionDetectionAlgorithm}
-            onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
-            onDragEnd={handleDragEnd}
-            onDragMove={handleDragMove}
-        >
-            <div className="hanabiPage entirePage select-none z-[0] text-slate-200">
-                { cluePlayer &&
-                    <HanabiGiveClueOverlay roomCode={roomCode}
-                                           cluePlayer={cluePlayer} 
-                                           setCluePlayer={setCluePlayer} 
-                                           playersDataArray={playersDataArray} 
-                                           cardWidth={clueCardWidth}
-                    />
-                }
-
-                { currentClue &&
-                    <HanabiShowClueOverlay currentClue={currentClue}  
-                                           setCurrentClue={setCurrentClue}
-                                           playersDataArray={playersDataArray}
-                                           cardWidth={clueCardWidth} 
-                    />
-                }
-                {
-                    (endScore !== null) && 
-                        <HanabiEndOverlay endScore={endScore}/>
-                }
-                
-                <div className="absolute flex flex-col gap-[2%] left-[3%] h-[20%] w-[min(120px,6vw)]">
-                    <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
-                        <div className="flex w-[40%] justify-center items-center text-[3.5vh]"><FaHeart className="text-red-500"/></div>
-                        <div>{lives}</div>
-                    </div>
-
-                    <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
-                        <div className="flex w-[40%] justify-center items-center"><CardBacking width={tokenSize * 0.8}/></div>
-                        <div>{cardsRemaining}</div>
-                    </div>
-                </div>
-                { !gameInProgress &&
-                    <button className={"gradientButton absolute text-white w-[20vh] h-[8vh] text-[2vh] rounded-lg shadow-xl"}
-                            style={{top: "10vh", right: (playerCount === 2 || playerCount === 4) && "10vw"}} 
-                            onClick={() => {
-                                socket.emit("hanabi_new_game_ready", roomCode);
-                            }}
-                            disabled={playersData[socket.userId].isReady}
-                    >
-                        {(playersData[socket.userId].isReady) ? "Waiting for others" : "New Game"}
-                    </button>
-                }
-                <div className="topTaskBar">
-                    <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
-                    <InfoButton buttonType="settings">
-                        <HanabiSettings triggerRerender={triggerRerender}/>
-                    </InfoButton>
-                </div>
-
-                <div className="flex justify-evenly items-center w-full h-[30vh]">
-                    <HanabiPlayer playerData={playerCount >= 4 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(1)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
-                    { (playerCount === 3 || playerCount === 5) &&
-                        <HanabiPlayer playerData={playerCount === 3 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(3)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
-                    }               
-                </div>
-                <div className="flex justify-evenly items-center w-full h-[38vh]">
-                    { playerCount >= 4 &&
-                        <HanabiPlayer playerData={playersDataArray[adjustedIndex(1)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
+        <HanabiContext.Provider value={{ turnPlayer, showTeammateHints, finalPlayer, gameInProgress }}>
+            <DndContext
+                modifiers={[restrictToWindowEdges]}
+                sensors={sensors}
+                collisionDetection={customCollisionDetectionAlgorithm}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragEnd}
+                onDragMove={handleDragMove}
+            >
+                <div className="hanabiPage entirePage select-none z-[0] text-slate-200">
+                    { cluePlayer &&
+                        <HanabiGiveClueOverlay roomCode={roomCode}
+                                            cluePlayer={cluePlayer} 
+                                            setCluePlayer={setCluePlayer} 
+                                            playersDataArray={playersDataArray} 
+                                            cardWidth={clueCardWidth}
+                        />
                     }
 
-                    <HanabiPlayPile playPile={playPile} turnPlayer={turnPlayer} cardWidth={playCardWidth}/>
-
-                    { playerCount >= 4 &&
-                        <HanabiPlayer playerData={playersDataArray[adjustedIndex(playerCount - 1)]} turnPlayer={turnPlayer} showTeammateHints={showTeammateHints}/>
+                    { currentClue &&
+                        <HanabiShowClueOverlay currentClue={currentClue}  
+                                            setCurrentClue={setCurrentClue}
+                                            playersDataArray={playersDataArray}
+                                            cardWidth={clueCardWidth} 
+                        />
                     }
-                </div>
-
-                <div className="flex items-center h-[32%] w-full">
-                    <div className="flex flex-col w-[30vw] h-full" 
-                         style={{gap: Math.max(tokenSize * 0.8, 20)}}
-                    >
-
-                        <HanabiTokenArea tokenCount={tokenCount}
-                                        tokenSize={tokenSize}
-                        />
-                        <HanabiDiscardPile cards={discardPileCards} 
-                                            cardWidth={discardCardWidth}
-                                            turnPlayer={turnPlayer} 
-                        />
-                    </div>
-
-
-                    <HanabiSelfCards cardWidth={selfCardWidth}
-                                     cards={myCards}
-                                     selfCardIds={selfCardIds}
-                                     isMyTurn={isMyTurn}
-                    />
-                    <div className="flex w-[30vw] h-full items-center justify-center">
-                        <HanabiHistoryLog history={history} playersData={playersData}/>
-                    </div>
-
-                </div>
-
-                <DragOverlay>
-                    {draggingStyle ? (
-                        <div
-                        style={{
-                            position: 'absolute',
-                            left: draggingStyle.transform ? `${draggingStyle.transform.split(' ')[0]}` : '0px',
-                            top: draggingStyle.transform ? `${draggingStyle.transform.split(' ')[1]}` : '0px',
-                            pointerEvents: 'none', // Prevent interaction with the overlay
-                            zIndex: 9999, // Ensure the overlay is on top
-                            opacity: 1
-                        }}
-                        >
-                            {
-                            (activeType === "card" && activeCard) ?
-                                <HanabiCard number={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.numberVisible ? activeCard.number : "unknown")} 
-                                        suit={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.suitVisible ? activeCard.suit : "unknown")}
-                                        width={selfCardWidth}
-                                />
-                            : activeType === "token" ?
-                                <HanabiClueToken size={tokenSize}/>
-                            :
-                            <div>TESTING</div>
-                            }
+                    {
+                        (endScore !== null) && 
+                            <HanabiEndOverlay endScore={endScore}/>
+                    }
+                    
+                    <div className="absolute flex flex-col gap-[2%] left-[3%] h-[20%] w-[min(120px,6vw)]">
+                        <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
+                            <div className="flex w-[40%] justify-center items-center text-[3.5vh]"><FaHeart className="text-red-500"/></div>
+                            <div>{lives}</div>
                         </div>
-                    ) : null}
-                </DragOverlay>
 
-                <div className="entirePage bg-black/80 z-[-10]"></div>
+                        <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
+                            <div className="flex w-[40%] justify-center items-center"><CardBacking width={tokenSize * 0.8}/></div>
+                            <div>{cardsRemaining}</div>
+                        </div>
+                    </div>
+                    { !gameInProgress &&
+                        <button className={"gradientButton absolute text-white w-[20vh] h-[8vh] text-[2vh] rounded-lg shadow-xl"}
+                                style={{top: "10vh", right: (playerCount === 2 || playerCount === 4) && "10vw"}} 
+                                onClick={() => {
+                                    socket.emit("hanabi_new_game_ready", roomCode);
+                                }}
+                                disabled={playersData[socket.userId].isReady}
+                        >
+                            {(playersData[socket.userId].isReady) ? "Waiting for others..." : "New Game"}
+                        </button>
+                    }
+                    <div className="topTaskBar">
+                        <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
+                        <InfoButton buttonType="settings">
+                            <HanabiSettings triggerRerender={triggerRerender}/>
+                        </InfoButton>
+                    </div>
 
-            </div>
+                    <div className="flex justify-evenly items-center w-full h-[30vh]">
+                        <HanabiPlayer playerData={playerCount >= 4 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(1)]} />
+                        { (playerCount === 3 || playerCount === 5) &&
+                            <HanabiPlayer playerData={playerCount === 3 ? playersDataArray[adjustedIndex(2)] : playersDataArray[adjustedIndex(3)]} />
+                        }               
+                    </div>
+                    <div className="flex justify-evenly items-center w-full h-[38vh]">
+                        { playerCount >= 4 &&
+                            <HanabiPlayer playerData={playersDataArray[adjustedIndex(1)]} />
+                        }
 
-        </DndContext>
+                        <HanabiPlayPile playPile={playPile} turnPlayer={turnPlayer} cardWidth={playCardWidth}/>
+
+                        { playerCount >= 4 &&
+                            <HanabiPlayer playerData={playersDataArray[adjustedIndex(playerCount - 1)]} />
+                        }
+                    </div>
+
+                    <div className="flex items-center h-[32%] w-full">
+                        <div className="flex flex-col w-[30vw] h-full" 
+                            style={{gap: Math.max(tokenSize * 0.8, 20)}}
+                        >
+
+                            <HanabiTokenArea tokenCount={tokenCount}
+                                            tokenSize={tokenSize}
+                            />
+                            <HanabiDiscardPile cards={discardPileCards} 
+                                                cardWidth={discardCardWidth}
+                                                turnPlayer={turnPlayer} 
+                            />
+                        </div>
+
+
+                        <HanabiSelfCards cardWidth={selfCardWidth}
+                                        myData={playersData[socket.userId]}
+                                        selfCardIds={selfCardIds}
+                                        isMyTurn={isMyTurn}
+                                        isFinalPlayer={finalPlayer === socket.userId}
+                                        gameInProgress={gameInProgress}
+                        />
+                        <div className="flex w-[30vw] h-full items-center justify-center">
+                            <HanabiHistoryLog history={history} playersData={playersData}/>
+                        </div>
+
+                    </div>
+
+                    <DragOverlay>
+                        {draggingStyle ? (
+                            <div
+                            style={{
+                                position: 'absolute',
+                                left: draggingStyle.transform ? `${draggingStyle.transform.split(' ')[0]}` : '0px',
+                                top: draggingStyle.transform ? `${draggingStyle.transform.split(' ')[1]}` : '0px',
+                                pointerEvents: 'none', // Prevent interaction with the overlay
+                                zIndex: 9999, // Ensure the overlay is on top
+                                opacity: 1
+                            }}
+                            >
+                                {
+                                (activeType === "card" && activeCard) ?
+                                    <HanabiCard number={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.numberVisible ? activeCard.number : "unknown")} 
+                                            suit={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.suitVisible ? activeCard.suit : "unknown")}
+                                            width={selfCardWidth}
+                                    />
+                                : activeType === "token" ?
+                                    <HanabiClueToken size={tokenSize}/>
+                                :
+                                <div>TESTING</div>
+                                }
+                            </div>
+                        ) : null}
+                    </DragOverlay>
+
+                    <div className="entirePage bg-black/80 z-[-10]"></div>
+
+                </div>
+
+            </DndContext>
+        </HanabiContext.Provider>
         
     )
 }

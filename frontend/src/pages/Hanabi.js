@@ -316,7 +316,7 @@ export const Hanabi = ({roomCode}) => {
                 onDragEnd={handleDragEnd}
                 onDragMove={handleDragMove}
             >
-                <div className="hanabiPage entirePage select-none z-[0] text-slate-200">
+                <div className="hanabiPage entirePage select-none z-[0] text-slate-200 h-[100vh] md:h-[calc(100vh-60px)]">
                     { cluePlayer &&
                         <HanabiGiveClueOverlay roomCode={roomCode}
                                             cluePlayer={cluePlayer} 

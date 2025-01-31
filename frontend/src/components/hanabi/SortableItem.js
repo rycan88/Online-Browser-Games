@@ -8,6 +8,7 @@ export const SortableItem = ({ id, children, type}) => {
             style={{transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
                      transition,
                      opacity: isDragging ? "0" : "1",
+                     touchAction: "none",
                     }}
              {...attributes}
              {...listeners}

@@ -6,7 +6,7 @@ import { HanabiPlayPile } from "../components/hanabi/HanabiPlayPile";
 import CardBacking from "../components/card/CardBacking";
 import { HanabiClueToken } from "../components/hanabi/HanabiClueToken";
 import { GiNotebook } from "react-icons/gi";
-import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, pointerWithin, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { closestCenter, DndContext, DragOverlay, KeyboardSensor, MouseSensor, PointerSensor, pointerWithin, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { createContext, useEffect, useState } from "react";
@@ -29,7 +29,6 @@ import { HanabiEndOverlay } from "../components/hanabi/HanabiEndOverlay";
 // TODO
 /*
 Add lose life animation
-Maybe add discard pile toggle
 
 Pop up for if trying to discard and there are 8 tokens
 History rewind
@@ -203,7 +202,8 @@ export const Hanabi = ({roomCode}) => {
 
     const sensors = useSensors(
         useSensor(PointerSensor),
-        useSensor(TouchSensor),
+        //useSensor(MouseSensor),
+        //useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })

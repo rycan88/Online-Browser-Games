@@ -440,7 +440,7 @@ export const Hanabi = ({roomCode}) => {
                         ) : null}
                     </DragOverlay>
 
-                    <div className="entirePage bg-black/80 z-[-10]"></div>
+                    <div className="entirePage bg-black/80 z-[-10] h-[100vh] md:h-[calc(100vh-60px)]"></div>
 
                 </div>
 

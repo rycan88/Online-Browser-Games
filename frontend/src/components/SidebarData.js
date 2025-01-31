@@ -10,7 +10,7 @@ export const SidebarData = [
     {
         title: "Home",
         icon: <MdHome/>,
-        link: "/",
+        link: "/home",
         isMain: true,
     },
     {

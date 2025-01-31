@@ -20,6 +20,8 @@ import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
 import { ThirtyOneSelfCard } from "../components/thirty-one/ThirtyOneSelfCard";
 import { ThirtyOneKnockOverlay } from "../components/thirty-one/ThirtyOneKnockOverlay";
 import { StandardCard } from "../components/card/StandardCard";
+import useFullscreen from "../hooks/useFullscreen";
+import { FullscreenButton } from "../components/FullscreenButton";
 
 // TODO
 // Allow users to drag cards
@@ -31,6 +33,8 @@ const socket = getSocket();
 const NAVBAR_HEIGHT = 60;
 
 export const ThirtyOne = ({roomCode}) => {
+    const isFullscreen = useFullscreen();
+
     const MIDDLE_CARD_WIDTH = (window.innerHeight * 0.20) * (2/3);
     const MY_CARD_WIDTH = (window.innerHeight * 0.25) * (2/3);
     const PICK_UP_DURATION = 300;
@@ -283,6 +287,8 @@ export const ThirtyOne = ({roomCode}) => {
         socket.emit('thirty_one_knock', roomCode);
     }
 
+
+
     if (shouldShowResults && arrayOfElements.length === 0 && playersData) {
         return <ThirtyOneResultsScreen roomCode={roomCode} playersData={playersData}/>
     }
@@ -300,14 +306,15 @@ export const ThirtyOne = ({roomCode}) => {
     }
 
     return (
-        <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)]">   
+        <div className={`thirtyOnePage entirePage h-[100vh] ${!isFullscreen && "md:h-[calc(100vh-60px)]"}`}>   
             { knockAnimationPlayer &&
-                <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} />
+                <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} isFullscreen={isFullscreen}/>
             }
-            <div className="topTaskBar">
-                <InfoButton buttonType="info" fullScreen={true}>
+            <div className="topTaskBar text-slate-200">
+                <InfoButton buttonType="info" fullScreen={isFullscreen}>
                     <ThirtyOneRules />
                 </InfoButton> 
+                <FullscreenButton shouldRotate={true} />
             </div>
    
 

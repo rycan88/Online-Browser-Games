@@ -1,23 +1,22 @@
 
 import { useState } from "react";
 import { MdFullscreen, MdFullscreenExit } from "react-icons/md";
+import useFullscreen from "../hooks/useFullscreen";
 
-export const FullscreenButton = () => {
-    const [isFullscreen, setIsFullscreen] = useState(false);
+export const FullscreenButton = ({shouldRotate=false}) => {
+    const isFullscreen = useFullscreen();
 
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
-            setIsFullscreen(true);
-            console.log(window.screen.orientation)
-            if (window.screen.orientation.lock) {
+
+            if (shouldRotate && window.screen.orientation.lock) {
                 window.screen.orientation.lock('landscape').catch((err) => {
                     console.error('Orientation lock failed: ', err);
                 });
               }
         } else if (document.exitFullscreen) {
             document.exitFullscreen();
-            setIsFullscreen(false);
         }
     };
 

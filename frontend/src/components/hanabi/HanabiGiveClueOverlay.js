@@ -6,7 +6,7 @@ import getSocket from "../../socket";
 
 const socket = getSocket();
 const hanabiColours = Object.keys(hanabiSuitColours);
-export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, playersDataArray, cardWidth}) => {
+export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, playersDataArray, cardWidth, isFullscreen}) => {
     const playerData = playersDataArray.find((data) => data.nameData.userId === cluePlayer);
     const [chosenClue, setChosenClue] = useState(null);
 
@@ -15,7 +15,7 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
     const cards = playerData.cards;
 
     return (
-        <Overlay isOpen={true} fullScreen={true} onClose={()=>{ setCluePlayer(null)}}>
+        <Overlay isOpen={true} fullScreen={isFullscreen} onClose={()=>{ setCluePlayer(null)}}>
             <div className="flex flex-col h-full justify-center items-center text-white text-[5vh]">
                 <div>{`Give clue to ${userName}`}</div>
                 <div className="flex gap-[20px] p-[10%]">

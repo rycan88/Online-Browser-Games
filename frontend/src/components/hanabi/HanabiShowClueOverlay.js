@@ -3,7 +3,7 @@ import { Overlay } from "../Overlay";
 import { HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
 
 const socket = getSocket();
-export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataArray, cardWidth}) => {
+export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataArray, cardWidth, isFullscreen}) => {
     const chosenClue = currentClue.chosenClue;
     const receiver = currentClue.receiver;
     const sender = currentClue.sender;
@@ -17,7 +17,7 @@ export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataA
     const isColorClue = Object.keys(hanabiSuitColours).includes(chosenClue);
     const isReceiver = socket.userId === receiver;
     return (
-        <Overlay isOpen={true} fullScreen={true} onClose={()=>{ setCurrentClue(null)}}>
+        <Overlay isOpen={true} fullScreen={isFullscreen} onClose={()=>{ setCurrentClue(null)}}>
             <div className="flex flex-col h-full justify-center items-center text-white text-[5vh]">
                 <div className="pb-[30px]">{`${sender} sent a clue to ${userName}: `}</div>
                 <div className={`hanabiClueButton text-black`}

@@ -113,6 +113,7 @@ function App() {
           <Router>
             <Navbar />
             <Routes>
+              <Route path="/home" element={<Home />} />
               <Route path="/" element={<Games />} />
               {lobbyRoutes()}
               {roomRoutes(rooms)}

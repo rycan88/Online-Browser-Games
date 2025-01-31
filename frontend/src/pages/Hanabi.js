@@ -26,6 +26,7 @@ import { MdVisibility } from "react-icons/md";
 import { HanabiHintVisibilityButton } from "../components/hanabi/HanabiHintVisibilityButton";
 import { HanabiEndOverlay } from "../components/hanabi/HanabiEndOverlay";
 import { FullscreenButton } from "../components/FullscreenButton";
+import useFullscreen from "../hooks/useFullscreen";
 
 // TODO
 /*
@@ -299,6 +300,8 @@ export const Hanabi = ({roomCode}) => {
         setActiveCard(null)
     }
 
+    const isFullscreen = useFullscreen();
+
     if (!dataInitialized) {
         return <LoadingScreen />;
     }
@@ -317,13 +320,14 @@ export const Hanabi = ({roomCode}) => {
                 onDragEnd={handleDragEnd}
                 onDragMove={handleDragMove}
             >
-                <div className="hanabiPage entirePage select-none z-[0] text-slate-200 h-[100vh] md:h-[calc(100vh-60px)]">
+                <div className={`hanabiPage entirePage select-none z-[0] text-slate-200 ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
                     { cluePlayer &&
                         <HanabiGiveClueOverlay roomCode={roomCode}
                                             cluePlayer={cluePlayer} 
                                             setCluePlayer={setCluePlayer} 
                                             playersDataArray={playersDataArray} 
                                             cardWidth={clueCardWidth}
+                                            isFullscreen={isFullscreen}
                         />
                     }
 
@@ -332,11 +336,14 @@ export const Hanabi = ({roomCode}) => {
                                             setCurrentClue={setCurrentClue}
                                             playersDataArray={playersDataArray}
                                             cardWidth={clueCardWidth} 
+                                            isFullscreen={isFullscreen}
                         />
                     }
                     {
                         (endScore !== null) && 
-                            <HanabiEndOverlay endScore={endScore}/>
+                            <HanabiEndOverlay endScore={endScore}
+                                              isFullscreen={isFullscreen}
+                            />
                     }
                     
                     <div className="absolute flex flex-col gap-[2%] left-[3%] h-[20%] w-[min(120px,6vw)]">
@@ -363,10 +370,10 @@ export const Hanabi = ({roomCode}) => {
                     }
                     <div className="topTaskBar">
                         <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
-                        <InfoButton buttonType="settings">
+                        <InfoButton buttonType="settings" fullScreen={isFullscreen}>
                             <HanabiSettings triggerRerender={triggerRerender}/>
                         </InfoButton>
-                        <FullscreenButton />
+                        <FullscreenButton shouldRotate={true}/>
                     </div>
 
                     <div className="flex justify-evenly items-center w-full h-[30vh]">
@@ -442,7 +449,7 @@ export const Hanabi = ({roomCode}) => {
                         ) : null}
                     </DragOverlay>
 
-                    <div className="entirePage bg-black/80 z-[-10] h-[100vh] md:h-[calc(100vh-60px)]"></div>
+                    <div className={`entirePage bg-black/80 z-[-10] h-[100vh] ${!isFullscreen && "md:h-[calc(100vh-60px)]"}`}></div>
 
                 </div>
 

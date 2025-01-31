@@ -46,3 +46,7 @@ export const getShouldSortHanabiDiscardPile = () => {
     return Cookies.get(shouldSortDiscardCookieName) === "true";
 }
 
+export const setShouldSortHanabiDiscardPile = (shouldSort) => {
+    Cookies.set(shouldSortDiscardCookieName, shouldSort.toString(), { expires: 365});
+}
+

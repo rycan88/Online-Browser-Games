@@ -25,6 +25,7 @@ import { InfoButton } from "../components/InfoButton";
 import { MdVisibility } from "react-icons/md";
 import { HanabiHintVisibilityButton } from "../components/hanabi/HanabiHintVisibilityButton";
 import { HanabiEndOverlay } from "../components/hanabi/HanabiEndOverlay";
+import { FullscreenButton } from "../components/FullscreenButton";
 
 // TODO
 /*
@@ -365,6 +366,7 @@ export const Hanabi = ({roomCode}) => {
                         <InfoButton buttonType="settings">
                             <HanabiSettings triggerRerender={triggerRerender}/>
                         </InfoButton>
+                        <FullscreenButton />
                     </div>
 
                     <div className="flex justify-evenly items-center w-full h-[30vh]">

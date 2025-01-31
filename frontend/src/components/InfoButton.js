@@ -22,7 +22,7 @@ export const InfoButton = ({buttonStyle, buttonType="info", children, fullScreen
 
     return (
         <>
-            <div className={`text-sky-700 text-[3vh] hover:cursor-pointer shadow-xl ${buttonStyle}`}
+            <div className={`flex items-center justify-center text-sky-700 text-[3vh] hover:cursor-pointer shadow-xl ${buttonStyle}`}
                 onClick={() => {
                     toggleOverlay();
                 }}

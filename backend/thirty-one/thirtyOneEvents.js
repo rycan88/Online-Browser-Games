@@ -97,7 +97,7 @@ const thirtyOneEvents = (io, socket, rooms) => {
         rooms[roomCode].gameData.turn += 0.5;
 
  
-        socket.broadcast.to(roomCode).emit('card_discarded', discardedCard);
+        socket.to(roomCode).emit('card_discarded', discardedCard);
 
         const myScore = calculateScore(rooms[roomCode].playersData[socket.userId].cards);
 

@@ -190,7 +190,7 @@ const hanabiEvents = (io, socket, rooms) => {
         console.log(socket.id, "is in rooms:", Array.from(socket.rooms));
         
         io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);
-        socket.broadcast.to(roomCode).emit("receive_clue", socket.nickname, cluePlayer, chosenClue);
+        socket.to(roomCode).emit("receive_clue", socket.nickname, cluePlayer, chosenClue);
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
         io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);
         io.to(roomCode).emit("receive_turn", rooms[roomCode].gameData.turn % playerCount); 

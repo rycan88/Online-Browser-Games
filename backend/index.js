@@ -97,11 +97,13 @@ io.on("connection", (socket) => {
     });
 
     socket.on('create_room', (gameName, roomCode) => {
+        socket.leaveAll();
         leaveAllRooms(io, rooms, socket.id);
         rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
         if (gameName === "telepath") {
             rooms[roomCode].teamMode = true;
         }
+
         socket.join(roomCode);
         rooms[roomCode].players.push(currentUser);
         rooms[roomCode].spectators.push(currentUser);

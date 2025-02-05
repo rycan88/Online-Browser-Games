@@ -32,6 +32,10 @@ import useFullscreen from "../hooks/useFullscreen";
 /*
 Add lose life animation
 
+Add sound effects
+Add visibiltity button to clue page
+ADd restart button
+
 Pop up for if trying to discard and there are 8 tokens
 History rewind
 
@@ -41,8 +45,11 @@ Better swap card animation
 
 Write rules
 BUGS:
+Rejoining same lobby can cause multiple server calls
+Clue visibility hold work on mobile
+Correct sizing for mobile not fullscreen
 Bottom cards and history moves when history is filled
-
+History scroll bar position doesnt move to the bottom when a new action is made
 */
 
 const socket = getSocket();
@@ -176,6 +183,7 @@ export const Hanabi = ({roomCode}) => {
             navigate(`/hana/lobby`, { state: {error: errorMessage}});
         });
 
+        console.log(roomCode)
         socket.emit('join_room', roomCode);
         socket.emit('get_all_hanabi_data', roomCode);
 

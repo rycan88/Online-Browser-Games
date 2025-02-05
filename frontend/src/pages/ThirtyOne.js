@@ -299,8 +299,11 @@ export const ThirtyOne = ({roomCode}) => {
 
     if (!landscapeMode) {
         return (
-            <div className="rotate-notice">
-                Please rotate your device to landscape mode.
+            <div className="entirePage rotate-notice">
+                <div className="topTaskBar">
+                    <FullscreenButton shouldRotate={true}/>
+                </div>
+                <div>Please rotate your device to landscape mode.</div>
             </div>
         );
     }

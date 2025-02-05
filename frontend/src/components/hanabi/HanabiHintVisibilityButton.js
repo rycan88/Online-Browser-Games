@@ -19,7 +19,8 @@ export const HanabiHintVisibilityButton = ({showTeammateHints, setShowTeammateHi
             onMouseUp={handleRelease}
 
             onTouchStart={handlePress}
-            onTouchDown={handleRelease}
+            onTouchEnd={handleRelease}
+            onTouchCancel={handleRelease}
         >
             { showTeammateHints ?
                 <MdVisibilityOff />

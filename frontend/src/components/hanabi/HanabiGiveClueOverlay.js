@@ -3,12 +3,14 @@ import { Overlay } from "../Overlay"
 import { HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
 import { useState } from "react";
 import getSocket from "../../socket";
+import { HanabiHintVisibilityButton } from "./HanabiHintVisibilityButton";
 
 const socket = getSocket();
 const hanabiColours = Object.keys(hanabiSuitColours);
 export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, playersDataArray, cardWidth, isFullscreen}) => {
     const playerData = playersDataArray.find((data) => data.nameData.userId === cluePlayer);
     const [chosenClue, setChosenClue] = useState(null);
+    const [showTeammateHints, setShowTeammateHints] = useState(false);
 
     if (!playerData) { return; }
     const userName = playerData.nameData.nickname;
@@ -18,13 +20,17 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
         <Overlay isOpen={true} fullScreen={isFullscreen} onClose={()=>{ setCluePlayer(null)}}>
             <div className="flex flex-col h-full justify-center items-center text-white text-[5vh]">
                 <div>{`Give clue to ${userName}`}</div>
-                <div className="flex gap-[20px] p-[10%]">
+                <div className="flex relative gap-[20px] p-[10%]">
                     {
                         cards.map((card) => {
+                            const hasData = card.numberVisible || card.suitVisible;
+                            const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
+                            const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
+
                             return(
                                 <div className={`transition rounded-[4%] ${chosenClue && ([card.number, card.suit].includes(chosenClue)) && "hanabiChosenLiftedCard"}`}>
-                                    <HanabiCard number={card.number}
-                                                suit={card.suit}
+                                    <HanabiCard number={showTeammateHints ? number : card.number}
+                                                suit={showTeammateHints ? suit : card.suit}
                                                 width={cardWidth} 
                                     />
                                 </div>
@@ -32,6 +38,9 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
                             );
                         })
                     }
+                    <div className="absolute -top-[1px] -right-[1px]">
+                        <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
+                    </div>
                 </div>
                 <div className="flex h-[18%] gap-[50px] items-center justify-center">
                     <div className="flex flex-col h-full gap-[10px] items-center justify-around">

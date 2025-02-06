@@ -186,11 +186,9 @@ const hanabiEvents = (io, socket, rooms) => {
         if (rooms[roomCode].gameData.gameInProgress && rooms[roomCode].gameData.finalTurn && rooms[roomCode].gameData.turn > rooms[roomCode].gameData.finalTurn) { // Last turn happened
             gameEndedAction(io, rooms, roomCode);
         }
-
-        console.log(socket.id, "is in rooms:", Array.from(socket.rooms));
         
-        io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);
         socket.to(roomCode).emit("receive_clue", socket.nickname, cluePlayer, chosenClue);
+        io.to(roomCode).emit("receive_token_count", rooms[roomCode].gameData.tokenCount);
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
         io.to(roomCode).emit("receive_history", rooms[roomCode].gameData.history);
         io.to(roomCode).emit("receive_turn", rooms[roomCode].gameData.turn % playerCount); 

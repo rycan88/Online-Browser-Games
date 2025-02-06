@@ -21,14 +21,15 @@ const getRoomLeader = (rooms, roomCode) => {
 }
 
 // leaveAllRooms removes the current user's socket from all rooms, and replaces it with another socket with same socketid if found
-const leaveAllRooms = (io, rooms, deleteTimers, currentUser) => {
-    if (!currentUser) { return; }
+const leaveAllRooms = (io, rooms, deleteTimers, currentSocket) => {
+    if (!currentSocket) { return; }
     Object.keys(rooms).forEach((roomCode) => {
-        const currentIndex = rooms[roomCode].players.findIndex(user => user.socketId === currentUser.socketId);
+        const currentIndex = rooms[roomCode].players.findIndex(user => user.socketId === currentSocket.id);
         if (currentIndex === -1) { return; }
+        currentSocket.leave(roomCode);
 
-        rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.socketId !== currentUser.socketId);
-        const otherAcc = rooms[roomCode].spectators.find(user => user.userId === currentUser.userId);
+        rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.socketId !== currentSocket.id);
+        const otherAcc = rooms[roomCode].spectators.find(user => user.userId === currentSocket.id);
 
         if (otherAcc) {
             rooms[roomCode].players.splice(currentIndex, 1, otherAcc);
@@ -42,7 +43,7 @@ const leaveAllRooms = (io, rooms, deleteTimers, currentUser) => {
             }
         } else {
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
-            removeFromTeamList(io, rooms, roomCode, currentUser, -1);
+            removeFromTeamList(io, rooms, roomCode, currentSocket.id, -1);
         }
     });
 }
@@ -67,15 +68,15 @@ const addToTeamList = (rooms, roomCode, currentUser) => {
     }
 }
 
-const removeFromTeamList = (io, rooms, roomCode, currentUser, excludedIndex) => {
-    if (!currentUser) { return; }
+const removeFromTeamList = (io, rooms, roomCode, currentSocket, excludedIndex) => {
+    if (!currentSocket) { return; }
     const teamData = rooms[roomCode].teamData;
     for (const [index, team] of teamData.entries()) {
         if (index === excludedIndex) { continue; }
-        if (containsUserId(team, currentUser.userId)) {
+        if (containsUserId(team, currentSocket.id)) {
             team.length === 1 
                 ? teamData.splice(index, 1)
-                : teamData[index] = teamData[index].filter(user => user.userId !== currentUser.userId);
+                : teamData[index] = teamData[index].filter(user => user.userId !== currentSocket.id);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
             return team.length === 1;
         }

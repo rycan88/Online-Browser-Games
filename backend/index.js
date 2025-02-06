@@ -97,8 +97,8 @@ io.on("connection", (socket) => {
     });
 
     socket.on('create_room', (gameName, roomCode) => {
-        socket.leaveAll();
-        leaveAllRooms(io, rooms, socket.id);
+        //socket.leaveAll();
+        leaveAllRooms(io, rooms, deleteTimers, socket);
         rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
         if (gameName === "telepath") {
             rooms[roomCode].teamMode = true;
@@ -133,8 +133,8 @@ io.on("connection", (socket) => {
             socket.emit('room_error', `Player limit reached`);
         } else if (!containsSocketId(rooms[roomCode].players, socket.id)) { // If the socket is not already connected to the room
             clearDeleteTimer(deleteTimers, roomCode);
-            socket.leaveAll();
-            leaveAllRooms(io, rooms, deleteTimers, currentUser);
+            //socket.leaveAll();
+            leaveAllRooms(io, rooms, deleteTimers, socket);
             socket.join(roomCode);
             rooms[roomCode].spectators.push(currentUser);
             if (!containsUserId(rooms[roomCode].players, socket.userId)) {
@@ -164,7 +164,7 @@ io.on("connection", (socket) => {
                 }
             } else {
                 if (teamGames.includes(rooms[roomCode].gameName)) {
-                    removeFromTeamList(io, rooms, roomCode, currentUser, -1);
+                    removeFromTeamList(io, rooms, roomCode, socket, -1);
                 }    
                 io.to(roomCode).emit('update_players', rooms[roomCode].players);
             }
@@ -223,7 +223,7 @@ io.on("connection", (socket) => {
             } else {
                 teamData[index - 1].push(currentUser);
             }
-            removeFromTeamList(io, rooms, roomCode, currentUser, index - 1);
+            removeFromTeamList(io, rooms, roomCode, socket, index - 1);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         }
     });

@@ -12,12 +12,13 @@ import { RPSMeleeSettings } from "../rps-melee/RPSMeleeSettings";
 import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 import { TelepathSettings } from "../telepath/TelepathSettings";
 import { RoomCodeWords } from "./RoomCodeWords";
+import { HanabiSettings } from "../hanabi/HanabiSettings";
 
 const socket = getSocket();
 
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
-const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />}
+const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />, "hana": <HanabiSettings />}
 
 // roomCode: string
 // gameName: string

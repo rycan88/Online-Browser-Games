@@ -2,19 +2,33 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { ToggleSwitch } from "../ToggleSwitch";
 import { SettingsSaveButton } from "../SettingsSaveButton";
+import getSocket from "../../socket";
+import { ChoiceDropdown } from "../ChoiceDropdown";
 
 const shouldSortDiscardCookieName = "shouldSortHanabiDiscardPile";
 
+// Game modes: standard, extraSuit
+const gameModeChoices = {"standard": "Standard", "extraSuit": "6th Pile"}
 
-export const HanabiSettings = ({triggerRerender, closeOverlay}) => {
+const socket = getSocket();
+export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
     const [shouldSort, setShouldSort] = useState(false); 
     const [isSaved, setIsSaved] = useState(false);
+    const [gameMode, setGameMode] = useState("standard");
 
     const handleSave = () => {
         Cookies.set(shouldSortDiscardCookieName, shouldSort.toString(), { expires: 365});
 
-        triggerRerender();
-        
+        if (triggerRerender) {
+            triggerRerender();
+        }
+
+        const settings = {
+            gameMode: gameMode,
+        };
+
+        socket.emit('send_hanabi_settings_data', roomCode, settings);
+
         setIsSaved(true);
         setTimeout(() => {
             setIsSaved(false);
@@ -25,6 +39,21 @@ export const HanabiSettings = ({triggerRerender, closeOverlay}) => {
         const shouldSort = getShouldSortHanabiDiscardPile();
 
         setShouldSort(shouldSort);
+
+        socket.on('receive_settings_data', (settingsData) => {
+            if (!settingsData) { return; }
+            const gameMode = settingsData.gameMode;
+
+            if (gameMode) {
+                setGameMode(gameMode)
+            }
+        });
+
+        socket.emit('get_hanabi_settings_data', roomCode);
+
+        return () => {
+            socket.off('receive_settings_data');
+        }
     }, [])
 
     return (
@@ -34,6 +63,10 @@ export const HanabiSettings = ({triggerRerender, closeOverlay}) => {
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
                     <div>Sort discard pile</div>
                     <ToggleSwitch isOn={shouldSort} onAction={() => {setShouldSort(true)}} offAction={() => {setShouldSort(false)}} bgColour="bg-blue-600"/>
+                </div>
+                <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
+                    <div>Time Mode</div>
+                    <ChoiceDropdown selectedChoice={gameMode} setSelectedChoice={setGameMode} choices={gameModeChoices}/>
                 </div>
             </div>
             

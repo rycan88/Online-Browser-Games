@@ -99,7 +99,8 @@ const setUpGameData = (io, rooms, roomCode) => {
             discardPile.push(deck.drawCard());
 
             const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
+            const startingTurn = Math.floor(Math.random() * playerDataArray.length);
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: startingTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
         } else if (gameName === "rock_paper_scissors_melee") {
             const maxPoints = rooms[roomCode].gameData.maxPoints;
             const roundDuration = rooms[roomCode].gameData.roundDuration;
@@ -107,7 +108,9 @@ const setUpGameData = (io, rooms, roomCode) => {
 
             rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration, withGun: withGun, turn: 0};            
         } else if (gameName === "hana") {
-            const deck = new HanabiDeck();
+            const gameMode = rooms[roomCode].gameData.gameModeSetting;
+
+            const deck = new HanabiDeck(gameMode);
             const discardPile = [];
             deck.shuffle();
 
@@ -123,10 +126,13 @@ const setUpGameData = (io, rooms, roomCode) => {
                 }
             }
             const playPile = {"red": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0}
+            if (gameMode === "extraSuit") {
+                playPile["pink"] = 0;
+            }
             const startingTurn = Math.floor(Math.random() * playerDataArray.length);
             const history = [{"type": "start", "player": playerDataArray[startingTurn].nameData.userId}];
- 
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history, gameInProgress: true, finalTurn: null};
+            
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history, gameInProgress: true, finalTurn: null, gameMode: gameMode, gameModeSetting: gameMode};
         }
     }
 }

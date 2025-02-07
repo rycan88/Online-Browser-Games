@@ -1,12 +1,12 @@
 import { useDroppable } from "@dnd-kit/core"
 import CardOutline from "../card/CardOutline"
 import { DropZone } from "./DropZone"
-import { HanabiCard } from "./HanabiCard"
+import { getHanabiColours, HanabiCard } from "./HanabiCard"
 import getSocket from "../../socket"
 
 const socket = getSocket();
 
-const borderColors = {"red": "border-red-500", "yellow": "border-yellow-500", "green": "border-green-500", "blue": "border-blue-500", "purple": "border-purple-500"}
+const borderColors = {"red": "border-red-500", "yellow": "border-yellow-500", "green": "border-green-500", "blue": "border-blue-500", "purple": "border-purple-500", "pink": "border-pink-500"}
 export const HanabiPlayPile = ({playPile, turnPlayer, cardWidth}) => {
     const id = "playPileArea";
     const { active, isOver, setNodeRef } = useDroppable({ id })

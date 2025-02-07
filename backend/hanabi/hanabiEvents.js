@@ -15,6 +15,7 @@ const hanabiEvents = (io, socket, rooms) => {
             socket.emit("receive_game_in_progress", rooms[roomCode].gameData.gameInProgress);
 
             socket.emit("receive_final_player", rooms[roomCode].gameData.finalPlayer);
+            socket.emit("receive_game_mode", rooms[roomCode].gameData.gameMode);
             
             socket.emit("receive_players_data", rooms[roomCode].playersData);
             
@@ -140,13 +141,12 @@ const hanabiEvents = (io, socket, rooms) => {
 
         rooms[roomCode].gameData.turn += 1;
         
-        const totalPoints = Object.values(playPile).reduce((acc, num) => acc + num, 0);
         if (rooms[roomCode].gameData.gameInProgress) {
             if (rooms[roomCode].gameData.lives === 0) { // Ran out of lives
                 gameEndedAction(io, rooms, roomCode);
             } else if (rooms[roomCode].gameData.finalTurn && rooms[roomCode].gameData.turn > rooms[roomCode].gameData.finalTurn) { // Last turn happened
                 gameEndedAction(io, rooms, roomCode);
-            } else if (totalPoints === 25) {
+            } else if (Object.values(playPile).every(num => num === 5)) {
                 gameEndedAction(io, rooms, roomCode);
             }
         }
@@ -207,6 +207,23 @@ const hanabiEvents = (io, socket, rooms) => {
         } 
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
     })
+
+    socket.on("get_hanabi_settings_data", (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+        const gameMode = rooms[roomCode].gameData.gameModeSetting;
+
+        socket.emit('receive_settings_data', {gameMode: gameMode});
+    });
+
+    socket.on("send_hanabi_settings_data", (roomCode, settingsData) => {
+        if (!rooms[roomCode] || !settingsData) { return; }
+        const gameMode = settingsData.gameMode;
+
+        if (gameMode) {
+            rooms[roomCode].gameData.gameModeSetting = gameMode; 
+            io.to(roomCode).emit('receive_settings_data', {gameMode: gameMode});
+        }
+    });
 }
 
 module.exports = {

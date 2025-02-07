@@ -1,13 +1,13 @@
 import { RiFlowerFill } from "react-icons/ri";
 import { Overlay } from "../Overlay"
-import { HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
+import { getHanabiColours, HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
 import { useState } from "react";
 import getSocket from "../../socket";
 import { HanabiHintVisibilityButton } from "./HanabiHintVisibilityButton";
 
 const socket = getSocket();
-const hanabiColours = Object.keys(hanabiSuitColours);
-export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, playersDataArray, cardWidth, isFullscreen}) => {
+
+export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, playersDataArray, cardWidth, gameMode, isFullscreen}) => {
     const playerData = playersDataArray.find((data) => data.nameData.userId === cluePlayer);
     const [chosenClue, setChosenClue] = useState(null);
     const [showTeammateHints, setShowTeammateHints] = useState(false);
@@ -15,6 +15,8 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
     if (!playerData) { return; }
     const userName = playerData.nameData.nickname;
     const cards = playerData.cards;
+
+    let hanabiColours = getHanabiColours(gameMode);
 
     return (
         <Overlay isOpen={true} fullScreen={isFullscreen} onClose={()=>{ setCluePlayer(null)}}>

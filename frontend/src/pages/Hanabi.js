@@ -30,8 +30,8 @@ import useFullscreen from "../hooks/useFullscreen";
 
 // TODO
 /*
+End game if no more points can be gotten
 Add lose life animation
-
 Add sound effects
 Add visibiltity button to clue page
 ADd restart button
@@ -45,8 +45,6 @@ Better swap card animation
 
 Write rules
 BUGS:
-Rejoining same lobby can cause multiple server calls
-Clue visibility hold work on mobile
 Correct sizing for mobile not fullscreen
 Bottom cards and history moves when history is filled
 History scroll bar position doesnt move to the bottom when a new action is made
@@ -75,6 +73,7 @@ export const Hanabi = ({roomCode}) => {
     const [turn, setTurn] = useState(0);
     const [endScore, setEndScore] = useState(null);
     const [finalPlayer, setFinalPlayer] = useState(null);
+    const [gameMode, setGameMode] = useState("standard");
 
     const maxClueTokens = 8;
 
@@ -159,6 +158,10 @@ export const Hanabi = ({roomCode}) => {
             setFinalPlayer(finalPlayer);
         });
 
+        socket.on('receive_game_mode', (gameMode) => {
+            setGameMode(gameMode);
+        });
+
         socket.on('receive_clue', (sender, receiver, chosenClue) => { // Sender is the senders nickname while receiver is the receivers userId
             setCurrentClue({sender, receiver, chosenClue})
         })
@@ -191,6 +194,7 @@ export const Hanabi = ({roomCode}) => {
             socket.off('receive_own_cards');
             socket.off('room_error');
             socket.off('receive_players_data');
+            socket.off('receive_game_mode');
             socket.off('receive_token_count');
             socket.off('receive_discard_pile');
             socket.off('receive_play_pile');
@@ -335,6 +339,7 @@ export const Hanabi = ({roomCode}) => {
                                             setCluePlayer={setCluePlayer} 
                                             playersDataArray={playersDataArray} 
                                             cardWidth={clueCardWidth}
+                                            gameMode={gameMode}
                                             isFullscreen={isFullscreen}
                         />
                     }
@@ -395,7 +400,7 @@ export const Hanabi = ({roomCode}) => {
                             <HanabiPlayer playerData={playersDataArray[adjustedIndex(1)]} />
                         }
 
-                        <HanabiPlayPile playPile={playPile} turnPlayer={turnPlayer} cardWidth={playCardWidth}/>
+                        <HanabiPlayPile playPile={playPile} turnPlayer={turnPlayer} cardWidth={playCardWidth} gameMode={gameMode}/>
 
                         { playerCount >= 4 &&
                             <HanabiPlayer playerData={playersDataArray[adjustedIndex(playerCount - 1)]} />

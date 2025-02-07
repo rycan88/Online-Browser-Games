@@ -118,7 +118,9 @@ io.on("connection", (socket) => {
         if (gameName === "rock_paper_scissors_melee") {
             rooms[roomCode].gameData = {maxPoints: 5, roundDuration: 1000, withGun: true};   
         } else if (gameName === "telepath") {
-            rooms[roomCode].gameData = {timeLimit: "unlimited"}
+            rooms[roomCode].gameData = {timeLimit: "unlimited"};
+        } else if (gameName === "hana") {
+            rooms[roomCode].gameData = {gameModeSetting: "standard"};
         }
 
         socket.emit('room_created', gameName, roomCode);

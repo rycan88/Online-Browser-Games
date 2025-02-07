@@ -6,7 +6,7 @@ import getSocket from "../../socket"
 
 const socket = getSocket();
 
-const borderColors = {"red": "border-red-500", "yellow": "border-yellow-500", "green": "border-green-500", "blue": "border-blue-500", "purple": "border-purple-500", "pink": "border-pink-500"}
+const borderColors = {"red": "border-red-500", "yellow": "border-yellow-500", "green": "border-green-500", "blue": "border-blue-500", "purple": "border-purple-500", "pink": "border-[#db27be]"}
 export const HanabiPlayPile = ({playPile, turnPlayer, cardWidth}) => {
     const id = "playPileArea";
     const { active, isOver, setNodeRef } = useDroppable({ id })

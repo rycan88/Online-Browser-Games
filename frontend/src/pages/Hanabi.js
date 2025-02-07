@@ -384,7 +384,7 @@ export const Hanabi = ({roomCode}) => {
                     <div className="topTaskBar">
                         <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>
-                            <HanabiSettings triggerRerender={triggerRerender}/>
+                            <HanabiSettings triggerRerender={triggerRerender} roomCode={roomCode}/>
                         </InfoButton>
                         <FullscreenButton shouldRotate={true}/>
                     </div>

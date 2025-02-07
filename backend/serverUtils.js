@@ -26,7 +26,8 @@ const leaveAllRooms = (io, rooms, deleteTimers, currentSocket) => {
     Object.keys(rooms).forEach((roomCode) => {
         const currentIndex = rooms[roomCode].players.findIndex(user => user.socketId === currentSocket.id);
         if (currentIndex === -1) { return; }
-        currentSocket.leave(roomCode);
+
+        //currentSocket.leave(roomCode);
 
         rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.socketId !== currentSocket.id);
         const otherAcc = rooms[roomCode].spectators.find(user => user.userId === currentSocket.id);

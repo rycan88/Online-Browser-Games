@@ -60,6 +60,14 @@
   }
 }
 
+.rainbowText {
+  background: linear-gradient(165deg, pink, red, red, orange, yellow, green, blue, indigo, violet, black);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Hanabi Scrollbar */
 .hanabi-scrollbar::-webkit-scrollbar {
   width: 8px;
 }

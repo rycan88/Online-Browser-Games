@@ -61,7 +61,16 @@
 }
 
 .rainbowText {
-  background: linear-gradient(165deg, pink, red, red, orange, yellow, green, blue, indigo, violet, black);
+  background: linear-gradient(170deg, 
+    #6e0f0f 0%, /* Red */
+    #6e0f0f 30%, /* Red */
+    #d97706 47.5%, /* Orange */
+    #c8ab04 55%, /* Yellow */
+    #138636 57.5%, /* Green */
+    #1d4ed8 65%, /* Blue */
+    #7c1bc7 72.5%, /* Purple */
+    #7c1bc7 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;

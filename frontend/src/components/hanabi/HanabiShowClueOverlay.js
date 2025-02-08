@@ -1,6 +1,6 @@
 import getSocket from "../../socket";
 import { Overlay } from "../Overlay";
-import { HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
+import { getVisibleCardData, HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
 
 const socket = getSocket();
 export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataArray, cardWidth, isFullscreen}) => {
@@ -29,11 +29,11 @@ export const HanabiShowClueOverlay = ({currentClue, setCurrentClue, playersDataA
                 <div className="flex gap-[20px] p-[10%]">
                     {
                         cards.map((card) => {
-                            const isChosen = chosenClue && ([card.number, card.suit].includes(chosenClue));
+                            const isChosen = chosenClue && ([card.number, card.suit].includes(chosenClue) || (isColorClue && card.suit === "rainbow"));
 
-                            const hasData = card.numberVisible || card.suitVisible;
-                            const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
-                            const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
+                            const cardData = getVisibleCardData(card);
+                            const number = cardData.number;
+                            const suit = cardData.suit;
                             return(
                                 <div className={`transition rounded-[4%] ${isChosen && "hanabiChosenLiftedCard"}`}>
                                     <HanabiCard number={!isReceiver ? card.number : number}

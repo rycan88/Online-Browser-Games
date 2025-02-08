@@ -76,6 +76,13 @@
   display: inline-block;
 }
 
+.rainbowBorder {
+  border-top: #eab308;
+  border-right: #4ade80;
+  border-bottom: #3b82f6;
+  border-left: #ef4444; 
+}
+
 /* Hanabi Scrollbar */
 .hanabi-scrollbar::-webkit-scrollbar {
   width: 8px;

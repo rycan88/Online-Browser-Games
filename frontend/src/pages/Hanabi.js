@@ -186,7 +186,6 @@ export const Hanabi = ({roomCode}) => {
             navigate(`/hana/lobby`, { state: {error: errorMessage}});
         });
 
-        console.log(roomCode)
         socket.emit('join_room', roomCode);
         socket.emit('get_all_hanabi_data', roomCode);
 

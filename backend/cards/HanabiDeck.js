@@ -7,6 +7,8 @@ class HanabiDeck extends Deck {
 
         if (gameMode === "extraSuit") {
             suits.push("pink");
+        } if (gameMode === "rainbowSuit") {
+            suits.push("rainbow");
         }
 
         let counter = 0;

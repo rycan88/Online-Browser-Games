@@ -1,5 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
-import { HanabiCard } from "./HanabiCard";
+import { getVisibleCardData, HanabiCard } from "./HanabiCard";
 import getSocket from "../../socket";
 import { FaFlagCheckered, FaHourglass } from "react-icons/fa6";
 import { HanabiContext } from "../../pages/Hanabi";
@@ -45,9 +45,10 @@ export const HanabiPlayer = ({playerData}) => {
                 <div className="flex items-center justify-center gap-[5%] w-full">
                     {
                         cards.map((card) => {
-                            const hasData = card.numberVisible || card.suitVisible;
-                            const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
-                            const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
+                            const cardData = getVisibleCardData(card);
+                            const number = cardData.number;
+                            const suit = cardData.suit;
+                            
                             return <HanabiCard number={showTeammateHints ? number : card.number} 
                                 suit={showTeammateHints ? suit : card.suit}
                                 width={nameCardWidth} 

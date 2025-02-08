@@ -30,7 +30,12 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
                             const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
 
                             return(
-                                <div className={`transition rounded-[4%] ${chosenClue && ([card.number, card.suit].includes(chosenClue)) && "hanabiChosenLiftedCard"}`}>
+                                <div className={`transition rounded-[4%] 
+                                                 ${chosenClue && ([card.number, card.suit].includes(chosenClue) || (hanabiColours.includes(chosenClue) && card.suit === "rainbow")) 
+                                                    && "hanabiChosenLiftedCard"
+                                                 }
+                                                `}
+                                >
                                     <HanabiCard number={showTeammateHints ? number : card.number}
                                                 suit={showTeammateHints ? suit : card.suit}
                                                 width={cardWidth} 
@@ -68,7 +73,7 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
                         <div className="flex gap-[20px] text-[4vh]">
                             {
                                 hanabiColours.map((color) => {
-                                    const isChoosable = cards.some((card) => card.suit === color);
+                                    const isChoosable = cards.some((card) => (card.suit === color || card.suit === "rainbow"));
                                     return (
                                         <button className={`hanabiClueButton ${chosenClue === color && "outline outline-[4px] outline-amber-500"}`}
                                                 style={{color: hanabiSuitColours[color], height: cardWidth * 6/15, width: cardWidth * 6/15}}

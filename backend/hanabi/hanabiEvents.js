@@ -171,12 +171,18 @@ const hanabiEvents = (io, socket, rooms) => {
         rooms[roomCode].gameData.turn += 1;
 
         const cluePlayerData = rooms[roomCode].playersData[cluePlayer];
-
+        const suits = Object.keys(rooms[roomCode].gameData.playPile)
         cluePlayerData.cards.forEach((card) => {
             if (card.number === chosenClue) {
                 card.numberVisible = true;
             } else if (card.suit === chosenClue) {
                 card.suitVisible = true;
+            } else if (card.suit === "rainbow" && suits.includes(chosenClue)) {
+                if (card.suitVisible && card.suitVisible !== chosenClue) {
+                    card.suitVisible = "rainbow";
+                } else {
+                    card.suitVisible = chosenClue;
+                }
             }
         });
 

@@ -1,5 +1,5 @@
 import { horizontalListSortingStrategy, SortableContext } from "@dnd-kit/sortable";
-import { HanabiCard } from "./HanabiCard"
+import { getVisibleCardData, HanabiCard } from "./HanabiCard"
 import { SortableItem } from "./SortableItem";
 import { useDroppable } from "@dnd-kit/core";
 import getSocket from "../../socket";
@@ -35,9 +35,9 @@ export const HanabiSelfCards = ({selfCardIds, myData, cardWidth, isMyTurn, isFin
                 >
                     {selfCardIds.map((id) => {
                         const card = cards.find((c) => `Card${c.id}` === id);
-                        const hasData = card.numberVisible || card.suitVisible;
-                        const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
-                        const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
+                        const cardData = getVisibleCardData(card);
+                        const number = cardData.number;
+                        const suit = cardData.suit;
                         
                         return (
                             <SortableItem key={id} id={id} type={"card"}>

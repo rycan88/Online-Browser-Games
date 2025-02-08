@@ -8,7 +8,7 @@ import { ChoiceDropdown } from "../ChoiceDropdown";
 const shouldSortDiscardCookieName = "shouldSortHanabiDiscardPile";
 
 // Game modes: standard, extraSuit
-const gameModeChoices = {"standard": "Standard", "extraSuit": "6th Pile"}
+const gameModeChoices = {"standard": "Standard", "extraSuit": "6th Pile", "rainbowSuit": "Rainbow Pile"}
 
 const socket = getSocket();
 export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {

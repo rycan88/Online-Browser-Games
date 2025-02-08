@@ -128,7 +128,10 @@ const setUpGameData = (io, rooms, roomCode) => {
             const playPile = {"red": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0}
             if (gameMode === "extraSuit") {
                 playPile["pink"] = 0;
-            }
+            } if (gameMode === "rainbowSuit") {
+                playPile["rainbow"] = 0;
+            } 
+            
             const startingTurn = Math.floor(Math.random() * playerDataArray.length);
             const history = [{"type": "start", "player": playerDataArray[startingTurn].nameData.userId}];
             

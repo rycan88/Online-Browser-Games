@@ -10,11 +10,19 @@ export const hanabiSuitColours = {"red": "#991b1b", "yellow": "#d97706", "green"
 export const hanabiColours = ["red", "yellow", "green", "blue", "purple", "pink"];
 
 export const getHanabiColours = (gameMode="standard") => {
-    if (gameMode === "standard") {
-        return hanabiColours.filter(colour => colour !== "pink");
+    if (gameMode === "extraSuit") {
+        return hanabiColours
     }
 
-    return hanabiColours
+    return hanabiColours.filter(colour => colour !== "pink");
+}
+
+export const getVisibleCardData = (card) => {
+    const isRainbow = card.suit === "rainbow";
+    const hasData = card.numberVisible || card.suitVisible;
+    const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
+    const suit = !hasData ? "" : (card.suitVisible ? (isRainbow ? card.suitVisible : card.suit) : "unknown");
+    return {number: number, suit: suit};
 }
 
 export const HanabiCard = ({number, suit, width = 200, withBorder=true}) => {

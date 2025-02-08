@@ -449,7 +449,7 @@ export const Hanabi = ({roomCode}) => {
                                 {
                                 (activeType === "card" && activeCard) ?
                                     <HanabiCard number={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.numberVisible ? activeCard.number : "unknown")} 
-                                            suit={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.suitVisible ? activeCard.suit : "unknown")}
+                                            suit={!(activeCard.numberVisible || activeCard.suitVisible) ? "" : (activeCard.suitVisible ? (activeCard.suit === "rainbow" ? activeCard.suitVisible : activeCard.suit) : "unknown")}
                                             width={selfCardWidth}
                                     />
                                 : activeType === "token" ?

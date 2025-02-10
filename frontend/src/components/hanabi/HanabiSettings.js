@@ -7,14 +7,13 @@ import { ChoiceDropdown } from "../ChoiceDropdown";
 
 const shouldSortDiscardCookieName = "shouldSortHanabiDiscardPile";
 
-// Game modes: standard, extraSuit
-const gameModeChoices = {"standard": "Standard", "extraSuit": "6th Pile", "rainbowSuit": "Rainbow Pile"}
+const gameModeChoices = {"standard": "Standard", "extraSuit": "6th Pile", "rainbowSuit": "Rainbow Pile", "uniqueRainbowSuit": "Rainbow Unique"}
 
 const socket = getSocket();
 export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
     const [shouldSort, setShouldSort] = useState(false); 
     const [isSaved, setIsSaved] = useState(false);
-    const [gameMode, setGameMode] = useState("standard");
+    const [gameMode, setGameMode] = useState("");
 
     const handleSave = () => {
         Cookies.set(shouldSortDiscardCookieName, shouldSort.toString(), { expires: 365});
@@ -65,7 +64,7 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
                     <ToggleSwitch isOn={shouldSort} onAction={() => {setShouldSort(true)}} offAction={() => {setShouldSort(false)}} bgColour="bg-blue-600"/>
                 </div>
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
-                    <div>Time Mode</div>
+                    <div>Game Mode</div>
                     <ChoiceDropdown selectedChoice={gameMode} setSelectedChoice={setGameMode} choices={gameModeChoices}/>
                 </div>
             </div>

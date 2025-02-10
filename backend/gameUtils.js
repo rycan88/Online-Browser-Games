@@ -128,7 +128,7 @@ const setUpGameData = (io, rooms, roomCode) => {
             const playPile = {"red": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0}
             if (gameMode === "extraSuit") {
                 playPile["pink"] = 0;
-            } if (gameMode === "rainbowSuit") {
+            } if (["rainbowSuit", "uniqueRainbowSuit"].includes(gameMode)) {
                 playPile["rainbow"] = 0;
             } 
             

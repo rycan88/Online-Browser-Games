@@ -33,7 +33,6 @@ import useFullscreen from "../hooks/useFullscreen";
 End game if no more points can be gotten
 Add lose life animation
 Add sound effects
-Add visibiltity button to clue page
 ADd restart button
 
 Pop up for if trying to discard and there are 8 tokens

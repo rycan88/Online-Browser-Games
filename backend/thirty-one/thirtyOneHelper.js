@@ -69,6 +69,7 @@ const calculateScores = (playersData, currentPlayers) => {
         players.push(playerData);
     }
 
+    // Sorts alive players to know the strike cutoff
     players.sort((a, b) => {
         if (a.score === b.score) {
             return a.lives - b.lives;
@@ -79,8 +80,8 @@ const calculateScores = (playersData, currentPlayers) => {
 
     const knockOutScore = players[Math.floor(playerCount / 2) - 1].score;
 
-    players.map((player, index) => {
-        player.ranking = playerCount - index;
+    // Deducts lives
+    players.map((player) => {
         if (player.score <= knockOutScore) {
             if (player.didKnock) {
                 player.lives -= 2;
@@ -90,6 +91,19 @@ const calculateScores = (playersData, currentPlayers) => {
 
             player.gotStrike = true;
         }
+    })
+
+    // Re-sort with updated lives
+    players.sort((a, b) => {
+        if (a.score === b.score) {
+            return a.lives - b.lives;
+        }
+        return a.score - b.score;
+    });
+
+    // Update player ranking
+    players.map((player, index) => {
+        player.ranking = playerCount - index;
     })
 }
 

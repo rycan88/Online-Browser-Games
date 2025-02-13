@@ -214,6 +214,17 @@ const hanabiEvents = (io, socket, rooms) => {
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
     })
 
+    socket.on("hanabi_reject_surrender_vote", (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+
+        const playersData = rooms[roomCode].playersData;
+        Object.values(playersData).forEach((playerData) => { // Reset isReady to false
+            playerData.isReady = false;
+        })
+
+        io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
+    })
+
     socket.on("get_hanabi_settings_data", (roomCode) => {
         if (!rooms[roomCode]) { return; }
         const gameMode = rooms[roomCode].gameData.gameModeSetting;

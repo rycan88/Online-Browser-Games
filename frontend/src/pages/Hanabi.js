@@ -29,6 +29,8 @@ import { FullscreenButton } from "../components/FullscreenButton";
 import useFullscreen from "../hooks/useFullscreen";
 import { NotLandscapeWarningPage } from "../components/NotLandscapeWarningPage";
 import { useOrientation } from "../hooks/useOrientation";
+import { HanabiNewGameButton } from "../components/hanabi/HanabiNewGameButton";
+import { HanabiSurrenderDisplay } from "../components/hanabi/HanabiSurrenderDisplay";
 
 // TODO
 /*
@@ -217,8 +219,6 @@ export const Hanabi = ({roomCode}) => {
 
     const sensors = useSensors(
         useSensor(PointerSensor),
-        //useSensor(MouseSensor),
-        //useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -367,25 +367,27 @@ export const Hanabi = ({roomCode}) => {
                     <div className="absolute flex flex-col gap-[2%] left-[3%] h-[20%] w-[min(120px,6vw)]">
                         <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                             <div className="flex w-[40%] justify-center items-center text-[3.5vh]"><FaHeart className="text-red-500"/></div>
-                            <div>{lives}</div>
+                            <div className={lives <= 1 && "text-red-600"}>{lives}</div>
                         </div>
 
                         <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                             <div className="flex w-[40%] justify-center items-center"><CardBacking width={tokenSize * 0.8}/></div>
-                            <div>{cardsRemaining}</div>
+                            <div className={cardsRemaining <= 3 && "text-red-600"}>{cardsRemaining}</div>
                         </div>
+                        { 0 < cardsRemaining && cardsRemaining <= 3 &&
+                            <div className="absolute w-full text-left -bottom-[5vh] text-[1.5vh] ">Only {cardsRemaining} card{cardsRemaining !== 1 && "s"} remaining!</div>
+                        }
                     </div>
-                    { !gameInProgress &&
-                        <button className={"gradientButton absolute text-white w-[20vh] h-[8vh] text-[2vh] rounded-lg shadow-xl"}
-                                style={{top: "10vh", right: (playerCount === 2 || playerCount === 4) && "10vw"}} 
-                                onClick={() => {
-                                    socket.emit("hanabi_new_game_ready", roomCode);
-                                }}
-                                disabled={playersData[socket.userId].isReady}
-                        >
-                            {(playersData[socket.userId].isReady) ? "Waiting for others..." : "New Game"}
-                        </button>
-                    }
+                    <div className={"absolute flex items-center justify-center w-[30vh] h-[12vh]"}
+                         style={{top: "8vh", right: (playerCount === 2 || playerCount === 4) && "5vw"}} 
+                    >
+                        { !gameInProgress ?
+                            <HanabiNewGameButton roomCode={roomCode} playersData={playersData}/>
+                        :
+                            <HanabiSurrenderDisplay roomCode={roomCode} playersDataArray={playersDataArray} selfIndex={selfIndex}/>
+                        }
+                    </div>
+
                     <div className="topTaskBar">
                         <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>

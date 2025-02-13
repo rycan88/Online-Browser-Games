@@ -7,7 +7,12 @@ const gameEndedAction = (io, rooms, roomCode) => {
     const action = {type: "end", points: totalPoints};
     rooms[roomCode].gameData.history.push(action);
 
+    Object.values(rooms[roomCode].playersData).forEach((playerData) => { // Reset isReady to false
+        playerData.isReady = false;
+    })
+
     rooms[roomCode].gameData.gameInProgress = false;
+    io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
     io.to(roomCode).emit("game_has_ended", totalPoints);
 }
 

@@ -4,7 +4,7 @@
 
 @layer base {
   .entirePage {
-    @apply absolute flex flex-col h-[calc(100vh-60px)] w-full bg-cover scrollbar-hide;
+    @apply absolute flex flex-col h-[100vh] md:h-[calc(100vh-60px)] w-full bg-cover scrollbar-hide;
   }
 
   .gradientButton {

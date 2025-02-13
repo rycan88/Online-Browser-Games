@@ -22,6 +22,8 @@ import { ThirtyOneKnockOverlay } from "../components/thirty-one/ThirtyOneKnockOv
 import { StandardCard } from "../components/card/StandardCard";
 import useFullscreen from "../hooks/useFullscreen";
 import { FullscreenButton } from "../components/FullscreenButton";
+import { useOrientation } from "../hooks/useOrientation";
+import { NotLandscapeWarningPage } from "../components/NotLandscapeWarningPage";
 
 // TODO
 // Allow users to drag cards
@@ -62,16 +64,7 @@ export const ThirtyOne = ({roomCode}) => {
     const isMyTurn = playerTurn === selfIndex;
     const hasPicked = turn % 1 !== 0;
     
-    const [landscapeMode, setLandscapeMode] = useState(false);
-
-    function checkOrientation() {
-        if (window.innerHeight > window.innerWidth) {
-          // Device is in portrait mode
-          setLandscapeMode(false);
-        } else {
-            setLandscapeMode(true);
-        }
-    }
+    const orientation = useOrientation();
 
     const removeMovingElement = (cardId) => { // cardId is the timestamp of when the movingCard was created
         if (!cardId) {return; }
@@ -116,7 +109,7 @@ export const ThirtyOne = ({roomCode}) => {
 
     useEffect(() => {
         window.scrollTo(0, NAVBAR_HEIGHT);
-    }, [landscapeMode]);
+    }, [orientation]);
 
     useEffect(() => {
         socket.on('receive_own_cards', (cardArray, cardId) => {
@@ -176,9 +169,6 @@ export const ThirtyOne = ({roomCode}) => {
 
         socket.emit('join_room', roomCode);
         socket.emit('get_all_thirty_one_data', roomCode);
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('load', checkOrientation);
-        checkOrientation();
 
         return () => {
             socket.off('receive_own_cards');
@@ -308,15 +298,8 @@ export const ThirtyOne = ({roomCode}) => {
 
 
 
-    if (!landscapeMode) {
-        return (
-            <div className="entirePage rotate-notice">
-                <div className="topTaskBar">
-                    <FullscreenButton shouldRotate={true}/>
-                </div>
-                <div>Please rotate your device to landscape mode.</div>
-            </div>
-        );
+    if (orientation !== "landscape") {
+        return <NotLandscapeWarningPage />
     }
 
     return (

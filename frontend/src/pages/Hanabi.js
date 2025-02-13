@@ -27,6 +27,8 @@ import { HanabiHintVisibilityButton } from "../components/hanabi/HanabiHintVisib
 import { HanabiEndOverlay } from "../components/hanabi/HanabiEndOverlay";
 import { FullscreenButton } from "../components/FullscreenButton";
 import useFullscreen from "../hooks/useFullscreen";
+import { NotLandscapeWarningPage } from "../components/NotLandscapeWarningPage";
+import { useOrientation } from "../hooks/useOrientation";
 
 // TODO
 /*
@@ -54,6 +56,7 @@ export const HanabiContext = createContext();
 
 export const Hanabi = ({roomCode}) => {
     const [rerender, setRerender] = useState(false);
+    const orientation = useOrientation();
 
     const triggerRerender = () => {
         setRerender(!rerender);
@@ -314,6 +317,10 @@ export const Hanabi = ({roomCode}) => {
 
     if (!dataInitialized) {
         return <LoadingScreen />;
+    }
+
+    if (orientation !== "landscape") {
+        return <NotLandscapeWarningPage />
     }
 
     const turnPlayer = playersDataArray[turn].nameData.userId;

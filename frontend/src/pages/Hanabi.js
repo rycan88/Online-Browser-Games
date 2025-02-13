@@ -216,6 +216,12 @@ export const Hanabi = ({roomCode}) => {
     const [activeType, setActiveType] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
     const [draggingStyle, setDraggingStyle] = useState({});
+    const [storedDiscardCard, setStoredDiscardCard] = useState(null);
+
+    const discardStoredCard = () => {
+        setSelfCardIds(selfCardIds.filter((id) => id !== storedDiscardCard));
+        socket.emit("hanabi_discard_card", roomCode, storedDiscardCard);
+    }
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -294,8 +300,12 @@ export const Hanabi = ({roomCode}) => {
         }
 
         if (activeType === "card" && over.id === "discardPileArea" && isMyTurn) { // Discard card
-            setSelfCardIds(selfCardIds.filter((id) => id !== activeId));
-            socket.emit("hanabi_discard_card", roomCode, activeId);
+            if (tokenCount < maxClueTokens) {
+                setSelfCardIds(selfCardIds.filter((id) => id !== activeId));
+                socket.emit("hanabi_discard_card", roomCode, activeId);
+            } else {
+                setStoredDiscardCard(activeId);
+            }
         }
 
         if (activeType === "card" && over.id === "playPileArea" && isMyTurn) { // PLay card
@@ -325,6 +335,10 @@ export const Hanabi = ({roomCode}) => {
 
     const turnPlayer = playersDataArray[turn].nameData.userId;
     const isMyTurn = turn === selfIndex;
+
+    if (!isMyTurn && storedDiscardCard) {
+        setStoredDiscardCard(null);
+    }
 
     return (
         <HanabiContext.Provider value={{ turnPlayer, showTeammateHints, finalPlayer, gameInProgress }}>
@@ -425,6 +439,9 @@ export const Hanabi = ({roomCode}) => {
                             <HanabiDiscardPile cards={discardPileCards} 
                                                 cardWidth={discardCardWidth}
                                                 turnPlayer={turnPlayer} 
+                                                storedDiscardCard={storedDiscardCard}
+                                                setStoredDiscardCard={setStoredDiscardCard}
+                                                discardStoredCard={discardStoredCard}
                             />
                         </div>
 

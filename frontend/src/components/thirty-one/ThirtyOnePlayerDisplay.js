@@ -1,13 +1,28 @@
+import { useEffect, useState } from "react";
 import { getPlayerCoords } from "../../utils";
 import { ThirtyOnePlayer } from "./ThirtyOnePlayer";
 
 export const ThirtyOnePlayerDisplay = ({selfIndex, currentPlayers, playerTurn, knockPlayer, hasPicked}) => {
-    if (!currentPlayers) { return <></> }
     const wholePage = document.querySelector(".thirtyOnePage");
+    const [viewportWidth, setViewportWidth] = useState(wholePage ? wholePage.clientWidth : window.innerWidth);
+    const [viewportHeight, setViewportHeight] = useState(wholePage ? wholePage.clientHeight : window.innerHeight);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setViewportWidth(wholePage ? wholePage.clientWidth : window.innerWidth);
+            setViewportHeight(wholePage ? wholePage.clientHeight : window.innerHeight);
+        }
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [])
+
+
+    if (!currentPlayers) { return <></> }
+
 
     const playerCount = currentPlayers.length;
-    const viewportWidth = wholePage ? wholePage.clientWidth : window.innerWidth;
-    const viewportHeight = wholePage ? wholePage.clientHeight : window.innerHeight;
+
     const centerX = viewportWidth / 2;
     const centerY = viewportHeight / 2;
     const width = viewportWidth * 0.85;

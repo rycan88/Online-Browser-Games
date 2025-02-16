@@ -16,6 +16,30 @@ const gameEndedAction = (io, rooms, roomCode) => {
     io.to(roomCode).emit("game_has_ended", totalPoints);
 }
 
+const isMaxPointsReached = (rooms, roomCode) => {
+    if (!rooms[roomCode]) { return false; }
+
+    const playPile = rooms[roomCode].gameData.playPile;
+    const playersData = rooms[roomCode].playersData;
+    const deck = rooms[roomCode].gameData.deck;
+
+    for (const colour of Object.keys(playPile)) {
+        const nextNum = playPile[colour] + 1;
+
+        if (deck.cards.some((card) => card.suit === colour && card.number === nextNum)) {
+            return false;
+        }
+        for (playerData of Object.values(playersData)) {
+            if (playerData.cards.some((card) => card.suit === colour && card.number === nextNum)) {
+                return false;
+            }    
+        }
+    };
+
+    return true;
+}
+
 module.exports = {
     gameEndedAction,
+    isMaxPointsReached,
 };

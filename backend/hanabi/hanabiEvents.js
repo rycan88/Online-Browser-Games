@@ -1,5 +1,5 @@
 const { setUpPlayerData, setUpGameData } = require("../gameUtils");
-const { gameEndedAction } = require("./hanabiHelper");
+const { gameEndedAction, isMaxPointsReached } = require("./hanabiHelper");
 
 const hanabiEvents = (io, socket, rooms) => {    
     socket.on("get_all_hanabi_data", (roomCode) => {
@@ -80,6 +80,8 @@ const hanabiEvents = (io, socket, rooms) => {
 
         if (rooms[roomCode].gameData.gameInProgress && rooms[roomCode].gameData.finalTurn && rooms[roomCode].gameData.turn > rooms[roomCode].gameData.finalTurn) { // last turn happened
             gameEndedAction(io, rooms, roomCode);
+        } else if (isMaxPointsReached(rooms, roomCode)) {
+            gameEndedAction(io, rooms, roomCode);            
         }
 
         io.to(roomCode).emit("receive_deck_count", deck.getCount());  
@@ -146,7 +148,7 @@ const hanabiEvents = (io, socket, rooms) => {
                 gameEndedAction(io, rooms, roomCode);
             } else if (rooms[roomCode].gameData.finalTurn && rooms[roomCode].gameData.turn > rooms[roomCode].gameData.finalTurn) { // Last turn happened
                 gameEndedAction(io, rooms, roomCode);
-            } else if (Object.values(playPile).every(num => num === 5)) {
+            } else if (isMaxPointsReached(rooms, roomCode)) {
                 gameEndedAction(io, rooms, roomCode);
             }
         }

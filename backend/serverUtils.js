@@ -69,15 +69,15 @@ const addToTeamList = (rooms, roomCode, currentUser) => {
     }
 }
 
-const removeFromTeamList = (io, rooms, roomCode, currentSocket, excludedIndex) => {
-    if (!currentSocket) { return; }
+const removeFromTeamList = (io, rooms, roomCode, currentUser, excludedIndex) => {
+    if (!currentUser) { return; }
     const teamData = rooms[roomCode].teamData;
     for (const [index, team] of teamData.entries()) {
         if (index === excludedIndex) { continue; }
-        if (containsUserId(team, currentSocket.id)) {
+        if (containsUserId(team, currentUser.userId)) {
             team.length === 1 
                 ? teamData.splice(index, 1)
-                : teamData[index] = teamData[index].filter(user => user.userId !== currentSocket.id);
+                : teamData[index] = teamData[index].filter(user => user.userId !== currentUser.userId);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
             return team.length === 1;
         }

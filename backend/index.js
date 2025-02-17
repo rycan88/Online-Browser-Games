@@ -166,7 +166,7 @@ io.on("connection", (socket) => {
                 }
             } else {
                 if (teamGames.includes(rooms[roomCode].gameName)) {
-                    removeFromTeamList(io, rooms, roomCode, socket, -1);
+                    removeFromTeamList(io, rooms, roomCode, currentUser, -1);
                 }    
                 io.to(roomCode).emit('update_players', rooms[roomCode].players);
             }
@@ -225,7 +225,7 @@ io.on("connection", (socket) => {
             } else {
                 teamData[index - 1].push(currentUser);
             }
-            removeFromTeamList(io, rooms, roomCode, socket, index - 1);
+            removeFromTeamList(io, rooms, roomCode, currentUser, index - 1);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
         }
     });

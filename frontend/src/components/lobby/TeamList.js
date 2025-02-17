@@ -34,8 +34,9 @@ export const TeamList = (props) => {
                                 ? <h2 className={`playerLabel ${socket.userId === team[1].userId && "text-sky-700"}`}>{team[1].nickname}</h2>
                                 : <button className="joinButton gradientButton" 
                                             id={index + 1} 
+                                            style={{fontSize: "0.8em"}}
                                             disabled={socket.userId === team[0].userId}
-                                            onClick={joinAction}>Join</button>
+                                            onClick={joinAction}>Switch Teams</button>
                             }
                         </div>
                     </div>
@@ -44,7 +45,11 @@ export const TeamList = (props) => {
             { canStart &&
                 <div className="teamContainer">
                     <div className="teamInfoContainer justify-center">
-                        <button className="joinButton gradientButton" id={teamData.length + 1} onClick={joinAction}>Join</button>
+                        <button className="joinButton gradientButton text-[0.5em]" 
+                                id={teamData.length + 1} 
+                                style={{fontSize: "0.8em"}}
+                                onClick={joinAction}>Switch Teams
+                        </button>
                     </div>
                 </div>
             }

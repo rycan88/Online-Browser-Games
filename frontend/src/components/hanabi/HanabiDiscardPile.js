@@ -3,9 +3,8 @@ import { HanabiCard } from "./HanabiCard"
 import getSocket from "../../socket";
 import { getSortHanabiDiscardPileMode, setSortHanabiDiscardPileMode } from "./HanabiSettings";
 import { UnsortedIcon } from "../UnsortedIcon";
-import { HiSortAscending } from "react-icons/hi";
 import { useState } from "react";
-import { TbSortAscendingNumbers, TbSortAscendingShapes, TbSortAZ, TbSortDescendingShapes } from "react-icons/tb";
+import { TbSortAscendingNumbers, TbSortAscendingShapes} from "react-icons/tb";
 
 const socket = getSocket();
 export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCard, setStoredDiscardCard, discardStoredCard}) => { 

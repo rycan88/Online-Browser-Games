@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { ToggleSwitch } from "../ToggleSwitch";
 import { SettingsSaveButton } from "../SettingsSaveButton";
 import getSocket from "../../socket";
 import { ChoiceDropdown } from "../ChoiceDropdown";

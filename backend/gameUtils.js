@@ -100,7 +100,7 @@ const setUpGameData = (io, rooms, roomCode) => {
 
             const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
             const startingTurn = Math.floor(Math.random() * playerDataArray.length);
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: startingTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: startingTurn, turn: startingTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
         } else if (gameName === "rock_paper_scissors_melee") {
             const maxPoints = rooms[roomCode].gameData.maxPoints;
             const roundDuration = rooms[roomCode].gameData.roundDuration;

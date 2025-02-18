@@ -136,6 +136,7 @@ const setUpNewRound = (rooms, roomCode) => {
 
     const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData);
     const newTurn = getNextPlayerIndex(oldPlayers, currentPlayers, rooms[roomCode].gameData.startTurn);
+    console.log(rooms[roomCode].gameData.turn, newTurn, rooms[roomCode].gameData.startTurn)
 
     rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: newTurn, turn: newTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false}
 }
@@ -146,15 +147,19 @@ const getCurrentPlayers = (playersData) => {
     });
 }
 
+// Get the index of the player after the current one
 const getNextPlayerIndex = (oldPlayers, currentPlayers, index) => {
-    const newIndex = (index + 1) % oldPlayers.length;
+    let newIndex = (index + 1) % oldPlayers.length;
     while (newIndex !== index) {
-        if (oldPlayers[newIndex].lives > 0) {
-            return currentPlayers.findIndex(user => user.nameData.userId === oldPlayers[newIndex].nameData.userId);
+        const nextPlayerIndex = currentPlayers.findIndex(user => user.nameData.userId === oldPlayers[newIndex].nameData.userId);
+        if (nextPlayerIndex !== -1) {
+            return nextPlayerIndex;
         }
 
         newIndex = (newIndex + 1) % oldPlayers.length;
     }
+    // Error
+    console.log("ERROR: 31 NEXT PLAYER NOT FOUND");
     return -1;
 }
 

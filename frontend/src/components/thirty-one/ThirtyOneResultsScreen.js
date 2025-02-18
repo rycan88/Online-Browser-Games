@@ -178,9 +178,9 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         onClick={() => {
                             socket.emit("thirty_one_ready", roomCode);
                         }}
-                        disabled={playersData[socket.userId].isReady || (playersData[socket.userId].lives === 0 && playersAlive.length > 1)}
+                        disabled={playersData[socket.userId].isReady || (playersData[socket.userId].lives <= 0 && playersAlive.length > 1)}
                 >
-                    {(playersData[socket.userId].isReady || (playersData[socket.userId].lives === 0 && playersAlive.length > 1)) 
+                    {(playersData[socket.userId].isReady || (playersData[socket.userId].lives <= 0 && playersAlive.length > 1)) 
                         ? "Waiting for others" 
                         : (playersAlive.length > 1) ? "Next Round" : "New Game"
                     }

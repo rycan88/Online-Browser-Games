@@ -1,25 +1,12 @@
-
-import { HiSortAscending } from 'react-icons/hi';
-import { GiCancel } from 'react-icons/gi';  // Or any other icon for the slash
+import { TbSlash, TbSortAscending} from 'react-icons/tb';
 
 export const UnsortedIcon = ({size=30}) => (
-  <div style={{ position: 'relative', display: 'inline-block' }}>
-    <HiSortAscending size={size} />
-    <div style={{
-      position: 'absolute', 
-      top: -10, 
-      left: -10, 
-      right: 0, 
-      bottom: 0, 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      transform: 'rotate(-60deg)', 
-      fontSize: size, 
-      color: 'red',
-      opacity: "80%",
-    }}>
-      /
+  <div className='relative flex'>
+    <div className="rotate-180">
+      <TbSortAscending size={size} />
     </div>
+    <div className="absolute inset-0 flex items-center justify-center rotate-[100deg] text-red-500">
+        <TbSlash size={size * 1.1} />
+      </div>
   </div>
 );

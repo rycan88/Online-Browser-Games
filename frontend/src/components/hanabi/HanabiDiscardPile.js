@@ -1,16 +1,29 @@
 import { useDroppable } from "@dnd-kit/core";
 import { HanabiCard } from "./HanabiCard"
 import getSocket from "../../socket";
-import { getShouldSortHanabiDiscardPile, setShouldSortHanabiDiscardPile } from "./HanabiSettings";
+import { getSortHanabiDiscardPileMode, setSortHanabiDiscardPileMode } from "./HanabiSettings";
 import { UnsortedIcon } from "../UnsortedIcon";
 import { HiSortAscending } from "react-icons/hi";
 import { useState } from "react";
+import { TbSortAscendingNumbers, TbSortAscendingShapes, TbSortAZ, TbSortDescendingShapes } from "react-icons/tb";
 
 const socket = getSocket();
 export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCard, setStoredDiscardCard, discardStoredCard}) => { 
     const [rerender, setRerender] = useState(false);
-    const shouldSort = getShouldSortHanabiDiscardPile();
-    const discardPile = shouldSort ? [...cards].sort((a, b) => a.id - b.id) : cards
+    const sortMode = getSortHanabiDiscardPileMode();
+
+    const colourSort = (a, b) => {
+        return a.id - b.id;
+    }
+
+    const numberSort = (a, b) => {
+        if (a.number === b.number) {
+            return a.id - b.id;
+        }
+        return a.number - b.number;
+    }
+
+    const discardPile = sortMode === 1 ? [...cards].sort(colourSort) : (sortMode === 2 ? [...cards].sort(numberSort) : cards); 
 
     const id = "discardPileArea";
     const { active, isOver, setNodeRef } = useDroppable({ id })
@@ -23,12 +36,15 @@ export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCa
             {
                 <button className="absolute top-[0] right-[0]"
                         onClick={() => {
-                            setShouldSortHanabiDiscardPile(!shouldSort);
+                            setSortHanabiDiscardPileMode(sortMode + 1);
                             setRerender(!rerender);
                         }}
                 >
-                    { shouldSort ?
-                        <HiSortAscending size={cardWidth * 0.35} />
+                    { sortMode === 1 ?
+                        <TbSortAscendingShapes size={cardWidth * 0.35} />
+
+                    : sortMode === 2 ?
+                        <TbSortAscendingNumbers size={cardWidth * 0.35} />
                     :
                         <UnsortedIcon size={cardWidth * 0.35}/>
                     } 

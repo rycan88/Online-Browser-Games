@@ -5,7 +5,7 @@ import { SettingsSaveButton } from "../SettingsSaveButton";
 import getSocket from "../../socket";
 import { ChoiceDropdown } from "../ChoiceDropdown";
 
-const shouldSortDiscardCookieName = "shouldSortHanabiDiscardPile";
+const sortDiscardModeCookieName = "sortHanabiDiscardPileMode";
 
 const gameModeChoices = {"standard": "Standard", "extraSuit": "6th Pile", "rainbowSuit": "Rainbow Pile", "uniqueRainbowSuit": "Rainbow Unique"}
 const gameModeDescription = {"standard": <div>Standard Rules.</div>, 
@@ -13,16 +13,18 @@ const gameModeDescription = {"standard": <div>Standard Rules.</div>,
                              "rainbowSuit": <div>A rainbow pile will be added as a 6th pile. You cannot clue the rainbow suit. Instead, these cards will count as every colour. So when clueing red, all red and rainbow cards will be clued.</div>,
                              "uniqueRainbowSuit": <div>This is the same as Rainbow Pile except that there will be only 1 copy of each rainbow card. So there is only 1 copy of the 1,2,3,4,5 of rainbow. <br/><br/> Rainbow Pile Description: A rainbow pile will be added as a 6th pile. You cannot clue the rainbow suit. Instead, these cards will count as every colour. So when clueing red, all red and rainbow cards will be clued.</div>
                             }
+const sortModeChoices = {0: "Discard Order", 1: "Suit", 2: "Number"}
+
 const socket = getSocket();
 export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
     const [dataInitialized, setDataInitialized] = useState(false);
 
-    const [shouldSort, setShouldSort] = useState(false); 
+    const [sortMode, setSortMode] = useState(0); 
     const [isSaved, setIsSaved] = useState(false);
     const [gameMode, setGameMode] = useState("");
 
     const handleSave = () => {
-        Cookies.set(shouldSortDiscardCookieName, shouldSort.toString(), { expires: 365});
+        Cookies.set(sortDiscardModeCookieName, sortMode.toString(), { expires: 365});
 
         if (triggerRerender) {
             triggerRerender();
@@ -41,9 +43,9 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
     };
 
     useEffect(() => {
-        const shouldSort = getShouldSortHanabiDiscardPile();
+        const sortMode = getSortHanabiDiscardPileMode();
 
-        setShouldSort(shouldSort);
+        setSortMode(sortMode);
 
         socket.on('receive_settings_data', (settingsData) => {
             if (!settingsData) { return; }
@@ -77,7 +79,7 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
             <div className="myContainerCardCenterScrollBox gap-[2vh] w-[90%] mt-[2vh]">
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
                     <div>Sort discard pile</div>
-                    <ToggleSwitch isOn={shouldSort} onAction={() => {setShouldSort(true)}} offAction={() => {setShouldSort(false)}} bgColour="bg-blue-600"/>
+                    <ChoiceDropdown selectedChoice={sortMode} setSelectedChoice={setSortMode} choices={sortModeChoices}/>
                 </div>
                 <div className="myContainerCardInnerBox flex flex-col">  
                     <div className="py-2 px-[5%] flex items-center justify-between">
@@ -105,11 +107,12 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
     )
 }
 
-export const getShouldSortHanabiDiscardPile = () => {
-    return Cookies.get(shouldSortDiscardCookieName) === "true";
+export const getSortHanabiDiscardPileMode = () => {
+    return Number(Cookies.get(sortDiscardModeCookieName)) || 0;
 }
 
-export const setShouldSortHanabiDiscardPile = (shouldSort) => {
-    Cookies.set(shouldSortDiscardCookieName, shouldSort.toString(), { expires: 365});
+export const setSortHanabiDiscardPileMode = (sortMode) => {
+    const mode = sortMode % Object.keys(sortModeChoices).length
+    Cookies.set(sortDiscardModeCookieName, mode.toString(), { expires: 365});
 }
 

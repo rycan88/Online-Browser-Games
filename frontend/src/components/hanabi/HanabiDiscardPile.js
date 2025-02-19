@@ -2,9 +2,9 @@ import { useDroppable } from "@dnd-kit/core";
 import { HanabiCard } from "./HanabiCard"
 import getSocket from "../../socket";
 import { getSortHanabiDiscardPileMode, setSortHanabiDiscardPileMode } from "./HanabiSettings";
-import { UnsortedIcon } from "../UnsortedIcon";
+
 import { useState } from "react";
-import { TbSortAscendingNumbers, TbSortAscendingShapes} from "react-icons/tb";
+
 
 const socket = getSocket();
 export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCard, setStoredDiscardCard, discardStoredCard}) => { 
@@ -39,14 +39,7 @@ export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCa
                             setRerender(!rerender);
                         }}
                 >
-                    { sortMode === 1 ?
-                        <TbSortAscendingShapes size={cardWidth * 0.35} />
 
-                    : sortMode === 2 ?
-                        <TbSortAscendingNumbers size={cardWidth * 0.35} />
-                    :
-                        <UnsortedIcon size={cardWidth * 0.35}/>
-                    } 
                 </button>
             }
             <div className="absolute inset-0 flex items-center justify-center left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[min(4vh,2.6vw)] opacity-40">

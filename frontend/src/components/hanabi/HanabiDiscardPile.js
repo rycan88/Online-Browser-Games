@@ -4,7 +4,7 @@ import getSocket from "../../socket";
 import { getSortHanabiDiscardPileMode, setSortHanabiDiscardPileMode } from "./HanabiSettings";
 import { UnsortedIcon } from "../UnsortedIcon";
 import { useState } from "react";
-import { TbSortAscendingNumbers, TbSortAscendingShapes} from "react-icons/tb";
+import { BsSortAlphaDown, BsSortNumericDown } from "react-icons/bs";
 
 const socket = getSocket();
 export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCard, setStoredDiscardCard, discardStoredCard}) => { 
@@ -13,8 +13,8 @@ export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCa
 
     const sortIcon = {
         0: <UnsortedIcon size={cardWidth * 0.35}/>,
-        1: <TbSortAscendingShapes size={cardWidth * 0.35} />,
-        2: <TbSortAscendingNumbers size={cardWidth * 0.35} />,
+        1: <BsSortAlphaDown size={cardWidth * 0.35} />,
+        2: <BsSortNumericDown size={cardWidth * 0.35} />,
     }[sortMode]
 
     const colourSort = (a, b) => {

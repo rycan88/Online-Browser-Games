@@ -1,4 +1,4 @@
-import { TbSlash, TbSortAscending} from 'react-icons/tb';
+import { TbSlash, TbSortAscending } from 'react-icons/tb';
 
 export const UnsortedIcon = ({size=30}) => (
   <div className='relative flex'>

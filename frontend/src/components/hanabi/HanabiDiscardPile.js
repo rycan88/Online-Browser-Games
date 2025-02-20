@@ -28,7 +28,11 @@ export const HanabiDiscardPile = ({cards, turnPlayer, cardWidth, storedDiscardCa
         return a.number - b.number;
     }
 
-    const discardPile = sortMode === 1 ? [...cards].sort(colourSort) : (sortMode === 2 ? [...cards].sort(numberSort) : cards); 
+    const discardPile = {
+        0: cards,
+        1: [...cards].sort(colourSort),
+        2: [...cards].sort(numberSort),
+    }[sortMode]
 
     const id = "discardPileArea";
     const { active, isOver, setNodeRef } = useDroppable({ id })

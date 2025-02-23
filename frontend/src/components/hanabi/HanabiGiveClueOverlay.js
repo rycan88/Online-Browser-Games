@@ -1,6 +1,6 @@
 import { RiFlowerFill } from "react-icons/ri";
 import { Overlay } from "../Overlay"
-import { getHanabiColours, HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
+import { getHanabiColours, getVisibleCardData, HanabiCard, hanabiSuitColours, hanabiSuitIcons } from "./HanabiCard";
 import { useState } from "react";
 import getSocket from "../../socket";
 import { HanabiHintVisibilityButton } from "./HanabiHintVisibilityButton";
@@ -25,9 +25,9 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
                 <div className="flex relative gap-[20px] p-[10%]">
                     {
                         cards.map((card) => {
-                            const hasData = card.numberVisible || card.suitVisible;
-                            const number = !hasData ? "" : (card.numberVisible ? card.number : "unknown");
-                            const suit = !hasData ? "" : (card.suitVisible ? card.suit : "unknown");
+                            const cardData = getVisibleCardData(card);
+                            const number = cardData.number;
+                            const suit = cardData.suit;
 
                             return(
                                 <div className={`transition rounded-[4%] 

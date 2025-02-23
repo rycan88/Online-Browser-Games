@@ -41,7 +41,6 @@ export const HanabiGiveClueOverlay = ({roomCode, cluePlayer, setCluePlayer, play
                                                 width={cardWidth} 
                                     />
                                 </div>
-
                             );
                         })
                     }

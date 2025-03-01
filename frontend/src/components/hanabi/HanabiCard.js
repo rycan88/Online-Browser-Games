@@ -6,12 +6,12 @@ import { IoMdFlower } from "react-icons/io";
 import { RainbowFlowers } from "./RainbowFlowers";
 
 export const hanabiSuitIcons = {"red": <RiFlowerFill />, "yellow": <GiFlowerEmblem />, "green": <GiLotusFlower />, "purple": <GiSpotedFlower />, "blue": <GiLotus />, "pink": <GiVanillaFlower />, "rainbow": <RainbowFlowers/>}
-export const hanabiSuitColours = {"red": "#991b1b", "yellow": "#d97706", "green": "#16a34a", "blue": "#1d4ed8", "purple": "#7e22ce", "pink": "#c425aa" } // red-800 "#FF69B4"
+export const hanabiSuitColours = {"red": "#991b1b", "yellow": "#d97706", "green": "#16a34a", "blue": "#1d4ed8", "purple": "#7e22ce", "pink": "#c425aa", "colourless": "black"} // red-800 "#FF69B4"
 export const hanabiColours = ["red", "yellow", "green", "blue", "purple", "pink"];
 
-export const getHanabiColours = (gameMode="standard") => {
-    if (gameMode === "extraSuit") {
-        return hanabiColours
+export const getHanabiColours = (gameMode={"extraSuitType": "none"}) => {
+    if (gameMode.extraSuitType === "pink") {
+        return hanabiColours;
     }
 
     return hanabiColours.filter(colour => colour !== "pink");

@@ -1,8 +1,13 @@
 const gameEndedAction = (io, rooms, roomCode) => {
     if (!rooms[roomCode]) { return; }
 
+    const gameMode = rooms[roomCode].gameData.gameMode;
     const playPile = rooms[roomCode].gameData.playPile;
-    const totalPoints = Object.values(playPile).reduce((acc, num) => acc + num, 0);
+    let totalPoints = Object.values(playPile).reduce((acc, num) => acc + num, 0);
+    if (gameMode.extraSuitReversed === true && playPile[gameMode.extraSuitType]) {
+        totalPoints -= playPile[gameMode.extraSuitType];
+        totalPoints += 6 - playPile[gameMode.extraSuitType];
+    }
 
     const action = {type: "end", points: totalPoints};
     rooms[roomCode].gameData.history.push(action);
@@ -19,12 +24,16 @@ const gameEndedAction = (io, rooms, roomCode) => {
 const isMaxPointsReached = (rooms, roomCode) => {
     if (!rooms[roomCode]) { return false; }
 
+    const gameMode = rooms[roomCode].gameData.gameMode;
     const playPile = rooms[roomCode].gameData.playPile;
     const playersData = rooms[roomCode].playersData;
     const deck = rooms[roomCode].gameData.deck;
 
     for (const colour of Object.keys(playPile)) {
-        const nextNum = playPile[colour] + 1;
+        let nextNum = playPile[colour] + 1;
+        if (gameMode.extraSuitReversed === true && colour === gameMode.extraSuitType) {
+            nextNum = playPile[colour] - 1;
+        }
 
         if (deck.cards.some((card) => card.suit === colour && card.number === nextNum)) {
             return false;

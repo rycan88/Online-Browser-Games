@@ -136,7 +136,6 @@ const setUpNewRound = (rooms, roomCode) => {
 
     const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData);
     const newTurn = getNextPlayerIndex(oldPlayers, currentPlayers, rooms[roomCode].gameData.startTurn);
-    console.log(rooms[roomCode].gameData.turn, newTurn, rooms[roomCode].gameData.startTurn)
 
     rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: newTurn, turn: newTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false}
 }

@@ -126,11 +126,14 @@ const setUpGameData = (io, rooms, roomCode) => {
                 }
             }
             const playPile = {"red": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0}
-            if (gameMode === "extraSuit") {
-                playPile["pink"] = 0;
-            } if (["rainbowSuit", "uniqueRainbowSuit"].includes(gameMode)) {
-                playPile["rainbow"] = 0;
-            } 
+            const extraPileStartValue = gameMode.extraSuitReversed ? 6 : 0; // When reversed we go down from 6
+            if (gameMode.extraSuitType === "pink") {
+                playPile["pink"] = extraPileStartValue;
+            } else if (gameMode.extraSuitType === "rainbow") {
+                playPile["rainbow"] = extraPileStartValue;
+            } else if (gameMode.extraSuitType === "colourless") {
+                playPile["colourless"] = extraPileStartValue;
+            }
             
             const startingTurn = Math.floor(Math.random() * playerDataArray.length);
             const history = [{"type": "start", "player": playerDataArray[startingTurn].nameData.userId}];

@@ -101,17 +101,32 @@ const hanabiEvents = (io, socket, rooms) => {
         const playerCount = rooms[roomCode].gameData.playerDataArray.length;
         if (!card || (rooms[roomCode].gameData.turn % playerCount) !== myData.index) { return; }
 
+        const gameMode = rooms[roomCode].gameData.gameMode;
         myData.cards = myData.cards.filter((card) => `Card${card.id}` !== cardId)
 
         const playPile = rooms[roomCode].gameData.playPile;
         
         let isSuccessful = playPile[card.suit] + 1 === card.number;
 
-        if (playPile[card.suit] + 1 === card.number) { // If can be played in the play pile
-            if (card.number === 5) {
-                rooms[roomCode].gameData.tokenCount = Math.min(rooms[roomCode].gameData.tokenCount + 1, 8);
+        const isReversed = gameMode.extraSuitReversed === true && card.suit === gameMode.extraSuitType;
+
+        if (isReversed) {
+            isSuccessful = playPile[card.suit] - 1 === card.number;
+        }
+
+        if (isSuccessful) { // If can be played in the play pile
+            if (isReversed) {
+                if (card.number === 1) {
+                    rooms[roomCode].gameData.tokenCount = Math.min(rooms[roomCode].gameData.tokenCount + 1, 8);
+                }
+                playPile[card.suit] -= 1;
+            } else {
+                if (card.number === 5) {
+                    rooms[roomCode].gameData.tokenCount = Math.min(rooms[roomCode].gameData.tokenCount + 1, 8);
+                }
+                playPile[card.suit] += 1;
             }
-            playPile[card.suit] += 1;
+
         } else {
             const discardPile = rooms[roomCode].gameData.discardPile;
             discardPile.push(card)
@@ -226,6 +241,9 @@ const hanabiEvents = (io, socket, rooms) => {
 
         io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
     })
+
+    // gameMode is the gameMode of the current game
+    // gameModeSettings is the gameMode displayed in the settings 
 
     socket.on("get_hanabi_settings_data", (roomCode) => {
         if (!rooms[roomCode]) { return; }

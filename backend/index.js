@@ -120,7 +120,7 @@ io.on("connection", (socket) => {
         } else if (gameName === "telepath") {
             rooms[roomCode].gameData = {timeLimit: "unlimited"};
         } else if (gameName === "hana") {
-            rooms[roomCode].gameData = {gameModeSetting: "standard"};
+            rooms[roomCode].gameData = {gameModeSetting: {"extraSuitType": "none"}};
         }
 
         socket.emit('room_created', gameName, roomCode);

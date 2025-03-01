@@ -3,16 +3,23 @@ import Cookies from "js-cookie";
 import { SettingsSaveButton } from "../SettingsSaveButton";
 import getSocket from "../../socket";
 import { ChoiceDropdown } from "../ChoiceDropdown";
+import { ToggleSwitch } from "../ToggleSwitch";
 
 const sortDiscardModeCookieName = "sortHanabiDiscardPileMode";
 
-const gameModeChoices = {"standard": "Standard", "extraSuit": "6th Pile", "rainbowSuit": "Rainbow Pile", "uniqueRainbowSuit": "Rainbow Unique"}
+const gameModeChoices = {"standard": "Standard", "extraSuit": "Pink Pile", "rainbowSuit": "Rainbow Pile", "uniqueRainbowSuit": "Rainbow Unique", "custom": "Custom (6th Pile)"}
+const gameModeData = {"standard": {"extraSuitType": "none"}, 
+                      "extraSuit": {"extraSuitType": "pink", "extraSuitUnique": false, "extraSuitReversed": false},
+                      "rainbowSuit": {"extraSuitType": "rainbow", "extraSuitUnique": false, "extraSuitReversed": false},
+                      "uniqueRainbowSuit": {"extraSuitType": "rainbow", "extraSuitUnique": true, "extraSuitReversed": false},
+                     }
 const gameModeDescription = {"standard": <div>Standard Rules.</div>, 
                              "extraSuit": <div>A pink pile will be added as a 6th pile. It follows the same rules as the other piles.</div>,
                              "rainbowSuit": <div>A rainbow pile will be added as a 6th pile. You cannot clue the rainbow suit. Instead, these cards will count as every colour. So when clueing red, all red and rainbow cards will be clued.</div>,
                              "uniqueRainbowSuit": <div>This is the same as Rainbow Pile except that there will be only 1 copy of each rainbow card. So there is only 1 copy of the 1,2,3,4,5 of rainbow. <br/><br/> Rainbow Pile Description: A rainbow pile will be added as a 6th pile. You cannot clue the rainbow suit. Instead, these cards will count as every colour. So when clueing red, all red and rainbow cards will be clued.</div>
                             }
 const sortModeChoices = {0: "Discard Order", 1: "Suit", 2: "Number"}
+const extraSuitChoices = {"pink": "Pink", "rainbow": "Rainbow", "colourless": "Colourless"}
 
 const socket = getSocket();
 export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
@@ -21,6 +28,9 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
     const [sortMode, setSortMode] = useState(0); 
     const [isSaved, setIsSaved] = useState(false);
     const [gameMode, setGameMode] = useState("");
+    const [extraSuitType, setExtraSuitType] = useState("pink");
+    const [extraSuitUnique, setExtraSuitUnique] = useState(false);
+    const [extraSuitReversed, setExtraSuitReversed] = useState(false);
 
     const handleSave = () => {
         Cookies.set(sortDiscardModeCookieName, sortMode.toString(), { expires: 365});
@@ -30,7 +40,7 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
         }
 
         const settings = {
-            gameMode: gameMode,
+            gameMode: gameModeData[gameMode] ?? {"extraSuitType": extraSuitType, "extraSuitUnique": extraSuitUnique, "extraSuitReversed": extraSuitReversed},
         };
 
         socket.emit('send_hanabi_settings_data', roomCode, settings);
@@ -51,7 +61,22 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
             const gameMode = settingsData.gameMode;
 
             if (gameMode) {
-                setGameMode(gameMode)
+                const key = Object.keys(gameModeData).find((key) => {
+                    return gameModeData[key].extraSuitType === gameMode.extraSuitType 
+                        && gameModeData[key].extraSuitUnique === gameMode.extraSuitUnique
+                        && gameModeData[key].extraSuitReversed === gameMode.extraSuitReversed
+                });
+
+                if (key) {
+                    setGameMode(key);
+                } else {
+                    setGameMode("custom");
+                    setExtraSuitType(gameMode.extraSuitType);
+                    setExtraSuitUnique(gameMode.extraSuitUnique);
+                    setExtraSuitReversed(gameMode.extraSuitReversed);
+                }
+
+
             }
             setDataInitialized(true);
         });
@@ -85,6 +110,23 @@ export const HanabiSettings = ({triggerRerender, roomCode, closeOverlay}) => {
                         <div>Game Mode</div>
                         <ChoiceDropdown selectedChoice={gameMode} setSelectedChoice={setGameMode} choices={gameModeChoices}/>
                     </div>      
+                    { gameMode === "custom" &&
+                        <div className="myContainerCardInnerBox flex flex-col items-stretch w-[90%] mx-auto my-[1vh]">
+                            <div className="py-2 px-[5%] flex items-center justify-between">
+                                <div>6th Pile Suit</div>
+                                <ChoiceDropdown selectedChoice={extraSuitType} setSelectedChoice={setExtraSuitType} choices={extraSuitChoices}/>
+                            </div>     
+                            <div className="py-2 px-[5%] flex items-center justify-between">
+                                <div>6th Pile Unique</div>
+                                <ToggleSwitch isOn={extraSuitUnique} onAction={() => {setExtraSuitUnique(true)}} offAction={() => {setExtraSuitUnique(false)}} bgColour="bg-sky-600"/>
+                            </div>   
+                            <div className="py-2 px-[5%] flex items-center justify-between">
+                                <div>6th Pile Reversed</div>
+                                <ToggleSwitch isOn={extraSuitReversed} onAction={() => {setExtraSuitReversed(true)}} offAction={() => {setExtraSuitReversed(false)}} bgColour="bg-sky-600"/>
+                            </div>   
+                        </div>
+
+                    }
                     <div className="py-2 px-[5%] text-left">
                         {gameModeDescription[gameMode]}
                     </div>          

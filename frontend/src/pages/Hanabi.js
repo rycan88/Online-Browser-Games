@@ -5,7 +5,7 @@ import { HanabiPlayer } from "../components/hanabi/HanabiPlayer";
 import { HanabiPlayPile } from "../components/hanabi/HanabiPlayPile";
 import CardBacking from "../components/card/CardBacking";
 import { HanabiClueToken } from "../components/hanabi/HanabiClueToken";
-import { GiNotebook } from "react-icons/gi";
+import { GoStarFill } from "react-icons/go";
 import { closestCenter, DndContext, DragOverlay, KeyboardSensor, MouseSensor, PointerSensor, pointerWithin, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
@@ -340,6 +340,12 @@ export const Hanabi = ({roomCode}) => {
         setStoredDiscardCard(null);
     }
 
+    let currentScore = Object.values(playPile).reduce((acc, num) => acc + num, 0);
+    if (gameMode.extraSuitReversed === true && playPile[gameMode.extraSuitType]) {
+        currentScore -= playPile[gameMode.extraSuitType];
+        currentScore += 6 - playPile[gameMode.extraSuitType];
+    }
+
     return (
         <HanabiContext.Provider value={{ turnPlayer, showTeammateHints, finalPlayer, gameInProgress }}>
             <DndContext
@@ -378,12 +384,15 @@ export const Hanabi = ({roomCode}) => {
                             />
                     }
                     
-                    <div className="absolute flex flex-col gap-[2%] left-[3%] h-[20%] w-[min(120px,6vw)]">
+                    <div className="absolute flex flex-col gap-[2%] left-[3%] h-[25%] w-[min(140px,9vw)]">
                         <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                             <div className="flex w-[40%] justify-center items-center text-[3.5vh]"><FaHeart className="text-red-500"/></div>
                             <div className={lives <= 1 && "text-red-600"}>{lives}</div>
                         </div>
-
+                        <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
+                            <div className="flex w-[40%] justify-center items-center text-[3.8vh]"><GoStarFill className="text-amber-500"/></div>
+                            <div className={cardsRemaining <= 3 && "text-red-600 w-[160%] bg-blue-500"}>{currentScore} / {Object.keys(playPile).length * 5}</div>
+                        </div>
                         <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                             <div className="flex w-[40%] justify-center items-center"><CardBacking width={tokenSize * 0.8}/></div>
                             <div className={cardsRemaining <= 3 && "text-red-600"}>{cardsRemaining}</div>

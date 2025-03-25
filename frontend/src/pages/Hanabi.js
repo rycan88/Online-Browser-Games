@@ -391,7 +391,7 @@ export const Hanabi = ({roomCode}) => {
                         </div>
                         <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                             <div className="flex w-[40%] justify-center items-center text-[3.8vh]"><GoStarFill className="text-amber-500"/></div>
-                            <div className={cardsRemaining <= 3 && "text-red-600 w-[160%] bg-blue-500"}>{currentScore} / {Object.keys(playPile).length * 5}</div>
+                            <div>{currentScore} / {Object.keys(playPile).length * 5}</div>
                         </div>
                         <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                             <div className="flex w-[40%] justify-center items-center"><CardBacking width={tokenSize * 0.8}/></div>

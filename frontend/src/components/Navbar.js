@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import '../css/Navbar.css';
 import { Sidebar } from './Sidebar';
 import { getNickname } from '../utils';
+import useFullscreen from '../hooks/useFullscreen';
 
 export const Navbar = () => {
     const [sidebarWidth, setSidebarWidth] = useState(-300);
-    
+    const isFullscreen = useFullscreen();
+
     return (
-        <div className="navbar"> 
+        <div className="navbar" style={{display: isFullscreen && "none"}}> 
             <Sidebar sidebarWidth={sidebarWidth} setSidebarWidth={setSidebarWidth}/>
             <div className="sidebarDiv" 
                 onClick={() => {
@@ -18,7 +20,7 @@ export const Navbar = () => {
                 <div />
             </div>
             <div className="leftNavItems">                
-                <Link to="/">Home</Link>
+                <Link to="/home">Home</Link>
                 <Link to="/games">Games</Link>
                 <Link to="/about">About</Link>
             </div>

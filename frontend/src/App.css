@@ -4,7 +4,7 @@
 
 @layer base {
   .entirePage {
-    @apply absolute flex flex-col h-[calc(100vh-60px)] w-full bg-cover scrollbar-hide;
+    @apply absolute flex flex-col h-[100vh] md:h-[calc(100vh-60px)] w-full bg-cover scrollbar-hide;
   }
 
   .gradientButton {
@@ -58,6 +58,51 @@
   .topTaskBar { 
     @apply flex absolute w-full justify-end gap-[calc(min(1%,8px))] top-[0] right-[0] pt-[1vh] pr-[calc(min(2%,8px))]
   }
+}
+
+.rainbowText {
+  background: linear-gradient(170deg, 
+    #6e0f0f 0%, /* Red */
+    #6e0f0f 30%, /* Red */
+    #d97706 47.5%, /* Orange */
+    #c8ab04 55%, /* Yellow */
+    #138636 57.5%, /* Green */
+    #1d4ed8 65%, /* Blue */
+    #7c1bc7 72.5%, /* Purple */
+    #7c1bc7 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.rainbowBorder {
+  border-top: #eab308;
+  border-right: #4ade80;
+  border-bottom: #3b82f6;
+  border-left: #ef4444; 
+}
+
+/* Hanabi Scrollbar */
+.hanabi-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hanabi-scrollbar::-webkit-scrollbar:horizontal {
+  display: block;
+  height: 8px;
+}
+
+.hanabi-scrollbar::-webkit-scrollbar-track {
+  background: #888;
+}
+
+.hanabi-scrollbar::-webkit-scrollbar-thumb {
+  background: #f1f1f1;
+}
+
+.hanabi-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d0d5db;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

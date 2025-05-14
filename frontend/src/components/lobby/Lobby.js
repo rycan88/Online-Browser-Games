@@ -10,13 +10,16 @@ import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { GamesData } from "../GamesData";
 import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
+import { HanabiRules } from "../hanabi/HanabiRules";
+import { FullscreenButton } from "../FullscreenButton";
+import useFullscreen from "../../hooks/useFullscreen";
 
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
-const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />}
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {
     const navigate = useNavigate();
+    const isFullscreen = useFullscreen();
     const location = useLocation();
 
     const { rooms } = useContext(AppContext);
@@ -79,15 +82,18 @@ export const Lobby = ({gameName}) => {
     }
 
     return (
-        <div className="lobbyPage entirePage place-content-center items-center">
+        <div className={`lobbyPage entirePage place-content-center items-center ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
             <div className="topTaskBar">
                 <InfoButton buttonType="info">
                     {Rules[gameName]}
                 </InfoButton>
+                <div className="text-slate-200">
+                    <FullscreenButton shouldRotate={false}/>
+                </div>
             </div>
 
             <div className="lobbyBox">
-                <h1 className="gameTitle">{Titles[gameName]}</h1>
+                <h1 className="gameTitle">{gameData.title}</h1>
 
                 <div className="flex gap-[16px] w-full h-[15%] pt-[5%] justify-center items-center text-black">
                     <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg">{gameData.playerLimitText}</div>
@@ -126,7 +132,7 @@ export const Lobby = ({gameName}) => {
 
  
             </div>
-            <div className="entirePage bg-black/70 z-[-10]"></div>
+            <div className={`entirePage bg-black/70 z-[-10] ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}></div>
         </div>
         
     )

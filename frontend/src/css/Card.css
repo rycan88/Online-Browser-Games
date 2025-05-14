@@ -4,7 +4,7 @@
 
 @layer base {
   .standardCard {
-    @apply relative flex bg-slate-200 shadow-md overflow-clip rounded-[5%] select-none;
+    @apply relative flex justify-between bg-slate-200 shadow-md overflow-clip rounded-[4%] select-none;
   }
 
   .simplifiedCard {
@@ -12,10 +12,10 @@
   }
 
   .standardCard .cardCornerContainer {
-    @apply flex flex-col items-center text-[50%] w-[15%];
+    @apply flex flex-col items-center w-[15%] pl-[5%];
   }
   .standardCard .cardMiddleContainer {
-    @apply w-[70%] h-[80%];
+    @apply w-[65%] h-[80%];
   }
 
   .standardCard .middleSuitIcon {
@@ -23,6 +23,6 @@
   }
 
   .standardCard .faceCardContent svg {
-    @apply absolute w-[90%] h-full top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 object-fill;
+    @apply absolute w-[85%] h-full top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 object-fill;
   }
 }

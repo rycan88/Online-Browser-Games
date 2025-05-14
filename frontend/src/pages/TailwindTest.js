@@ -1,25 +1,28 @@
+import { HanabiCard } from "../components/hanabi/HanabiCard";
+
 
 export const TailwindTest = () => {
-    return (
-        <div>
-            <div className="grid grid-cols-4 gap-6">
-                <div className="p-6 rounded-lg bg-sky-500"></div>
-                <div className="p-6 rounded-lg bg-sky-500"></div>
-                <div className="p-6 rounded-lg bg-sky-500"></div>
-                <div className="p-6 rounded-lg bg-sky-500"></div>
-                <div className="p-6 rounded-lg bg-sky-500"></div>
-                <div className="p-6 rounded-lg bg-sky-500"></div>
-                <div className="p-6 rounded-lg bg-sky-500"></div>
-                <div className="p-6 rounded-lg bg-sky-500"></div>
+ 
+  
+  return (
+    <div>
+      <HanabiCard number={2} suit={"red"} id={3} />
+      <HanabiCard number={2} suit={"rainbow"} id={3} />
+      <div className="flex">
+        <HanabiCard number={1} suit={"rainbow"} id={3} width={150}/>
+        <HanabiCard number={2} suit={"rainbow"} id={3} width={150}/>
+        <HanabiCard number={3} suit={"rainbow"} id={3} width={150}/>
+        <HanabiCard number={4} suit={"rainbow"} id={3} width={150}/>
+        <HanabiCard number={5} suit={"rainbow"} id={3} width={150}/>
 
-            </div>
+      </div>
 
-            <h3 className="text-green-600 text-xs md:text-3xl mb-5">
-                Hello world!
-            </h3>
-            <h3 className="text-yellow-600 border-b-8">
-                Hello world!
-            </h3>
-        </div>
-    );
-}
+      <div className="rainbowText text-8xl">
+        H
+      </div>
+    </div>
+
+  );
+};
+  
+

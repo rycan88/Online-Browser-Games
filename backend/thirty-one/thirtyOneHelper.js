@@ -1,4 +1,4 @@
-const { Deck } = require("../cards/Deck");
+const { StandardDeck } = require("../cards/StandardDeck");
 const { thirtyOnePlayerData } = require("./thirtyOnePlayerData");
 
 
@@ -69,6 +69,7 @@ const calculateScores = (playersData, currentPlayers) => {
         players.push(playerData);
     }
 
+    // Sorts alive players to know the strike cutoff
     players.sort((a, b) => {
         if (a.score === b.score) {
             return a.lives - b.lives;
@@ -79,8 +80,8 @@ const calculateScores = (playersData, currentPlayers) => {
 
     const knockOutScore = players[Math.floor(playerCount / 2) - 1].score;
 
-    players.map((player, index) => {
-        player.ranking = playerCount - index;
+    // Deducts lives
+    players.map((player) => {
         if (player.score <= knockOutScore) {
             if (player.didKnock) {
                 player.lives -= 2;
@@ -90,6 +91,19 @@ const calculateScores = (playersData, currentPlayers) => {
 
             player.gotStrike = true;
         }
+    })
+
+    // Re-sort with updated lives
+    players.sort((a, b) => {
+        if (a.score === b.score) {
+            return a.lives - b.lives;
+        }
+        return a.score - b.score;
+    });
+
+    // Update player ranking
+    players.map((player, index) => {
+        player.ranking = playerCount - index;
     })
 }
 
@@ -104,7 +118,7 @@ const setUpNewRound = (rooms, roomCode) => {
         playersData[playerUserId] = thirtyOnePlayerData(playerData.nameData, Math.max(0, playerData.lives), playerData.ranking)
     }
 
-    const deck = new Deck();
+    const deck = new StandardDeck();
     const discardPile = [];
     deck.shuffle();
     const playerDataArray = Object.values(rooms[roomCode].playersData)
@@ -132,15 +146,19 @@ const getCurrentPlayers = (playersData) => {
     });
 }
 
+// Get the index of the player after the current one
 const getNextPlayerIndex = (oldPlayers, currentPlayers, index) => {
-    const newIndex = (index + 1) % oldPlayers.length;
+    let newIndex = (index + 1) % oldPlayers.length;
     while (newIndex !== index) {
-        if (oldPlayers[newIndex].lives > 0) {
-            return currentPlayers.findIndex(user => user.nameData.userId === oldPlayers[newIndex].nameData.userId);
+        const nextPlayerIndex = currentPlayers.findIndex(user => user.nameData.userId === oldPlayers[newIndex].nameData.userId);
+        if (nextPlayerIndex !== -1) {
+            return nextPlayerIndex;
         }
 
         newIndex = (newIndex + 1) % oldPlayers.length;
     }
+    // Error
+    console.log("ERROR: 31 NEXT PLAYER NOT FOUND");
     return -1;
 }
 

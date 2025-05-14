@@ -38,16 +38,16 @@ const io = new Server(server, {
 
 
 const { User, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms} = require("./serverUtils");
-const { Deck } = require("./cards/Deck");
 const { setUpPlayerData, setUpGameData } = require("./gameUtils");
 const { telepathEvents } = require("./telepath/telepathEvents");
 const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
 const { rpsMeleeEvents } = require("./rps-melee/rpsMeleeEvents");
+const { hanabiEvents } = require("./hanabi/hanabiEvents");
 
 // Lobby Rooms
 const rooms = {};
 const teamGames = ["telepath"];
-const gamePlayerLimits = {"telepath": 100, "thirty_one": 8, "rock_paper_scissors_melee": 2};
+const gamePlayerLimits = {"telepath": 100, "thirty_one": 8, "rock_paper_scissors_melee": 2, "hana": 5};
 const deleteTimers = {};
 // Our socket has a socketId, userId, and nickname
 // socketId changes per tab, while userId changes per browser
@@ -97,11 +97,13 @@ io.on("connection", (socket) => {
     });
 
     socket.on('create_room', (gameName, roomCode) => {
-        leaveAllRooms(io, rooms, socket.id);
+        //socket.leaveAll();
+        leaveAllRooms(io, rooms, deleteTimers, socket);
         rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
         if (gameName === "telepath") {
             rooms[roomCode].teamMode = true;
         }
+
         socket.join(roomCode);
         rooms[roomCode].players.push(currentUser);
         rooms[roomCode].spectators.push(currentUser);
@@ -116,7 +118,9 @@ io.on("connection", (socket) => {
         if (gameName === "rock_paper_scissors_melee") {
             rooms[roomCode].gameData = {maxPoints: 5, roundDuration: 1000, withGun: true};   
         } else if (gameName === "telepath") {
-            rooms[roomCode].gameData = {timeLimit: "unlimited"}
+            rooms[roomCode].gameData = {timeLimit: "unlimited"};
+        } else if (gameName === "hana") {
+            rooms[roomCode].gameData = {gameModeSetting: {"extraSuitType": "none"}};
         }
 
         socket.emit('room_created', gameName, roomCode);
@@ -131,8 +135,8 @@ io.on("connection", (socket) => {
             socket.emit('room_error', `Player limit reached`);
         } else if (!containsSocketId(rooms[roomCode].players, socket.id)) { // If the socket is not already connected to the room
             clearDeleteTimer(deleteTimers, roomCode);
-            socket.leaveAll();
-            leaveAllRooms(io, rooms, deleteTimers, currentUser);
+            //socket.leaveAll();
+            leaveAllRooms(io, rooms, deleteTimers, socket);
             socket.join(roomCode);
             rooms[roomCode].spectators.push(currentUser);
             if (!containsUserId(rooms[roomCode].players, socket.userId)) {
@@ -229,6 +233,7 @@ io.on("connection", (socket) => {
     telepathEvents(io, socket, rooms);
     thirtyOneEvents(io, socket, rooms);
     rpsMeleeEvents(io, socket, rooms);
+    hanabiEvents(io, socket, rooms);
 
 })
 

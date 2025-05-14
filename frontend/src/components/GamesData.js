@@ -38,4 +38,13 @@ export const GamesData = [
         duration: <div className="gamesDataInfoContainer"><FaClock />1 min</div>,
         description: "Predict your opponents moves in this fast paced rock paper scissors game!"
     },
+    {
+        id: "hana",
+        title: "Hana",
+        logoLink: "/hana-logo.png",
+        link: "/hana/lobby",
+        playerLimitText: <div className="gamesDataInfoContainer"><IoPerson />2-5 players</div>,
+        duration: <div className="gamesDataInfoContainer"><FaClock />20-40 min</div>,
+        description: "Work together to create a beautiful display of flowers for the celebration!"
+    },
 ]

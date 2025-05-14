@@ -6,7 +6,6 @@ import { FaHandBackFist } from "react-icons/fa6";
 
 import getSocket from "../socket";
 
-import { Card } from "../components/card/Card";
 import LoadingScreen from "../components/LoadingScreen";
 import { ThirtyOnePlayer } from "../components/thirty-one/ThirtyOnePlayer";
 import { ThirtyOnePlayerDisplay } from "../components/thirty-one/ThirtyOnePlayerDisplay";
@@ -20,6 +19,11 @@ import { InfoButton } from "../components/InfoButton";
 import { ThirtyOneRules } from "../components/thirty-one/ThirtyOneRules";
 import { ThirtyOneSelfCard } from "../components/thirty-one/ThirtyOneSelfCard";
 import { ThirtyOneKnockOverlay } from "../components/thirty-one/ThirtyOneKnockOverlay";
+import { StandardCard } from "../components/card/StandardCard";
+import useFullscreen from "../hooks/useFullscreen";
+import { FullscreenButton } from "../components/FullscreenButton";
+import { useOrientation } from "../hooks/useOrientation";
+import { NotLandscapeWarningPage } from "../components/NotLandscapeWarningPage";
 
 // TODO
 // Allow users to drag cards
@@ -31,8 +35,8 @@ const socket = getSocket();
 const NAVBAR_HEIGHT = 60;
 
 export const ThirtyOne = ({roomCode}) => {
-    const MIDDLE_CARD_WIDTH = (window.innerHeight * 0.20) * (2/3);
-    const MY_CARD_WIDTH = (window.innerHeight * 0.25) * (2/3);
+    const isFullscreen = useFullscreen();
+
     const PICK_UP_DURATION = 300;
     const DISCARD_DURATION = 600;
     
@@ -60,16 +64,7 @@ export const ThirtyOne = ({roomCode}) => {
     const isMyTurn = playerTurn === selfIndex;
     const hasPicked = turn % 1 !== 0;
     
-    const [landscapeMode, setLandscapeMode] = useState(false);
-
-    function checkOrientation() {
-        if (window.innerHeight > window.innerWidth) {
-          // Device is in portrait mode
-          setLandscapeMode(false);
-        } else {
-            setLandscapeMode(true);
-        }
-    }
+    const orientation = useOrientation();
 
     const removeMovingElement = (cardId) => { // cardId is the timestamp of when the movingCard was created
         if (!cardId) {return; }
@@ -99,9 +94,22 @@ export const ThirtyOne = ({roomCode}) => {
         return position;
     }
 
+    const [middleCardWidth, setMiddleCardWidth]  = useState((window.innerHeight * 0.20) * (2/3));
+    const [myCardWidth, setMyCardWidth] = useState((window.innerHeight * 0.25) * (2/3));
+
+    useEffect(() => {
+        const handleResize = () => {
+            setMiddleCardWidth((window.innerHeight * 0.20) * (2/3));
+            setMyCardWidth((window.innerHeight * 0.25) * (2/3))
+        }
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [])
+
     useEffect(() => {
         window.scrollTo(0, NAVBAR_HEIGHT);
-    }, [landscapeMode]);
+    }, [orientation]);
 
     useEffect(() => {
         socket.on('receive_own_cards', (cardArray, cardId) => {
@@ -161,9 +169,6 @@ export const ThirtyOne = ({roomCode}) => {
 
         socket.emit('join_room', roomCode);
         socket.emit('get_all_thirty_one_data', roomCode);
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('load', checkOrientation);
-        checkOrientation();
 
         return () => {
             socket.off('receive_own_cards');
@@ -187,7 +192,7 @@ export const ThirtyOne = ({roomCode}) => {
         if (!currentPlayers) { return; }
 
         socket.on("deck_pick_up", () => {
-            const cardWidth = isMyTurn ? MY_CARD_WIDTH : MIDDLE_CARD_WIDTH;
+            const cardWidth = isMyTurn ? myCardWidth : middleCardWidth;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
 
             const cardId = Date.now();
@@ -209,12 +214,12 @@ export const ThirtyOne = ({roomCode}) => {
         });
 
         socket.on("discard_pile_pick_up", (card) => {
-            const cardWidth = isMyTurn ? MY_CARD_WIDTH : MIDDLE_CARD_WIDTH;
+            const cardWidth = isMyTurn ? myCardWidth : middleCardWidth;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
 
             const cardId = Date.now();
             const element = <MovingElement id={cardId} 
-                                            element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
+                                            element={<StandardCard number={card.number} suit={card.suit} width={cardWidth}/>} 
                                             startPosition={getLastElementPosition(".thirtyOneDiscardPile")}
                                             animationEndPosition={selfCardsPosition} 
                                             animationEndCall={() => {
@@ -231,12 +236,12 @@ export const ThirtyOne = ({roomCode}) => {
 
         socket.on("card_discarded", (card) => {
             if (isMyTurn) { return; } 
-            const cardWidth = MIDDLE_CARD_WIDTH;
+            const cardWidth = middleCardWidth;
             const selfCardsPosition = getSelfCardsPosition(cardWidth, cardWidth * 1.5);
 
             const cardId = Date.now();
             const element = <MovingElement id={cardId} 
-                                            element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
+                                            element={<StandardCard number={card.number} suit={card.suit} width={cardWidth}/>} 
                                             startPosition={selfCardsPosition}
                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                             animationEndCall={() => {
@@ -283,6 +288,8 @@ export const ThirtyOne = ({roomCode}) => {
         socket.emit('thirty_one_knock', roomCode);
     }
 
+
+
     if (shouldShowResults && arrayOfElements.length === 0 && playersData) {
         return <ThirtyOneResultsScreen roomCode={roomCode} playersData={playersData}/>
     }
@@ -291,23 +298,20 @@ export const ThirtyOne = ({roomCode}) => {
 
 
 
-    if (!landscapeMode) {
-        return (
-            <div className="rotate-notice">
-                Please rotate your device to landscape mode.
-            </div>
-        );
+    if (orientation !== "landscape") {
+        return <NotLandscapeWarningPage />
     }
 
     return (
-        <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)]">   
+        <div className={`thirtyOnePage entirePage h-[100vh] ${!isFullscreen && "md:h-[calc(100vh-60px)]"}`}>   
             { knockAnimationPlayer &&
-                <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} />
+                <ThirtyOneKnockOverlay knockPlayer={knockAnimationPlayer} isFullscreen={isFullscreen}/>
             }
-            <div className="topTaskBar">
-                <InfoButton buttonType="info" fullScreen={true}>
+            <div className="topTaskBar text-slate-200">
+                <InfoButton buttonType="info" fullScreen={isFullscreen}>
                     <ThirtyOneRules />
                 </InfoButton> 
+                <FullscreenButton shouldRotate={true} />
             </div>
    
 
@@ -327,10 +331,10 @@ export const ThirtyOne = ({roomCode}) => {
                             socket.emit("thirty_one_pick_up_deck_card", roomCode);
                         }}
                         pileElement={(card, index) => {
-                            return <CardBacking width={MIDDLE_CARD_WIDTH}/>
+                            return <CardBacking width={middleCardWidth}/>
                         }}
-                        cardOutline={<CardOutline width={MIDDLE_CARD_WIDTH}/>}
-                        width={MIDDLE_CARD_WIDTH}
+                        cardOutline={<CardOutline width={middleCardWidth}/>}
+                        width={middleCardWidth}
                     />
 
                     <Pile 
@@ -343,10 +347,10 @@ export const ThirtyOne = ({roomCode}) => {
 
                         }}
                         pileElement={(card, index) => {
-                            return <Card number={card.number} suit={card.suit} width={MIDDLE_CARD_WIDTH}/>
+                            return <StandardCard number={card.number} suit={card.suit} width={middleCardWidth}/>
                         }}
-                        cardOutline={<CardOutline width={MIDDLE_CARD_WIDTH}/>}
-                        width={MIDDLE_CARD_WIDTH}
+                        cardOutline={<CardOutline width={middleCardWidth}/>}
+                        width={middleCardWidth}
                     />
                 </div>
  
@@ -378,19 +382,19 @@ export const ThirtyOne = ({roomCode}) => {
                     return <ThirtyOneSelfCard handLength={myCards.length}
                         card={card}
                         index={index}
-                        cardWidth={MY_CARD_WIDTH}
+                        cardWidth={myCardWidth}
                         canBeHovered={isMyTurn && hasPicked}
                         onClickEvent={ (e) => {
                             if (!(isMyTurn && hasPicked)) { return; }
 
                             socket.emit("thirty_one_discard_card", roomCode, card);
             
-                            const cardWidth = MIDDLE_CARD_WIDTH;
+                            const cardWidth = middleCardWidth;
             
                             const rect = e.target.getBoundingClientRect();
                             const cardId = Date.now();
                             const element = <MovingElement id={cardId} 
-                                                            element={<Card number={card.number} suit={card.suit} width={cardWidth}/>} 
+                                                            element={<StandardCard number={card.number} suit={card.suit} width={cardWidth}/>} 
                                                             startPosition={{left: rect.left, top: rect.top}}
                                                             animationEndPosition={getLastElementPosition(".thirtyOneDiscardPile")} 
                                                             animationEndCall={() => {

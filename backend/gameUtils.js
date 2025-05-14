@@ -1,9 +1,11 @@
 const { telepathPlayerData } = require("./telepath/telepathPlayerData");
 const { thirtyOnePlayerData } = require("./thirty-one/thirtyOnePlayerData");
 const telepathHelper = require("./telepath/telepathHelper");
-const { Deck } = require("./cards/Deck");
+const { StandardDeck } = require("./cards/StandardDeck");
 const { getCurrentPlayers } = require("./thirty-one/thirtyOneHelper");
 const { rpsMeleePlayerData } = require("./rps-melee/rpsMeleePlayerData");
+const { HanabiDeck } = require("./cards/HanabiDeck");
+const { hanabiPlayerData } = require("./hanabi/hanabiPlayerData");
 
 const setUpPlayerData = (rooms, roomCode) => {
     const gameName = rooms[roomCode].gameName;
@@ -59,6 +61,21 @@ const setUpPlayerData = (rooms, roomCode) => {
         playersData[players[1].userId] = rpsMeleePlayerData(players[1], players[0]);                   
 
         rooms[roomCode].playersData = playersData;      
+    } else if (gameName === "hana") {
+        const players = rooms[roomCode].players;
+
+        if (players.length < 2 || players.length > 5) { 
+            console.log("Shouldn't be able to start");
+            return; 
+        }
+
+        const playersData = {}
+
+        players.forEach((player) => {
+            playersData[player.userId] = hanabiPlayerData(player);                   
+        })                   
+
+        rooms[roomCode].playersData = playersData;   
     }
 }
 
@@ -70,7 +87,7 @@ const setUpGameData = (io, rooms, roomCode) => {
             telepathHelper.setNewPrompt(gameData);
             telepathHelper.startRound(io, rooms, roomCode);
         } else if (gameName === "thirty_one") {
-            const deck = new Deck();
+            const deck = new StandardDeck();
             const discardPile = [];
             deck.shuffle();
             const playerDataArray = Object.values(rooms[roomCode].playersData)
@@ -82,13 +99,46 @@ const setUpGameData = (io, rooms, roomCode) => {
             discardPile.push(deck.drawCard());
 
             const currentPlayers = getCurrentPlayers(rooms[roomCode].playersData); 
-            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: 0, turn: 0, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
+            const startingTurn = Math.floor(Math.random() * playerDataArray.length);
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, startTurn: startingTurn, turn: startingTurn, currentPlayers: currentPlayers, roundEnd: null, shouldShowResults: false, gameEnded: false};
         } else if (gameName === "rock_paper_scissors_melee") {
             const maxPoints = rooms[roomCode].gameData.maxPoints;
             const roundDuration = rooms[roomCode].gameData.roundDuration;
             const withGun = rooms[roomCode].gameData.withGun;
 
             rooms[roomCode].gameData = {roundInProgress: false, gameInProgress: false, maxPoints: maxPoints, restInterval: 200, roundDuration: roundDuration, withGun: withGun, turn: 0};            
+        } else if (gameName === "hana") {
+            const gameMode = rooms[roomCode].gameData.gameModeSetting;
+
+            const deck = new HanabiDeck(gameMode);
+            const discardPile = [];
+            deck.shuffle();
+
+            const playerDataArray = Object.values(rooms[roomCode].playersData);
+            const playerCount = playerDataArray.length;
+            const cardsPerPlayer = playerCount <= 3 ? 5 : 4;
+            let index = 0;
+            for (const playerData of playerDataArray) {
+                playerData.index = index;
+                index++;
+                for (let i = 0; i < cardsPerPlayer; i++) {
+                    playerData.cards.push(deck.drawCard());
+                }
+            }
+            const playPile = {"red": 0, "yellow": 0, "green": 0, "blue": 0, "purple": 0}
+            const extraPileStartValue = gameMode.extraSuitReversed ? 6 : 0; // When reversed we go down from 6
+            if (gameMode.extraSuitType === "pink") {
+                playPile["pink"] = extraPileStartValue;
+            } else if (gameMode.extraSuitType === "rainbow") {
+                playPile["rainbow"] = extraPileStartValue;
+            } else if (gameMode.extraSuitType === "colourless") {
+                playPile["colourless"] = extraPileStartValue;
+            }
+            
+            const startingTurn = Math.floor(Math.random() * playerDataArray.length);
+            const history = [{"type": "start", "player": playerDataArray[startingTurn].nameData.userId}];
+            
+            rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history, gameInProgress: true, finalTurn: null, gameMode: gameMode, gameModeSetting: gameMode};
         }
     }
 }

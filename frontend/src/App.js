@@ -22,9 +22,12 @@ import { enterFullScreen } from './utils';
 import { ThirtyOne } from './pages/ThirtyOne';
 import LoadingScreen from './components/LoadingScreen';
 import { RPSMelee } from './pages/RPSMelee';
+import { Hanabi } from './pages/Hanabi';
 
 export const AppContext = createContext();
 const socket = getSocket();
+
+const gameNames = ["telepath", "thirty_one", "rock_paper_scissors_melee", "hana"]
 
 function App() {
   const client = new QueryClient();
@@ -37,7 +40,9 @@ function App() {
     } else if (gameName === "thirty_one") {
       return <ThirtyOne roomCode={roomCode} />
     } else if (gameName === "rock_paper_scissors_melee") {
-      return <RPSMelee roomCode={roomCode}/>
+      return <RPSMelee roomCode={roomCode} />
+    } else if (gameName === "hana") {
+      return <Hanabi roomCode={roomCode} />
     }
     return <></>
   }
@@ -60,6 +65,17 @@ function App() {
                     path={`/${gameName}/${roomCode}`} 
                     element={GameElement(gameName, roomCode)} />
         }) 
+  }
+
+  const lobbyRoutes = () => {
+    return gameNames.map((gameName) => {
+      return (
+        <Route key={gameName}
+                path={`/${gameName}/lobby`} 
+                element={<Lobby gameName={gameName}/>} 
+          />
+      );
+    });
   }
 
   useEffect(() => {
@@ -97,13 +113,12 @@ function App() {
           <Router>
             <Navbar />
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/telepath/lobby" element={<Lobby gameName="telepath"/>} />
-              <Route path="/thirty_one/lobby" element={<Lobby gameName="thirty_one"/>} />
-              <Route path="/rock_paper_scissors_melee/lobby" element={<Lobby gameName="rock_paper_scissors_melee"/>} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Games />} />
+              {lobbyRoutes()}
               {roomRoutes(rooms)}
               {gameRoutes(rooms)}
-              <Route path="/rock_paper_scissors_melee" element={<RPSMelee/>} />
+              <Route path="/hana" element={<Hanabi/>} />
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />

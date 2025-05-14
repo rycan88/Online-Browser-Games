@@ -12,12 +12,16 @@ import { RPSMeleeSettings } from "../rps-melee/RPSMeleeSettings";
 import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 import { TelepathSettings } from "../telepath/TelepathSettings";
 import { RoomCodeWords } from "./RoomCodeWords";
+import { HanabiSettings } from "../hanabi/HanabiSettings";
+import { HanabiRules } from "../hanabi/HanabiRules";
+import { FullscreenButton } from "../FullscreenButton";
+import useFullscreen from "../../hooks/useFullscreen";
 
 const socket = getSocket();
 
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
-const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />}
+const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />, "hana": <HanabiSettings />}
 
 // roomCode: string
 // gameName: string
@@ -26,6 +30,7 @@ export const Room = (props) => {
     const gameName = props.gameName;
     const roomCode = props.roomCode;
     const navigate = useNavigate();
+    const isFullscreen = useFullscreen();
     
     const [players, setPlayers] = useState([]);
     const [teamData, setTeamData] = useState([]);
@@ -87,7 +92,7 @@ export const Room = (props) => {
     }
 
     return (
-        <div className="lobbyPage entirePage justify-center items-center">
+        <div className={`lobbyPage entirePage justify-center items-center ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
             <div className="topTaskBar">
                 <InfoButton buttonType="info">
                     {Rules[gameName]}
@@ -97,6 +102,9 @@ export const Room = (props) => {
                         {React.cloneElement(Settings[gameName], { roomCode: roomCode})}
                     </InfoButton>  
                 } 
+                <div className="text-slate-200">
+                    <FullscreenButton shouldRotate={false}/>
+                </div>
             </div>
 
             <div className="lobbyBox">
@@ -123,7 +131,7 @@ export const Room = (props) => {
                 </div>
 
             </div>
-            <div className="entirePage bg-black/70 z-[-10]"></div>
+            <div className={`entirePage bg-black/70 z-[-10] ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}></div>
         </div>
     )
 

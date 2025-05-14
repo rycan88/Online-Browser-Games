@@ -4,12 +4,13 @@ import { IoLogoGameControllerB } from "react-icons/io";
 import { IoIosColorPalette } from "react-icons/io";
 import { GiBrain } from "react-icons/gi";
 import { GiCardAceSpades } from "react-icons/gi";
+import { LuFlower } from "react-icons/lu";
 
 export const SidebarData = [
     {
         title: "Home",
         icon: <MdHome/>,
-        link: "/",
+        link: "/home",
         isMain: true,
     },
     {
@@ -40,6 +41,12 @@ export const SidebarData = [
         title: "RPS Melee",
         icon: <FaHandRock />,
         link: "/rock_paper_scissors_melee/lobby",
+        isMain: false,
+    },
+    {
+        title: "Hana",
+        icon: <LuFlower />,
+        link: "/hana/lobby",
         isMain: false,
     },
     {

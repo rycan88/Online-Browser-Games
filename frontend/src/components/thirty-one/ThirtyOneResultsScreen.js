@@ -9,10 +9,14 @@ import { ThirtyOneRules } from "./ThirtyOneRules";
 import { useEffect, useState } from "react";
 import { ThirtyOneCrownOverlay } from "./ThirtyOneCrownOverlay";
 import { ReadyStatusIcon } from "../ReadyStatusIcon";
+import { FullscreenButton } from "../FullscreenButton";
+import useFullscreen from "../../hooks/useFullscreen";
 
 const socket = getSocket();
 const NAVBAR_HEIGHT = 60;
 export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
+    const isFullscreen = useFullscreen();
+
     const [winner, setWinner] = useState(null);
     const [hasOverlayShown, setHasOverlayShown] = useState(null);
 
@@ -40,14 +44,15 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
     }
 
     return (
-        <div className="thirtyOnePage entirePage h-[100vh] md:h-[calc(100vh-60px)] flex items-center justify-center text-slate-200 text-[2vh]">
+        <div className={`thirtyOnePage entirePage h-[100vh] ${!isFullscreen && "md:h-[calc(100vh-60px)]"} flex items-center justify-center text-slate-200 text-[2vh]`}>
             { winner &&
-                <ThirtyOneCrownOverlay winPlayer={winner} />
+                <ThirtyOneCrownOverlay winPlayer={winner} isFullscreen={isFullscreen}/>
             }
             <div className="topTaskBar">
-                <InfoButton buttonType="info">
+                <InfoButton buttonType="info" fullScreen={isFullscreen}>
                     <ThirtyOneRules />
                 </InfoButton>   
+                <FullscreenButton shouldRotate={true} />
             </div>
 
             <div className="myContainerCard pb-[75px]">
@@ -173,9 +178,9 @@ export const ThirtyOneResultsScreen = ({roomCode, playersData}) => {
                         onClick={() => {
                             socket.emit("thirty_one_ready", roomCode);
                         }}
-                        disabled={playersData[socket.userId].isReady || (playersData[socket.userId].lives === 0 && playersAlive.length > 1)}
+                        disabled={playersData[socket.userId].isReady || (playersData[socket.userId].lives <= 0 && playersAlive.length > 1)}
                 >
-                    {(playersData[socket.userId].isReady || (playersData[socket.userId].lives === 0 && playersAlive.length > 1)) 
+                    {(playersData[socket.userId].isReady || (playersData[socket.userId].lives <= 0 && playersAlive.length > 1)) 
                         ? "Waiting for others" 
                         : (playersAlive.length > 1) ? "Next Round" : "New Game"
                     }

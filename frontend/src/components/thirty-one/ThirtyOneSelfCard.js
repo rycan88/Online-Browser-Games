@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card } from "../card/Card";
+import { StandardCard } from "../card/StandardCard";
 
 export const ThirtyOneSelfCard = ({handLength, card, index, onClickEvent, cardWidth, canBeHovered}) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -41,7 +41,7 @@ export const ThirtyOneSelfCard = ({handLength, card, index, onClickEvent, cardWi
                   boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
                 }
             }}>
-                <Card number={card.number} 
+                <StandardCard number={card.number} 
                         suit={card.suit}
                         width={cardWidth}
                 />

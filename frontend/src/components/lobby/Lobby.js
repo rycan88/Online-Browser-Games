@@ -10,12 +10,16 @@ import { InfoButton } from "../InfoButton";
 import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { GamesData } from "../GamesData";
 import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
+import { HanabiRules } from "../hanabi/HanabiRules";
+import { FullscreenButton } from "../FullscreenButton";
+import useFullscreen from "../../hooks/useFullscreen";
 
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />}
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {
     const navigate = useNavigate();
+    const isFullscreen = useFullscreen();
     const location = useLocation();
 
     const { rooms } = useContext(AppContext);
@@ -78,11 +82,14 @@ export const Lobby = ({gameName}) => {
     }
 
     return (
-        <div className="lobbyPage entirePage place-content-center items-center">
+        <div className={`lobbyPage entirePage place-content-center items-center ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
             <div className="topTaskBar">
                 <InfoButton buttonType="info">
                     {Rules[gameName]}
                 </InfoButton>
+                <div className="text-slate-200">
+                    <FullscreenButton shouldRotate={false}/>
+                </div>
             </div>
 
             <div className="lobbyBox">
@@ -125,7 +132,7 @@ export const Lobby = ({gameName}) => {
 
  
             </div>
-            <div className="entirePage bg-black/70 z-[-10]"></div>
+            <div className={`entirePage bg-black/70 z-[-10] ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}></div>
         </div>
         
     )

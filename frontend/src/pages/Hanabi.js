@@ -31,6 +31,7 @@ import { NotLandscapeWarningPage } from "../components/NotLandscapeWarningPage";
 import { useOrientation } from "../hooks/useOrientation";
 import { HanabiNewGameButton } from "../components/hanabi/HanabiNewGameButton";
 import { HanabiSurrenderDisplay } from "../components/hanabi/HanabiSurrenderDisplay";
+import { HanabiRules } from "../components/hanabi/HanabiRules";
 
 // TODO
 /*
@@ -413,6 +414,9 @@ export const Hanabi = ({roomCode}) => {
 
                     <div className="topTaskBar">
                         <HanabiHintVisibilityButton showTeammateHints={showTeammateHints} setShowTeammateHints={setShowTeammateHints}/>
+                        <InfoButton buttonType="info" fullScreen={isFullscreen}>
+                            <HanabiRules triggerRerender={triggerRerender} roomCode={roomCode}/>
+                        </InfoButton>
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>
                             <HanabiSettings triggerRerender={triggerRerender} roomCode={roomCode}/>
                         </InfoButton>

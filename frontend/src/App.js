@@ -23,6 +23,7 @@ import { ThirtyOne } from './pages/ThirtyOne';
 import LoadingScreen from './components/LoadingScreen';
 import { RPSMelee } from './pages/RPSMelee';
 import { Hanabi } from './pages/Hanabi';
+import { CrossBattle } from './pages/CrossBattle';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -124,6 +125,7 @@ function App() {
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
               <Route path="/thirty_one" element={<ThirtyOne />} />
+              <Route path="/cross_battle" element={<CrossBattle />} />
               <Route path="*" element={isDataLoaded ? <ErrorPage/> : <LoadingScreen />} />
             </Routes>
           </Router>

@@ -9,7 +9,34 @@ import { useState } from 'react';
 
 export const CrossBattle = ({}) => {
     const letters = "EVERYONEISGOODEXCEPTME";
-    const things = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+
+    const tileSize = 48;
+    const gridSize = 43;
+    const viewTiles = 11;
+
+    const viewportSize = tileSize * viewTiles;
+    const centerTile = Math.floor(gridSize / 2);
+
+    const initialX = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
+    const initialY = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
+    const [transform, setTransform] = useState({offsetX: initialX, offsetY: initialY, scale: 1});
+
+    const [spaceToTile, setSpaceToTile] = useState({});
+
+    const moveTile = (startId, endId, tileIndex) => {
+        setSpaceToTile(prev => {
+            const next = { ...prev };
+
+            delete next[startId];
+            next[endId] = tileIndex;
+            return next;
+        });
+    }
+
+    // Tile index to space Id
+    const tileToSpace = (tileIndex) => {
+        return Object.entries(spaceToTile).find(([, value]) => value === tileIndex)?.[0];
+    }
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -18,24 +45,18 @@ export const CrossBattle = ({}) => {
         })
     );
 
-    const [activeId, setActiveId] = useState(null);
     const [activeType, setActiveType] = useState(null);
-    const [activeTile, setActiveTile] = useState(null);
+    const [activeData, setActiveData] = useState({});
     const [draggingStyle, setDraggingStyle] = useState({});
+    const [hoveredSpaceId, setHoveredSpaceId] = useState(null);
 
     const handleDragMove = (event) => {
-        const { delta } = event;
-        if (activeId) {
-            setDraggingStyle({
-                transform: `translate(${delta.x}px, ${delta.y}px)`,
-            });
-        }
+        const { over, delta } = event;
     }
 
     const handleDragStart = (event) => {
-        setActiveId(event.active.id);
         if (event.active.data.current.type) {
-            setActiveTile(event.active.id[0]);
+            setActiveData({letter: event.active.data.current.letter, tileIndex: event.active.data.current.tileIndex});
         } else {
             setActiveType(null);
         }
@@ -45,7 +66,9 @@ export const CrossBattle = ({}) => {
         const { over } = event;
 
         if (over) {
-            //console.log(`Dragging over: ${over.id}`);
+            setDraggingStyle({});
+            console.log(over.id, "HAHAHAH")
+            setHoveredSpaceId(over.id);
         }
     }
 
@@ -56,9 +79,21 @@ export const CrossBattle = ({}) => {
             return;
         }
 
+        if (!spaceToTile[over.id]) {
+            moveTile(tileToSpace(active.data.current.tileIndex), over.id, active.data.current.tileIndex);
+            console.log(tileToSpace(active.data.current.tileIndex), over.id, active.data.current.tileIndex);
+        }
+
         setDraggingStyle({});
-        setActiveId(null);
         setActiveType(null);
+        setActiveData({})
+        setHoveredSpaceId(null);
+    }
+
+    if (hoveredSpaceId) {
+        console.log(hoveredSpaceId)
+    } else {
+        console.log('lol')
     }
 
     return (
@@ -73,21 +108,33 @@ export const CrossBattle = ({}) => {
         >
             <div className="crossBattlePage entirePage">
                 <div className='flex flex-col items-center justify-around h-full'>
-                    <CrossBattleGrid />
+                    <CrossBattleGrid 
+                        tileSize={tileSize} 
+                        gridSize={gridSize} 
+                        viewTiles={viewTiles}
+                        transform={transform}
+                        setTransform={setTransform}
+                        spaceToTile={spaceToTile}
+                        letters={letters}
+                        hoverData={{spaceId: hoveredSpaceId, tileIndex: activeData.tileIndex, letter: activeData.letter}}
+
+                    >
+                    </CrossBattleGrid>
+                        
+                    
                     <div className='flex flex-wrap justify-center h-[20vh] w-[50vh] bg-red-800'>
                         {[...letters].map((letter, index) => {
+                            if (tileToSpace(index)) { return <></> }
                             return (
-                                <DraggableItem id={letter + String(index)} type="crossBattleTile">
-                                    <CrossBattleTile tileSize={50} 
+                                <DraggableItem id={`${letter}-${String(index)}`} data={{type: "crossBattleTile", letter: letter, tileIndex: index}}>
+                                    <CrossBattleTile tileSize={tileSize} 
                                                     tileLetter={letter}
                                     />
                                 </DraggableItem>
 
                             )
                         })}
-
                     </div>
-
                 </div>
 
                 <DragOverlay>
@@ -103,7 +150,7 @@ export const CrossBattle = ({}) => {
                             }}
                         >
                             {
-                                <CrossBattleTile tileSize={50} tileLetter={activeTile} />
+                                <CrossBattleTile tileSize={tileSize * 1.1} tileLetter={activeData.letter} />
                             }
                         </div>
                     ) : null}

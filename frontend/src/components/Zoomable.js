@@ -1,19 +1,11 @@
 
 import { useRef, useState } from "react";
 
-export const Zoomable = ({viewportSize, initialTransform, gridSizePx, children}) => {
+export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, children}) => {
     const divRef = useRef(null)
-    const {x: initialX, y: initialY, scale: initialScale} = initialTransform;
-
-    const [transform, setTransform] = useState({ offsetX: -10000000, offsetY: -10000000, scale: 1});
 
     const dragging = useRef(false);
     const last = useRef({ x: 0, y: 0 });
-
-    // set initial once
-    if (transform.offsetX === -10000000 && transform.offsetY === -10000000) {
-        setTransform({ offsetX: initialX, offsetY: initialY, scale: initialScale});
-    }
 
     const clamp = (value, min, max) =>
         Math.min(max, Math.max(min, value));
@@ -88,7 +80,7 @@ export const Zoomable = ({viewportSize, initialTransform, gridSizePx, children})
 
     return (
         <div
-            className="overflow-hidden relative border border-slate-200 select-none touch-none"
+            className="overflow-hidden relative border border-slate-100 select-none touch-none"
             style={{ width: viewportSize, height: viewportSize }}
             ref={divRef}
             onWheel={onWheel}
@@ -104,7 +96,7 @@ export const Zoomable = ({viewportSize, initialTransform, gridSizePx, children})
             <div
                 className="absolute top-0 left-0 origin-top-left cursor-grab active:cursor-grabbing"
                 style={{
-                transform: `translate(${-transform.offsetX}px, ${-transform.offsetY}px) scale(${transform.scale})`,
+                    transform: `translate(${-transform.offsetX}px, ${-transform.offsetY}px) scale(${transform.scale})`,
                 }}
             >
                 {children}

@@ -1,32 +1,60 @@
+import { useState } from "react";
+import { DropZone } from "../hanabi/DropZone";
 import { Zoomable } from "../Zoomable";
 import { CrossBattleGridSpace } from "./CrossBattleGridSpace";
 
-export const CrossBattleGrid = () => {
-    const tileSize = 48;
-    const gridSize = 43;
-    const viewTiles = 11;
-
+export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTransform, spaceToTile, letters, hoverData}) => {
     const viewportSize = tileSize * viewTiles;
+
+    const newTileSize = tileSize * transform.scale;
     const gridSizePx = tileSize * gridSize;
 
-    const centerTile = Math.floor(gridSize / 2);
-    const initialX = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
-    const initialY = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
-    const initialScale = 1;
-    const initialTransform = {x: initialX, y: initialY, scale: initialScale};
-    
+    const rowStart = Math.max(0, Math.floor((transform.offsetY) / newTileSize));
+    const rowEnd = Math.min(gridSize, Math.ceil((transform.offsetY + viewportSize) / newTileSize));
+    const colStart = Math.max(0, Math.floor(transform.offsetX / newTileSize));
+    const colEnd = Math.min(gridSize, Math.ceil((transform.offsetX + viewportSize) / newTileSize));
+
+    const tiles = [];
+    for (let row = rowStart; row < rowEnd; row++) {
+        for (let col = colStart; col < colEnd; col++) {
+            const id = `gridSpace-${String(col)}-${String(row)}`;
+            const isMiddle = row === (gridSize - 1) / 2 && col === (gridSize - 1) / 2;
+
+            const offset = {x: col * tileSize, y: row * tileSize}
+
+            let tileIndex = spaceToTile[id];
+            let letter = tileIndex ? letters[tileIndex] : null;
+            let isHovered = false;
+
+            if (!tileIndex && hoverData.spaceId === id) {
+                tileIndex = hoverData.tileIndex;
+                letter = hoverData.letter;
+                isHovered = true;
+                console.log(isHovered, hoverData, "cool")
+            }
+
+            tiles.push(
+                <CrossBattleGridSpace 
+                    key={id} 
+                    id={id} 
+                    tileSize={tileSize} 
+                    isMiddle={isMiddle} 
+                    offset={offset}
+                    tileData={{letter, tileIndex, isHovered: isHovered}}
+                />
+            )
+        }
+    }
+
     return(
-        <Zoomable viewportSize={viewportSize} initialTransform={initialTransform} gridSizePx={gridSizePx}>
-            <div className="grid"
+        <Zoomable viewportSize={viewportSize} transform={transform} setTransform={setTransform} gridSizePx={gridSizePx}>
+            <div className="bg-[rgb(182,188,226)]"
                 style={{
-                    gridTemplateColumns: `repeat(${gridSize}, ${tileSize}px)`,
                     width: gridSizePx,
                     height: gridSizePx,
                 }}
             >
-                {Array.from({ length: gridSize * gridSize }).map((_, i) => (
-                    <CrossBattleGridSpace key={i} tileSize={tileSize} isMiddle={i === ((gridSize * gridSize) - 1) / 2}/>
-                ))}
+                {tiles}
             </div>
         </Zoomable>
     );

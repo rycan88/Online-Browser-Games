@@ -1,11 +1,30 @@
 import { BsStarFill } from "react-icons/bs";
+import { CrossBattleDropZone } from "./CrossBattleDropZone";
+import { useDroppable } from "@dnd-kit/core";
+import { CrossBattleTile } from "./CrossBattleTile";
+import { DraggableItem } from "../hanabi/DraggableItem";
 
-export const CrossBattleGridSpace = ({tileSize, isMiddle}) => {
+export const CrossBattleGridSpace = ({tileSize, isMiddle, offset, id, tileData}) => {
+    const { active, isOver, setNodeRef } = useDroppable({ id });
+
+    const {letter, tileIndex, isHovered} = tileData;
+    //console.log(isHovered, tileData, "Hovered!")
+
     return (
-        <div className={`flex items-center justify-center bg-gradient-to-br ${isMiddle ? "from-slate-100 to-slate-200" : "from-slate-200 to-slate-400"} shadow-lg text-black  border-slate-700 border rounded-[10%]`} 
-             style={{height: tileSize, width: tileSize, fontSize: tileSize / 1.5}}
+        <div className={`absolute flex items-center justify-center bg-gradient-to-br ${isMiddle ? "bg-slate-100" : "bg-slate-700"} shadow-[inset_0_0_0_2px_rgb(182,188,226)] border-none text-black rounded-[10%]`} 
+             style={{height: tileSize, width: tileSize, fontSize: tileSize / 1.5, left: offset.x, top: offset.y}}
+             ref={setNodeRef}
         >
-            {isMiddle && <BsStarFill />}
+            {tileIndex &&
+                <div className={`z-[10] ${isHovered && "opacity-80"}`}>
+                    <DraggableItem id={`${letter}-${String(tileIndex)}`} data={{type: "crossBattleTile", letter: letter, tileIndex: tileIndex}}>
+                        <CrossBattleTile tileSize={tileSize} 
+                                        tileLetter={letter}
+                        />
+                    </DraggableItem>
+                </div>
+            }
+            <div className="absolute">{isMiddle && <BsStarFill />}</div>
         </div>
     )
 }

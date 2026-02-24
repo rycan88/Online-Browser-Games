@@ -34,7 +34,7 @@ export const CrossBattle = ({}) => {
         const shuffled = [...str].sort(() => Math.random() - 0.5);
         let newLetters = shuffled.slice(0, length).join("");
 
-        while (countVowels(newLetters) < 4 || countVowels(newLetters) > 11) {
+        while (countVowels(newLetters) < 4 || countVowels(newLetters) > 4) {
             newLetters = randomCombo(letterTileString, 22);
         }
         return newLetters;

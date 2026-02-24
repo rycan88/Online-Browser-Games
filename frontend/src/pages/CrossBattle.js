@@ -21,7 +21,7 @@ export const CrossBattle = ({}) => {
     const dictionary = useScrabbleDictionary();
 
     // Scrabble tile counts except +2 tiles added for each vowel
-    const allLetterTiles = {1: "JKQXZ", 2: "BCFHMPVWY", 3: "G", 4: "DLS", 6: "NRTU", 10: "O", 11: "AI", 14: "E"};
+    const allLetterTiles = {1: "JKQXZ", 2: "BCFHMPVWY", 3: "G", 4: "DLSU", 6: "NRT", 8: "O", 9: "AI", 12: "E"};
     let letterTileString = "";
 
     Object.entries(allLetterTiles).forEach((entry) => {
@@ -34,7 +34,7 @@ export const CrossBattle = ({}) => {
         const shuffled = [...str].sort(() => Math.random() - 0.5);
         let newLetters = shuffled.slice(0, length).join("");
 
-        while (countVowels(newLetters) < 4) {
+        while (countVowels(newLetters) < 4 || countVowels(newLetters) > 11) {
             newLetters = randomCombo(letterTileString, 22);
         }
         return newLetters;

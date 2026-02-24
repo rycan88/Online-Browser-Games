@@ -12,9 +12,10 @@ import useScrabbleDictionary from '../hooks/useScrabbleDictionary';
 import { Overlay } from '../components/Overlay';
 import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattleResultsOverlay';
 
-// Make dragoverlay actually appear when not showing the hover
-// dont let letter go out of bounds
-// Fix mouse dragging error
+// Scale properly for different sizes
+// Work for mobile
+
+// Work for multiplayer
 
 
 export const CrossBattle = ({}) => {
@@ -34,7 +35,7 @@ export const CrossBattle = ({}) => {
         const shuffled = [...str].sort(() => Math.random() - 0.5);
         let newLetters = shuffled.slice(0, length).join("");
 
-        while (countVowels(newLetters) < 4 || countVowels(newLetters) > 4) {
+        while (countVowels(newLetters) < 5 || countVowels(newLetters) > 11) {
             newLetters = randomCombo(letterTileString, 22);
         }
         return newLetters;

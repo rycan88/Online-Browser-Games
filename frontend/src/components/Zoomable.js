@@ -1,7 +1,7 @@
 
 import { useRef, useState } from "react";
 
-export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, children}) => {
+export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, children, zoomBounds={min: 0.5, max: 3}}) => {
     const divRef = useRef(null)
 
     const dragging = useRef(false);
@@ -23,7 +23,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             const sensitivity = 0.1;
             const delta = -Math.sign(e.deltaY);
             const zoomFactor = Math.exp(delta * sensitivity);
-            const newScale = clamp(transform.scale * zoomFactor, 0.5, 3);
+            const newScale = clamp(transform.scale * zoomFactor, zoomBounds.min, zoomBounds.max);
 
             const rect = divRef.current.getBoundingClientRect()
 
@@ -88,6 +88,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             onMouseDown={onMouseDown}
             onMouseUp={onMouseUp}
             onMouseLeave={onMouseUp}
+            onMouseEnter={onMouseUp}
             onTouchMove={onTouchMove}
             onTouchStart={onTouchMove}
             onTouchEnd={onTouchMove}

@@ -22,15 +22,15 @@ export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTr
 
             const offset = {x: col * tileSize, y: row * tileSize}
 
-            let tileIndex = spaceToTile[id];
-            let letter = tileIndex ? letters[tileIndex] : null;
+            let tileIndex = spaceToTile(id);
+            let letter = tileIndex != null ? letters[tileIndex] : null;
             let isHovered = false;
 
-            if (!tileIndex && hoverData.spaceId === id) {
+            const isHoveredSettingOn = false;
+            if (tileIndex == null && hoverData.spaceId === id && isHoveredSettingOn) {
                 tileIndex = hoverData.tileIndex;
                 letter = hoverData.letter;
                 isHovered = true;
-                console.log(isHovered, hoverData, "cool")
             }
 
             tiles.push(
@@ -47,7 +47,7 @@ export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTr
     }
 
     return(
-        <Zoomable viewportSize={viewportSize} transform={transform} setTransform={setTransform} gridSizePx={gridSizePx}>
+        <Zoomable viewportSize={viewportSize} transform={transform} setTransform={setTransform} gridSizePx={gridSizePx} zoomBounds={{min: 0.75, max: 2}}>
             <div className="bg-[rgb(182,188,226)]"
                 style={{
                     width: gridSizePx,

@@ -1,4 +1,4 @@
-import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, rectIntersection, useSensor, useSensors } from '@dnd-kit/core';
 import { CrossBattleGrid } from '../components/cross-battle/CrossBattleGrid';
 import { CrossBattleTile } from '../components/cross-battle/CrossBattleTile';
 import { DraggableItem } from '../components/hanabi/DraggableItem';
@@ -6,13 +6,45 @@ import '../css/CrossBattle.css';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { useState } from 'react';
+import { CrossBattleHand } from '../components/cross-battle/CrossBattleHand';
+import { countVowels, scoreGrid } from '../components/cross-battle/CrossBattleUtils';
+import useScrabbleDictionary from '../hooks/useScrabbleDictionary';
+import { Overlay } from '../components/Overlay';
+import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattleResultsOverlay';
+
+// Make dragoverlay actually appear when not showing the hover
+// dont let letter go out of bounds
+// Fix mouse dragging error
+
 
 export const CrossBattle = ({}) => {
-    const letters = "EVERYONEISGOODEXCEPTME";
+    const dictionary = useScrabbleDictionary();
+
+    // Scrabble tile counts except +2 tiles added for each vowel
+    const allLetterTiles = {1: "JKQXZ", 2: "BCFHMPVWY", 3: "G", 4: "DLS", 6: "NRTU", 10: "O", 11: "AI", 14: "E"};
+    let letterTileString = "";
+
+    Object.entries(allLetterTiles).forEach((entry) => {
+        for (const char of entry[1]) {
+            letterTileString += char.repeat(Number(entry[0]));
+        }
+    });
+    
+    const randomCombo = (str, length) => {
+        const shuffled = [...str].sort(() => Math.random() - 0.5);
+        let newLetters = shuffled.slice(0, length).join("");
+
+        while (countVowels(newLetters) < 4) {
+            newLetters = randomCombo(letterTileString, 22);
+        }
+        return newLetters;
+    }
+
+    const [letters, setLetters] = useState(randomCombo(letterTileString, 22));
 
     const tileSize = 48;
-    const gridSize = 43;
-    const viewTiles = 11;
+    const gridSize = 33;
+    const viewTiles = 17;
 
     const viewportSize = tileSize * viewTiles;
     const centerTile = Math.floor(gridSize / 2);
@@ -21,21 +53,37 @@ export const CrossBattle = ({}) => {
     const initialY = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
     const [transform, setTransform] = useState({offsetX: initialX, offsetY: initialY, scale: 1});
 
-    const [spaceToTile, setSpaceToTile] = useState({});
+    const [score, setScore] = useState(0); 
+    const [validWords, setValidWords] = useState([]);
+    const [invalidWords, setInvalidWords] = useState([]);
+    const [unusedLetters, setUnusedLetters] = useState([]);
+    const [tileCoords, setTileCoords] = useState([]);
 
-    const moveTile = (startId, endId, tileIndex) => {
-        setSpaceToTile(prev => {
+    const [shouldShowResults, setShouldShowResults] = useState(false);
+
+    const onClose = () => {
+        setShouldShowResults(false);
+    }
+
+    const [tileToSpace, setTileToSpace] = useState(() => {
+        const initial = {}
+        for (let index = 0; index < letters.length; index++) {
+            initial[index] = `handSpace-${String(index)}`;
+        }
+        return initial;
+    });
+
+    const moveTile = (endId, tileIndex) => {
+        setTileToSpace(prev => {
             const next = { ...prev };
-
-            delete next[startId];
-            next[endId] = tileIndex;
+            next[tileIndex] = endId;
             return next;
         });
     }
 
     // Tile index to space Id
-    const tileToSpace = (tileIndex) => {
-        return Object.entries(spaceToTile).find(([, value]) => value === tileIndex)?.[0];
+    const spaceToTile = (spaceId) => {
+        return Object.entries(tileToSpace).find(([, value]) => value === spaceId)?.[0];
     }
 
     const sensors = useSensors(
@@ -67,7 +115,6 @@ export const CrossBattle = ({}) => {
 
         if (over) {
             setDraggingStyle({});
-            console.log(over.id, "HAHAHAH")
             setHoveredSpaceId(over.id);
         }
     }
@@ -79,9 +126,8 @@ export const CrossBattle = ({}) => {
             return;
         }
 
-        if (!spaceToTile[over.id]) {
-            moveTile(tileToSpace(active.data.current.tileIndex), over.id, active.data.current.tileIndex);
-            console.log(tileToSpace(active.data.current.tileIndex), over.id, active.data.current.tileIndex);
+        if (spaceToTile(over.id) == null) {
+            moveTile(over.id, active.data.current.tileIndex);
         }
 
         setDraggingStyle({});
@@ -90,24 +136,43 @@ export const CrossBattle = ({}) => {
         setHoveredSpaceId(null);
     }
 
-    if (hoveredSpaceId) {
-        console.log(hoveredSpaceId)
-    } else {
-        console.log('lol')
-    }
-
     return (
         <DndContext
             modifiers={[restrictToWindowEdges]}
             sensors={sensors}
-            collisionDetection={closestCenter}
+            collisionDetection={rectIntersection}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
             onDragMove={handleDragMove}
         >
             <div className="crossBattlePage entirePage">
-                <div className='flex flex-col items-center justify-around h-full'>
+                <CrossBattleResultsOverlay
+                    validWords={validWords}
+                    invalidWords={invalidWords} 
+                    unusedLetters={unusedLetters}
+                    score={score}
+                    tileCoords={tileCoords}
+                    onClose={onClose}
+                    isOpen={shouldShowResults}
+                />     
+
+                <div className='flex items-center justify-around h-full'>
+                    <div className='flex flex-col justify-around items-center'>
+                        <button className="gradientButton"                 
+                            onClick={() => {
+                                const {validWords: newValidWords, invalidWords: newInvalidWords, score: newScore, unusedLetters, coords: tileCoords} = scoreGrid(tileToSpace, letters, dictionary);
+                                setValidWords(newValidWords);
+                                setInvalidWords(newInvalidWords);
+                                setScore(newScore);
+                                setUnusedLetters(unusedLetters);
+                                setShouldShowResults(true);
+                                setTileCoords(tileCoords);
+                            }}>
+                            Submit
+                        </button>
+                    </div>
+
                     <CrossBattleGrid 
                         tileSize={tileSize} 
                         gridSize={gridSize} 
@@ -122,23 +187,15 @@ export const CrossBattle = ({}) => {
                     </CrossBattleGrid>
                         
                     
-                    <div className='flex flex-wrap justify-center h-[20vh] w-[50vh] bg-red-800'>
-                        {[...letters].map((letter, index) => {
-                            if (tileToSpace(index)) { return <></> }
-                            return (
-                                <DraggableItem id={`${letter}-${String(index)}`} data={{type: "crossBattleTile", letter: letter, tileIndex: index}}>
-                                    <CrossBattleTile tileSize={tileSize} 
-                                                    tileLetter={letter}
-                                    />
-                                </DraggableItem>
-
-                            )
-                        })}
-                    </div>
+                    <CrossBattleHand 
+                        tileSize={tileSize}
+                        spaceToTile={spaceToTile}
+                        letters={letters}
+                    />
                 </div>
 
                 <DragOverlay>
-                    {draggingStyle ? (
+                    {(draggingStyle) ? (
                         <div
                             style={{
                                 position: 'absolute',

@@ -56,8 +56,8 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
 
                 return {
                 ...t,
-                offsetX: clamp(t.offsetX + dx, 0, maxX),
-                offsetY: clamp(t.offsetY + dy, 0, maxY),
+                    offsetX: clamp(t.offsetX + dx, 0, maxX),
+                    offsetY: clamp(t.offsetY + dy, 0, maxY),
                 };
             });
         } else if (pointers.current.size === 2) {
@@ -65,7 +65,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             const center = getCenter();
 
             if (lastDistance.current) {
-                const diff = distance - lastDistance.current;
+                const diff = lastDistance.current - distance;
                 setTransform((t) => {
                     return zoomTransform(t, diff, center)
                 });
@@ -78,6 +78,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
     const handlePointerUp = (e) => {
         pointers.current.delete(e.pointerId);
         lastDistance.current = null;
+        lastPointers.current.delete(e.pointerId);
     };
 
     

@@ -10,6 +10,70 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
     const clamp = (value, min, max) =>
         Math.min(max, Math.max(min, value));
 
+    const pointers = useRef(new Map());
+    const lastDistance = useRef(null);
+    const lastPointers = useRef(new Map());
+
+    const getDistance = () => {
+        const values = [...pointers.current.values()];
+        if (values.length < 2) return null;
+
+        const dx = values[0].x - values[1].x;
+        const dy = values[0].y - values[1].y;
+        return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const handlePointerDown = (e) => {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        lastPointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    };
+
+    const handlePointerMove = (e) => {
+        if (!pointers.current.has(e.pointerId)) return;
+
+        pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (pointers.current.size === 1) {
+            const prev = lastPointers.current.get(e.pointerId);
+            const dx = prev.x - e.clientX;
+            const dy = prev.y - e.clientY;
+
+            lastPointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+            setTransform((t) => {
+                const maxX = gridSizePx * t.scale - viewportSize;
+                const maxY = gridSizePx * t.scale - viewportSize;
+
+                return {
+                ...t,
+                offsetX: clamp(t.offsetX + dx, 0, maxX),
+                offsetY: clamp(t.offsetY + dy, 0, maxY),
+                };
+            });
+        } else if (pointers.current.size === 2) {
+            const distance = getDistance();
+
+            if (lastDistance.current) {
+                const diff = distance - lastDistance.current;
+                setTransform((t) => {
+                    return {
+                        ...t,
+                        scale: clamp(t.scale + diff * 0.01, zoomBounds.min, zoomBounds.max),
+                    }
+                });
+            }
+
+            lastDistance.current = distance;
+        }
+    };
+
+    const handlePointerUp = (e) => {
+        pointers.current.delete(e.pointerId);
+        lastDistance.current = null;
+    };
+
+    
     const onWheel = (e) => {
         e.preventDefault();
 
@@ -23,7 +87,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             const sensitivity = 0.1;
             const delta = -Math.sign(e.deltaY);
             const zoomFactor = Math.exp(delta * sensitivity);
-            const newScale = clamp(transform.scale * zoomFactor, zoomBounds.min, zoomBounds.max);
+            const newScale = clamp(prevTransform.scale * zoomFactor, zoomBounds.min, zoomBounds.max);
 
             const rect = divRef.current.getBoundingClientRect()
 
@@ -74,10 +138,6 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
         dragging.current = false;
     };
 
-    const onTouchMove = (e) => {
-        e.preventDefault();
-    };
-
     return (
         <div
             className="overflow-hidden relative border border-slate-100 select-none touch-none"
@@ -89,10 +149,9 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             onMouseUp={onMouseUp}
             onMouseLeave={onMouseUp}
             onMouseEnter={onMouseUp}
-            onTouchMove={onTouchMove}
-            onTouchStart={onTouchMove}
-            onTouchEnd={onTouchMove}
-        
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerMove={handlePointerMove}
         >
             <div
                 className="absolute top-0 left-0 origin-top-left cursor-grab active:cursor-grabbing"

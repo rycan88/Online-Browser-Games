@@ -47,18 +47,18 @@ export const CrossBattle = ({}) => {
 
     const gridSize = 33;
     const viewTiles = 17;
-    const [tileSize, setTileSize] = useState(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : window.innerHeight * 0.60 / viewTiles);
+    const [tileSize, setTileSize] = useState(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.85) / viewTiles);
 
     const viewportSize = tileSize * viewTiles; // window.innerHeight * 0.9
 
     useEffect(() => {
         const handleResize = () => {
-            setTileSize(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : window.innerHeight * 0.60 / viewTiles);
+            setTileSize(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.85) / viewTiles);
         }
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-    }, [])
+    }, [orientation, window])
 
     const centerTile = Math.floor(gridSize / 2);
 

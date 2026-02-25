@@ -23,6 +23,15 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
         return Math.sqrt(dx * dx + dy * dy);
     };
 
+    const getCenter = () => {
+        const values = [...pointers.current.values()];
+        if (values.length < 2) return null;
+
+        const x = values[0].x - (values[0].x - values[1].x) / 2;
+        const y = values[0].y - (values[0].y - values[1].y) / 2;
+        return {clientX: x, clientY: y};
+    };
+
     const handlePointerDown = (e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
         pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -53,14 +62,12 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             });
         } else if (pointers.current.size === 2) {
             const distance = getDistance();
+            const center = getCenter();
 
             if (lastDistance.current) {
                 const diff = distance - lastDistance.current;
                 setTransform((t) => {
-                    return {
-                        ...t,
-                        scale: clamp(t.scale + diff * 0.01, zoomBounds.min, zoomBounds.max),
-                    }
+                    return zoomTransform(t, diff, center)
                 });
             }
 
@@ -74,6 +81,34 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
     };
 
     
+    const zoomTransform = (prevTransform, deltaY, coord) => {
+        const { offsetX, offsetY, scale: prevScale } = prevTransform;
+
+        const sensitivity = 0.1;
+        const delta = -Math.sign(deltaY);
+        const zoomFactor = Math.exp(delta * sensitivity);
+        const newScale = clamp(prevTransform.scale * zoomFactor, zoomBounds.min, zoomBounds.max);
+
+        const rect = divRef.current.getBoundingClientRect()
+
+        const scaleRatio = newScale / prevScale;
+
+        const mouseOffset = {x: coord.clientX - rect.left, y: coord.clientY - rect.top}
+
+        const newOffsetX = (offsetX + mouseOffset.x) * scaleRatio - mouseOffset.x;
+
+        const newOffsetY = (offsetY + mouseOffset.y) * scaleRatio - mouseOffset.y;
+        
+        const maxX = gridSizePx * newScale - viewportSize;
+        const maxY = gridSizePx * newScale - viewportSize;
+        
+        return {
+            offsetX: clamp(newOffsetX, 0, maxX),
+            offsetY: clamp(newOffsetY, 0, maxY),
+            scale: newScale,
+        };
+    }
+
     const onWheel = (e) => {
         e.preventDefault();
 
@@ -81,32 +116,8 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             return;
         }
         
-        setTransform((prevTransform) => {
-            const { offsetX, offsetY, scale: prevScale } = prevTransform;
-
-            const sensitivity = 0.1;
-            const delta = -Math.sign(e.deltaY);
-            const zoomFactor = Math.exp(delta * sensitivity);
-            const newScale = clamp(prevTransform.scale * zoomFactor, zoomBounds.min, zoomBounds.max);
-
-            const rect = divRef.current.getBoundingClientRect()
-
-            const scaleRatio = newScale / prevScale;
-
-            const mouseOffset = {x: e.clientX - rect.left, y: e.clientY - rect.top}
-
-            const newOffsetX = (offsetX + mouseOffset.x) * scaleRatio - mouseOffset.x;
-
-            const newOffsetY = (offsetY + mouseOffset.y) * scaleRatio - mouseOffset.y;
-            
-            const maxX = gridSizePx * newScale - viewportSize;
-            const maxY = gridSizePx * newScale - viewportSize;
-            
-            return {
-                offsetX: clamp(newOffsetX, 0, maxX),
-                offsetY: clamp(newOffsetY, 0, maxY),
-                scale: newScale,
-            };
+        setTransform((prevTransform) => {  
+            return zoomTransform(prevTransform, e.deltaY, {clientX: e.clientX, clientY: e.clientY});
         });
     };
 

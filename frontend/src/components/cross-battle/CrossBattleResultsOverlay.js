@@ -14,7 +14,7 @@ export const CrossBattleResultsOverlay = ({validWords, invalidWords, unusedLette
             )
 
             validWordsText.push(
-                <div className="indent-2 w-full text-sm text-green-500">
+                <div className={`ml-[12px] w-full text-sm ${i > 2 && "text-green-500"}`}>
                     {`[${words.join("] [")}]`}
                 </div>
             )
@@ -86,7 +86,7 @@ export const CrossBattleResultsOverlay = ({validWords, invalidWords, unusedLette
                                         <div>{`Unused letters (${unusedLetters.length})`}</div>
                                         <div className="text-red-400">-{unusedLetters.length}</div>
                                     </div>
-                                    <div className="text-red-400">{unusedLetters}</div>
+                                    <div className="text-red-400 ml-[12px]">{unusedLetters}</div>
                                 </div>
                             }
                             <div className="flex flex-col items-center justify-center">

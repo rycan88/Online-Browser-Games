@@ -5,12 +5,13 @@ import { DraggableItem } from '../components/hanabi/DraggableItem';
 import '../css/CrossBattle.css';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CrossBattleHand } from '../components/cross-battle/CrossBattleHand';
 import { countVowels, scoreGrid } from '../components/cross-battle/CrossBattleUtils';
 import useScrabbleDictionary from '../hooks/useScrabbleDictionary';
 import { Overlay } from '../components/Overlay';
 import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattleResultsOverlay';
+import { useOrientation } from '../hooks/useOrientation';
 
 // Scale properly for different sizes
 // Work for mobile
@@ -19,6 +20,7 @@ import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattl
 
 
 export const CrossBattle = ({}) => {
+    const orientation = useOrientation();
     const dictionary = useScrabbleDictionary();
 
     // Scrabble tile counts except +2 tiles added for each vowel
@@ -43,15 +45,26 @@ export const CrossBattle = ({}) => {
 
     const [letters, setLetters] = useState(randomCombo(letterTileString, 22));
 
-    const tileSize = 48;
     const gridSize = 33;
     const viewTiles = 17;
+    const [tileSize, setTileSize] = useState(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : window.innerHeight * 0.60 / viewTiles);
 
-    const viewportSize = tileSize * viewTiles;
+    const viewportSize = tileSize * viewTiles; // window.innerHeight * 0.9
+
+    useEffect(() => {
+        const handleResize = () => {
+            setTileSize(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : window.innerHeight * 0.60 / viewTiles);
+        }
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [])
+
     const centerTile = Math.floor(gridSize / 2);
 
     const initialX = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
     const initialY = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
+
     const [transform, setTransform] = useState({offsetX: initialX, offsetY: initialY, scale: 1});
 
     const [score, setScore] = useState(0); 
@@ -158,8 +171,8 @@ export const CrossBattle = ({}) => {
                     isOpen={shouldShowResults}
                 />     
 
-                <div className='flex items-center justify-around h-full'>
-                    <div className='flex flex-col justify-around items-center'>
+                <div className={`flex ${orientation !== "landscape" && "flex-col"} items-center justify-around h-full`}>
+                    <div className={`flex justify-around items-center`}>
                         <button className="gradientButton"                 
                             onClick={() => {
                                 const {validWords: newValidWords, invalidWords: newInvalidWords, score: newScore, unusedLetters, coords: tileCoords} = scoreGrid(tileToSpace, letters, dictionary);
@@ -192,6 +205,7 @@ export const CrossBattle = ({}) => {
                         tileSize={tileSize}
                         spaceToTile={spaceToTile}
                         letters={letters}
+                        orientation={orientation}
                     />
                 </div>
 

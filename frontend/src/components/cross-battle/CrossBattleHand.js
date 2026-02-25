@@ -4,7 +4,7 @@ import { Zoomable } from "../Zoomable";
 import { CrossBattleGridSpace } from "./CrossBattleGridSpace";
 import { CrossBattleHandSpace } from "./CrossBattleHandSpace";
 
-export const CrossBattleHand = ({tileSize, spaceToTile, letters}) => {
+export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation}) => {
     const tiles = [];
 
     for (let index = 0; index < letters.length; index++) {
@@ -27,8 +27,8 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters}) => {
     
 
     return (
-        <div className='flex flex-col flex-wrap items-center justify-center'
-                style={{height: tileSize * 11.5, width: tileSize * 3}}
+        <div className={`flex ${orientation === "landscape" && "flex-col"} flex-wrap items-center justify-center`}
+                style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 3, width: orientation === "landscape" ? tileSize * 3 : tileSize * 11.5}}
         >
             {tiles}
         </div>

@@ -68,7 +68,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             if (lastDistance.current) {
                 const diff = lastDistance.current - distance;
                 setTransform((t) => {
-                    return zoomTransform(t, diff * 0.01, center)
+                    return zoomTransform(t, diff * 0.2, center)
                 });
             }
 

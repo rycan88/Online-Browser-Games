@@ -33,6 +33,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
     };
 
     const handlePointerDown = (e) => {
+        if (e.target !== e.currentTarget) return;
         e.currentTarget.setPointerCapture(e.pointerId);
         pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
         lastPointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -67,7 +68,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
             if (lastDistance.current) {
                 const diff = lastDistance.current - distance;
                 setTransform((t) => {
-                    return zoomTransform(t, diff, center)
+                    return zoomTransform(t, diff * 0.01, center)
                 });
             }
 

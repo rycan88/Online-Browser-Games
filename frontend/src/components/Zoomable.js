@@ -132,8 +132,6 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerMove={handlePointerMove}
-            onPointerEnter={handlePointerUp}
-            onPointerLeave={handlePointerUp}
         >
             <div
                 className="absolute top-0 left-0 origin-top-left cursor-grab active:cursor-grabbing"

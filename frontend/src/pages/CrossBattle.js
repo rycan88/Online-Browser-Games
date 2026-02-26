@@ -12,6 +12,7 @@ import useScrabbleDictionary from '../hooks/useScrabbleDictionary';
 import { Overlay } from '../components/Overlay';
 import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattleResultsOverlay';
 import { useOrientation } from '../hooks/useOrientation';
+import useFullscreen from '../hooks/useFullscreen';
 
 // Scale properly for different sizes
 // Work for mobile
@@ -22,6 +23,10 @@ import { useOrientation } from '../hooks/useOrientation';
 export const CrossBattle = ({}) => {
     const orientation = useOrientation();
     const dictionary = useScrabbleDictionary();
+    
+    useEffect(() => {
+        window.scrollTo(0, 1000);
+    }, []);
 
     // Scrabble tile counts except +2 tiles added for each vowel
     const allLetterTiles = {1: "JKQXZ", 2: "BCFHMPVWY", 3: "G", 4: "DLSU", 6: "NRT", 8: "O", 9: "AI", 12: "E"};
@@ -152,6 +157,7 @@ export const CrossBattle = ({}) => {
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
             onDragMove={handleDragMove}
+
         >
             <div className="crossBattlePage entirePage">
                 <CrossBattleResultsOverlay

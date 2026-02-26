@@ -68,7 +68,7 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
             if (lastDistance.current) {
                 const diff = lastDistance.current - distance;
                 setTransform((t) => {
-                    return zoomTransform(t, diff * 0.02, center)
+                    return zoomTransform(t, -Math.sign(diff), center, false);
                 });
             }
 
@@ -84,12 +84,11 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
     };
 
     
-    const zoomTransform = (prevTransform, deltaY, coord) => {
+    const zoomTransform = (prevTransform, direction, coord, isWheel=true) => {
         const { offsetX, offsetY, scale: prevScale } = prevTransform;
 
-        const sensitivity = 0.1;
-        const delta = -Math.sign(deltaY);
-        const zoomFactor = Math.exp(delta * sensitivity);
+        const sensitivity = isWheel ? 0.1 : 0.03;
+        const zoomFactor = Math.exp(direction * sensitivity);
         const newScale = clamp(prevTransform.scale * zoomFactor, zoomBounds.min, zoomBounds.max);
 
         const rect = divRef.current.getBoundingClientRect()
@@ -120,7 +119,7 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
         }
         
         setTransform((prevTransform) => {  
-            return zoomTransform(prevTransform, e.deltaY, {clientX: e.clientX, clientY: e.clientY});
+            return zoomTransform(prevTransform, -Math.sign(e.deltaY), {clientX: e.clientX, clientY: e.clientY});
         });
     };
 

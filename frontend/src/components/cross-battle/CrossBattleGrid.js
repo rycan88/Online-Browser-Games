@@ -40,7 +40,7 @@ export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTr
     console.log(activeType, activeType === "crossBattleTile")
     return(
         <Zoomable viewportSize={viewportSize} shouldLockTransform={activeType === "crossBattleTile"} transform={transform} setTransform={setTransform} gridSizePx={gridSizePx} zoomBounds={{min: 0.5, max: 1}}>
-            <div className="bg-[rgb(182,188,226)]"
+            <div className="bg-[rgb(182,188,226)] touch-none"
                 style={{
                     width: gridSizePx,
                     height: gridSizePx,

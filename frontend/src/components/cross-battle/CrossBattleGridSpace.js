@@ -10,7 +10,7 @@ export const CrossBattleGridSpace = ({tileSize, isMiddle, offset, id, tileData})
     const {letter, tileIndex} = tileData;
 
     return (
-        <div className={`absolute flex items-center justify-center bg-gradient-to-br ${isMiddle ? "bg-slate-100" : "bg-slate-700"}  border-none text-black rounded-[10%]`} 
+        <div className={`absolute flex items-center justify-center bg-gradient-to-br ${isMiddle ? "bg-slate-100" : "bg-slate-700"}  border-none text-black rounded-[10%] touch-none`} 
              style={{height: tileSize, width: tileSize, fontSize: tileSize / 1.5, left: offset.x, top: offset.y, boxShadow: `inset 0 0 0 ${tileSize / 24}px rgb(182,188,226)`}}
              ref={setNodeRef}
         >

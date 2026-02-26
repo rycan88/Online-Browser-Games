@@ -46,8 +46,10 @@ export const CrossBattle = ({}) => {
     const [letters, setLetters] = useState(randomCombo(letterTileString, 22));
 
     const gridSize = 33;
-    const viewTiles = orientation === "landscape" ? 15 : 11;
+
     const viewportSize = orientation === "landscape" ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95); 
+    const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 11 : 9);
+
     const tileSize = viewportSize / viewTiles;
 
     const centerTile = Math.floor(gridSize / 2);

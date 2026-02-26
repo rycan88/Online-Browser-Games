@@ -1,7 +1,9 @@
+import { useOrientation } from "../../hooks/useOrientation";
 import { Overlay } from "../Overlay";
 import { crossBattleScoring } from "./CrossBattleUtils";
 
 export const CrossBattleResultsOverlay = ({validWords, invalidWords, unusedLetters, score, tileCoords, onClose, isOpen}) => {
+    const orientation = useOrientation();
     const validWordsText = []
     for (let i = 15; i > 1; i--) {
         const words = validWords.filter((word) => word.length === i);
@@ -59,8 +61,8 @@ export const CrossBattleResultsOverlay = ({validWords, invalidWords, unusedLette
                     Results
                 </div>
                 <div className="h-full w-full overflow-x-auto scrollbar-hide flex gap-2 text-start">
-                    <div className="myContainerCardInnerBox flex flex-row justify-between w-[100%] py-[1vh] px-[2vh]">
-                        <div className="flex flex-col h-full w-[40%] text-[16px]">
+                    <div className={`myContainerCardInnerBox flex ${orientation !== "landscape" && "flex-col"} justify-between w-[100%] py-[1vh] px-[2vh]`}>
+                        <div className={`flex flex-col ${orientation === "landscape" ? "h-full w-[40%]": "w-full h-[40%]"} text-[16px]`}>
                             <div className="flex items-center justify-center underline text-[20px] pb-[6px]">Rycan88</div>
                             { validWords.length > 0 &&
                                 <div>
@@ -98,7 +100,7 @@ export const CrossBattleResultsOverlay = ({validWords, invalidWords, unusedLette
                             </div>
                         </div>
 
-                        <div className="w-[50%] aspect-square grid grid-cols-[repeat(23,1fr)] grid-rows-[repeat(23,1fr)] border border-slate-500">
+                        <div className={`${orientation === "landscape" ? "w-[50%]": "h-[40%]"} aspect-square grid grid-cols-[repeat(23,1fr)] grid-rows-[repeat(23,1fr)] border border-slate-500`}>
                             {gridArray}
                         </div>
                     </div>

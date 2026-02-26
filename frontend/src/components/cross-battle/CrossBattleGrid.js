@@ -3,7 +3,7 @@ import { DropZone } from "../hanabi/DropZone";
 import { Zoomable } from "../Zoomable";
 import { CrossBattleGridSpace } from "./CrossBattleGridSpace";
 
-export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTransform, spaceToTile, letters, hoverData}) => {
+export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTransform, spaceToTile, letters, activeType}) => {
     const viewportSize = tileSize * viewTiles;
 
     const newTileSize = tileSize * transform.scale;
@@ -24,14 +24,6 @@ export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTr
 
             let tileIndex = spaceToTile(id);
             let letter = tileIndex != null ? letters[tileIndex] : null;
-            let isHovered = false;
-
-            const isHoveredSettingOn = false;
-            if (tileIndex == null && hoverData.spaceId === id && isHoveredSettingOn) {
-                tileIndex = hoverData.tileIndex;
-                letter = hoverData.letter;
-                isHovered = true;
-            }
 
             tiles.push(
                 <CrossBattleGridSpace 
@@ -40,14 +32,14 @@ export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTr
                     tileSize={tileSize} 
                     isMiddle={isMiddle} 
                     offset={offset}
-                    tileData={{letter, tileIndex, isHovered: isHovered}}
+                    tileData={{letter, tileIndex}}
                 />
             )
         }
     }
-
+    console.log(activeType, activeType === "crossBattleTile")
     return(
-        <Zoomable viewportSize={viewportSize} transform={transform} setTransform={setTransform} gridSizePx={gridSizePx} zoomBounds={{min: 0.75, max: 2}}>
+        <Zoomable viewportSize={viewportSize} shouldLockTransform={activeType === "crossBattleTile"} transform={transform} setTransform={setTransform} gridSizePx={gridSizePx} zoomBounds={{min: 0.5, max: 1}}>
             <div className="bg-[rgb(182,188,226)]"
                 style={{
                     width: gridSizePx,

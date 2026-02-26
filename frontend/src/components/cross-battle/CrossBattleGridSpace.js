@@ -7,7 +7,7 @@ import { DraggableItem } from "../hanabi/DraggableItem";
 export const CrossBattleGridSpace = ({tileSize, isMiddle, offset, id, tileData}) => {
     const { active, isOver, setNodeRef } = useDroppable({ id });
 
-    const {letter, tileIndex, isHovered} = tileData;
+    const {letter, tileIndex} = tileData;
 
     return (
         <div className={`absolute flex items-center justify-center bg-gradient-to-br ${isMiddle ? "bg-slate-100" : "bg-slate-700"}  border-none text-black rounded-[10%]`} 
@@ -15,13 +15,6 @@ export const CrossBattleGridSpace = ({tileSize, isMiddle, offset, id, tileData})
              ref={setNodeRef}
         >
             {tileIndex != null && (
-                isHovered ?
-                    <div className={`z-[10] ${isHovered && "opacity-80"}`}>
-                        <CrossBattleTile tileSize={tileSize} 
-                                        tileLetter={letter}
-                        />
-                    </div>
-                :
                 <div className={`z-[10]`}>
                     <DraggableItem id={`${letter}-${String(tileIndex)}`} data={{type: "crossBattleTile", letter: letter, tileIndex: tileIndex}}>
                         <CrossBattleTile tileSize={tileSize} 

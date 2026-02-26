@@ -1,7 +1,7 @@
 
 import { useRef, useState } from "react";
 
-export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, children, zoomBounds={min: 0.5, max: 3}}) => {
+export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTransform, gridSizePx, children, zoomBounds={min: 0.5, max: 3}}) => {
     const divRef = useRef(null)
 
     const dragging = useRef(false);
@@ -32,15 +32,15 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
         return {clientX: x, clientY: y};
     };
 
-    const handlePointerDown = (e) => {
-        if (e.target !== e.currentTarget) return;
+    const handlePointerDown = (e) => {    
         e.currentTarget.setPointerCapture(e.pointerId);
         pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
         lastPointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        dragging.current = true;
     };
 
     const handlePointerMove = (e) => {
-        if (!pointers.current.has(e.pointerId)) return;
+        if (!pointers.current.has(e.pointerId) || shouldLockTransform || !dragging.current) return;
 
         pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
@@ -80,6 +80,7 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
         pointers.current.delete(e.pointerId);
         lastDistance.current = null;
         lastPointers.current.delete(e.pointerId);
+        dragging.current = false;
     };
 
     
@@ -123,48 +124,17 @@ export const Zoomable = ({viewportSize, transform, setTransform, gridSizePx, chi
         });
     };
 
-    const onMouseDown = (e) => {
-        dragging.current = true;
-        last.current = { x: e.clientX, y: e.clientY };
-    };
-
-    const onMouseMove = (e) => {
-        if (!dragging.current) return;
-
-        const dx = last.current.x - e.clientX;
-        const dy = last.current.y - e.clientY;
-        last.current = { x: e.clientX, y: e.clientY };
-
-        setTransform((transform) => {
-            const maxX = gridSizePx * transform.scale - viewportSize;
-            const maxY = gridSizePx * transform.scale - viewportSize;
-
-            return {
-                offsetX: clamp(transform.offsetX + dx, 0, maxX),
-                offsetY: clamp(transform.offsetY + dy, 0, maxY),
-                scale: transform.scale,
-            };
-        });
-    };
-
-    const onMouseUp = () => {
-        dragging.current = false;
-    };
-
     return (
         <div
             className="overflow-hidden relative border border-slate-100 select-none touch-none"
             style={{ width: viewportSize, height: viewportSize }}
             ref={divRef}
             onWheel={onWheel}
-            onMouseMove={onMouseMove}
-            onMouseDown={onMouseDown}
-            onMouseUp={onMouseUp}
-            onMouseLeave={onMouseUp}
-            onMouseEnter={onMouseUp}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             onPointerMove={handlePointerMove}
+            onPointerEnter={handlePointerUp}
+            onPointerLeave={handlePointerUp}
         >
             <div
                 className="absolute top-0 left-0 origin-top-left cursor-grab active:cursor-grabbing"

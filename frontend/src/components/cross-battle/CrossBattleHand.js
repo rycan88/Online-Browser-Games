@@ -28,7 +28,7 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation}) =
 
     return (
         <div className={`flex ${orientation === "landscape" && "flex-col"} flex-wrap items-center justify-center`}
-                style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 3, width: orientation === "landscape" ? tileSize * 3 : tileSize * 11.5}}
+                style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 4, width: orientation === "landscape" ? tileSize * 3 : tileSize * 8.5}}
         >
             {tiles}
         </div>

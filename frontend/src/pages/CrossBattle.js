@@ -46,19 +46,9 @@ export const CrossBattle = ({}) => {
     const [letters, setLetters] = useState(randomCombo(letterTileString, 22));
 
     const gridSize = 33;
-    const viewTiles = 17;
-    const [tileSize, setTileSize] = useState(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.85) / viewTiles);
-
-    const viewportSize = tileSize * viewTiles; // window.innerHeight * 0.9
-
-    useEffect(() => {
-        const handleResize = () => {
-            setTileSize(orientation === "landscape" ? window.innerHeight * 0.85 / viewTiles : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.85) / viewTiles);
-        }
-
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, [orientation, window])
+    const viewTiles = orientation === "landscape" ? 15 : 11;
+    const viewportSize = orientation === "landscape" ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95); 
+    const tileSize = viewportSize / viewTiles;
 
     const centerTile = Math.floor(gridSize / 2);
 
@@ -119,6 +109,7 @@ export const CrossBattle = ({}) => {
     const handleDragStart = (event) => {
         if (event.active.data.current.type) {
             setActiveData({letter: event.active.data.current.letter, tileIndex: event.active.data.current.tileIndex});
+            setActiveType(event.active.data.current.type);
         } else {
             setActiveType(null);
         }
@@ -171,7 +162,7 @@ export const CrossBattle = ({}) => {
                     isOpen={shouldShowResults}
                 />     
 
-                <div className={`flex ${orientation !== "landscape" && "flex-col"} items-center justify-around h-full`}>
+                <div className={`flex ${orientation !== "landscape" && "flex-col"} items-center justify-center h-full`}>
                     <div className={`flex justify-around items-center`}>
                         <button className="gradientButton"                 
                             onClick={() => {
@@ -195,8 +186,7 @@ export const CrossBattle = ({}) => {
                         setTransform={setTransform}
                         spaceToTile={spaceToTile}
                         letters={letters}
-                        hoverData={{spaceId: hoveredSpaceId, tileIndex: activeData.tileIndex, letter: activeData.letter}}
-
+                        activeType={activeType}
                     >
                     </CrossBattleGrid>
                         

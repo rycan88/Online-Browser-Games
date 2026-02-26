@@ -68,7 +68,7 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
             if (lastDistance.current) {
                 const diff = lastDistance.current - distance;
                 setTransform((t) => {
-                    return zoomTransform(t, diff * 0.2, center)
+                    return zoomTransform(t, diff * 0.02, center)
                 });
             }
 

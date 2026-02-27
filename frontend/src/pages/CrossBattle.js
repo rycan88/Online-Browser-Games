@@ -47,11 +47,13 @@ export const CrossBattle = ({}) => {
             while (newLetters.length < length) {
                 const num = Math.floor(Math.random() * tilePoolLength);
                 const letter = str[num];
+                if (!counter[letter]) { counter[letter] = 0; }
+                
                 if (counter[letter] >= letterCounts[letter]) {
                     continue;
                 }
 
-                counter[str[num]] += 1; 
+                counter[letter] += 1; 
                 newLetters += str[num];
             }
             if (countVowels(newLetters) >= 5 && countVowels(newLetters) <= 11) {

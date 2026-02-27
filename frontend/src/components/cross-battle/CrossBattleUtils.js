@@ -59,6 +59,9 @@ export const countVowels = (word) => {
 
 export const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
+// x 0 1 2 3  4
+// y 0 3 7 12 18
+
 export const sortByWordLength = (arr) => {
     arr.sort((a, b) => {
         if (a.length === b.length) { return a.localeCompare(b); }

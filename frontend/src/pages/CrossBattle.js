@@ -28,23 +28,36 @@ export const CrossBattle = ({}) => {
     }, []);
 
     // Scrabble tile counts
-    const allLetterTiles = {1: "JKQXZ", 2: "BCFHMPVWY", 3: "G", 4: "DLSU", 6: "NRT", 8: "O", 9: "AI", 12: "E"};
+    const allLetterTiles = {1: "JQXZV", 2: "BWYK", 3: "FMPHC", 4: "DUG", 6: "NRTSL", 8: "O", 9: "AI", 12: "E"};
+    const letterCounts = {}
     let letterTileString = "";
 
     Object.entries(allLetterTiles).forEach((entry) => {
         for (const char of entry[1]) {
             letterTileString += char.repeat(Number(entry[0]));
+            letterCounts[char] = entry[0];
         }
     });
     
     const randomCombo = (str, length) => {
-        const shuffled = [...str].sort(() => Math.random() - 0.5);
-        let newLetters = shuffled.slice(0, length).join("");
+        const tilePoolLength = str.length;
+        while (true) {
+            let newLetters = "";
+            const counter = {}
+            while (newLetters.length < length) {
+                const num = Math.floor(Math.random() * tilePoolLength);
+                const letter = str[num];
+                if (counter[letter] >= letterCounts[letter]) {
+                    continue;
+                }
 
-        while (countVowels(newLetters) < 5 || countVowels(newLetters) > 11) {
-            newLetters = randomCombo(letterTileString, 22);
+                counter[str[num]] += 1; 
+                newLetters += str[num];
+            }
+            if (countVowels(newLetters) >= 5 && countVowels(newLetters) <= 11) {
+                return newLetters
+            }
         }
-        return newLetters;
     }
 
     const [letters, setLetters] = useState(randomCombo(letterTileString, 22));

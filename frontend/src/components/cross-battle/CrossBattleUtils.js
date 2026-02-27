@@ -57,7 +57,7 @@ export const countVowels = (word) => {
     return counter;
 }
 
-export const crossBattleScoring = {2: 0, 3: 3, 4: 6, 5: 9, 6: 12, 7: 15, 8: 18, 9: 21, 10: 24, 11: 27, 12: 30, 13: 33, 14: 36, 15: 39};
+export const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
 export const sortByWordLength = (arr) => {
     arr.sort((a, b) => {
@@ -183,8 +183,8 @@ export const scoreGrid = (tileToSpace, letters, dictionary) => {
 
     const {minX, maxX, minY, maxY} = getBounds(coords);
     // minX - deltaX === 22 - (min - deltaX)
-    const deltaX = Math.floor((minX + maxX - 22) / 2);
-    const deltaY = Math.floor((minY + maxY - 22) / 2);
+    const deltaX = Math.floor((minX + maxX - 15) / 2);
+    const deltaY = Math.floor((minY + maxY - 15) / 2);
     
     coords.forEach((coord) => {
         coord.x -= deltaX;

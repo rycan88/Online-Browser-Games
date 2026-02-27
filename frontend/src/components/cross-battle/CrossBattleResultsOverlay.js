@@ -100,7 +100,7 @@ export const CrossBattleResultsOverlay = ({validWords, invalidWords, unusedLette
                             </div>
                         </div>
 
-                        <div className={`${orientation === "landscape" ? "w-[50%]": "h-[40%]"} aspect-square grid grid-cols-[repeat(23,1fr)] grid-rows-[repeat(23,1fr)] border border-slate-500`}>
+                        <div className={`${orientation === "landscape" ? "w-[50%]": "h-[40%]"} aspect-square grid grid-cols-[repeat(16,1fr)] grid-rows-[repeat(16,1fr)] border border-slate-500`}>
                             {gridArray}
                         </div>
                     </div>

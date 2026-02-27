@@ -3,9 +3,7 @@ import { DropZone } from "../hanabi/DropZone";
 import { Zoomable } from "../Zoomable";
 import { CrossBattleGridSpace } from "./CrossBattleGridSpace";
 
-export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTransform, spaceToTile, letters, activeType}) => {
-    const viewportSize = tileSize * viewTiles;
-
+export const CrossBattleGrid = ({tileSize, gridSize, viewportSize, transform, setTransform, spaceToTile, letters, activeType}) => {
     const newTileSize = tileSize * transform.scale;
     const gridSizePx = tileSize * gridSize;
 
@@ -37,7 +35,7 @@ export const CrossBattleGrid = ({tileSize, gridSize, viewTiles, transform, setTr
             )
         }
     }
-    console.log(activeType, activeType === "crossBattleTile")
+
     return(
         <Zoomable viewportSize={viewportSize} shouldLockTransform={activeType === "crossBattleTile"} transform={transform} setTransform={setTransform} gridSizePx={gridSizePx} zoomBounds={{min: 0.5, max: 1}}>
             <div className="bg-[rgb(182,188,226)] touch-none"

@@ -15,10 +15,9 @@ import { useOrientation } from '../hooks/useOrientation';
 import useFullscreen from '../hooks/useFullscreen';
 
 // Scale properly for different sizes
-// Work for mobile
+// Allow swap tiles
 
 // Work for multiplayer
-
 
 export const CrossBattle = ({}) => {
     const orientation = useOrientation();
@@ -28,7 +27,7 @@ export const CrossBattle = ({}) => {
         window.scrollTo(0, 1000);
     }, []);
 
-    // Scrabble tile counts except +2 tiles added for each vowel
+    // Scrabble tile counts
     const allLetterTiles = {1: "JKQXZ", 2: "BCFHMPVWY", 3: "G", 4: "DLSU", 6: "NRT", 8: "O", 9: "AI", 12: "E"};
     let letterTileString = "";
 
@@ -52,17 +51,39 @@ export const CrossBattle = ({}) => {
 
     const gridSize = 33;
 
-    const viewportSize = orientation === "landscape" ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95); 
+    const [viewportSize, setViewportSize] = useState(orientation === "landscape" ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95)); 
+    
     const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 11 : 9);
-
     const tileSize = viewportSize / viewTiles;
 
     const centerTile = Math.floor(gridSize / 2);
 
     const initialX = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
     const initialY = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
+    const [transform, setTransform] = useState({offsetX: initialX, offsetY: initialY, scale: 1, viewportSize: viewportSize, tileSize: tileSize});
+    
+    useEffect(() => {
+        const handleResize = () => {
+            const newViewportSize = orientation === "landscape" ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95);
+            setViewportSize(newViewportSize);
+            
+            setTransform((prev) => {
+                return ({
+                    ...prev,
+                    tileSize: tileSize,
+                    viewportSize: newViewportSize,
+                    offsetX: ((prev.offsetX + prev.viewportSize / 2) / prev.tileSize) * tileSize - newViewportSize / 2, 
+                    offsetY: ((prev.offsetY + prev.viewportSize / 2) / prev.tileSize) * tileSize - newViewportSize / 2,
+                })
+            })
+        }
 
-    const [transform, setTransform] = useState({offsetX: initialX, offsetY: initialY, scale: 1});
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [orientation, tileSize])
+
+
+
 
     const [score, setScore] = useState(0); 
     const [validWords, setValidWords] = useState([]);
@@ -88,6 +109,17 @@ export const CrossBattle = ({}) => {
         setTileToSpace(prev => {
             const next = { ...prev };
             next[tileIndex] = endId;
+            return next;
+        });
+    }
+
+    const swapTiles = (tileIndex1, tileIndex2) => {
+        setTileToSpace(prev => {
+            const next = { ...prev };
+        
+            next[tileIndex1] = prev[tileIndex2];
+            next[tileIndex2] = prev[tileIndex1];
+
             return next;
         });
     }
@@ -140,6 +172,8 @@ export const CrossBattle = ({}) => {
 
         if (spaceToTile(over.id) == null) {
             moveTile(over.id, active.data.current.tileIndex);
+        } else {
+            swapTiles(spaceToTile(over.id), active.data.current.tileIndex);
         }
 
         setDraggingStyle({});
@@ -189,7 +223,7 @@ export const CrossBattle = ({}) => {
                     <CrossBattleGrid 
                         tileSize={tileSize} 
                         gridSize={gridSize} 
-                        viewTiles={viewTiles}
+                        viewportSize={viewportSize}
                         transform={transform}
                         setTransform={setTransform}
                         spaceToTile={spaceToTile}
@@ -209,16 +243,7 @@ export const CrossBattle = ({}) => {
 
                 <DragOverlay>
                     {(draggingStyle) ? (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                left: draggingStyle.transform ? `${draggingStyle.transform.split(' ')[0]}` : '0px',
-                                top: draggingStyle.transform ? `${draggingStyle.transform.split(' ')[1]}` : '0px',
-                                pointerEvents: 'none', // Prevent interaction with the overlay
-                                zIndex: 9999, // Ensure the overlay is on top
-                                opacity: 1
-                            }}
-                        >
+                        <div className='absolute -translate-x-[4.55%] -translate-y-[4.55%] z-[9999] pointer-events-none'>
                             {
                                 <CrossBattleTile tileSize={tileSize * 1.1} tileLetter={activeData.letter} />
                             }

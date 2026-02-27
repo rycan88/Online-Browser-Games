@@ -1,5 +1,5 @@
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTransform, gridSizePx, children, zoomBounds={min: 0.5, max: 3}}) => {
     const divRef = useRef(null)
@@ -56,7 +56,7 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
                 const maxY = gridSizePx * t.scale - viewportSize;
 
                 return {
-                ...t,
+                    ...t,
                     offsetX: clamp(t.offsetX + dx, 0, maxX),
                     offsetY: clamp(t.offsetY + dy, 0, maxY),
                 };
@@ -84,10 +84,22 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
     };
 
     
+    useEffect(() => {
+        const stopDragging = () => {
+            dragging.current = false;
+        };
+
+        window.addEventListener("blur", stopDragging);
+
+        return () => {
+            window.removeEventListener("blur", stopDragging);
+        };
+    }, []);
+
     const zoomTransform = (prevTransform, direction, coord, isWheel=true) => {
         const { offsetX, offsetY, scale: prevScale } = prevTransform;
 
-        const sensitivity = isWheel ? 0.1 : 0.03;
+        const sensitivity = isWheel ? 0.1 : 0.01;
         const zoomFactor = Math.exp(direction * sensitivity);
         const newScale = clamp(prevTransform.scale * zoomFactor, zoomBounds.min, zoomBounds.max);
 
@@ -105,6 +117,7 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
         const maxY = gridSizePx * newScale - viewportSize;
         
         return {
+            ...prevTransform,
             offsetX: clamp(newOffsetX, 0, maxX),
             offsetY: clamp(newOffsetY, 0, maxY),
             scale: newScale,

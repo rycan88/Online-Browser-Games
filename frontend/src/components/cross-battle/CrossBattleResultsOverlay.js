@@ -62,7 +62,7 @@ export const CrossBattleResultsOverlay = ({validWords, invalidWords, unusedLette
                 </div>
                 <div className="h-full w-full overflow-x-auto scrollbar-hide flex gap-2 text-start">
                     <div className={`flex ${orientation !== "landscape" && "flex-col"} justify-between w-[100%] py-[1vh] px-[2vh]`}>
-                        <div className={`flex flex-col ${orientation === "landscape" ? "h-full w-[40%]": "w-full h-[40%]"} text-[16px]`}>
+                        <div className={`flex flex-col overflow-y-auto scrollbar-hide ${orientation === "landscape" ? "h-full w-[40%]": "w-full h-[55%]"} text-[16px]`}>
                             <div className="flex items-center justify-center underline text-[18px] pb-[6px]">Rycan88</div>
                             { validWords.length > 0 &&
                                 <div>

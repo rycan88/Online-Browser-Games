@@ -6,8 +6,8 @@ const { getCurrentPlayers } = require("./thirty-one/thirtyOneHelper");
 const { rpsMeleePlayerData } = require("./rps-melee/rpsMeleePlayerData");
 const { HanabiDeck } = require("./cards/HanabiDeck");
 const { hanabiPlayerData } = require("./hanabi/hanabiPlayerData");
-const { randomCombo } = require("./cross-battle/crossBattleHelper");
 const { crossBattlePlayerData } = require("./cross-battle/crossBattlePlayerData");
+const { randomCombo } = require("./cross-battle/crossBattleHelper");
 
 const setUpPlayerData = (rooms, roomCode) => {
     const gameName = rooms[roomCode].gameName;

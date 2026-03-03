@@ -3,7 +3,9 @@ import { CrossBattleDropZone } from "./CrossBattleDropZone";
 import { useDroppable } from "@dnd-kit/core";
 import { CrossBattleTile } from "./CrossBattleTile";
 import { DraggableItem } from "../hanabi/DraggableItem";
+import getSocket from "../../socket";
 
+const socket = getSocket()
 export const CrossBattleHandSpace = ({tileSize, id, tileData}) => {
     const { active, isOver, setNodeRef } = useDroppable({ id });
 

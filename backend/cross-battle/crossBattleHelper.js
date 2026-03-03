@@ -20,7 +20,7 @@ Object.entries(allLetterTiles).forEach((entry) => {
     }
 });
 
-export const randomCombo = (length) => {
+const randomCombo = (length) => {
     const tilePoolLength = letterTileString.length;
     while (true) {
         let newLetters = "";
@@ -41,4 +41,8 @@ export const randomCombo = (length) => {
             return newLetters
         }
     }
+}
+
+module.exports = {
+    randomCombo
 }

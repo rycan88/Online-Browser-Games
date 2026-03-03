@@ -21,7 +21,7 @@ export const FullscreenButton = ({shouldRotate=false}) => {
     };
 
     return (
-        <button className="text-[4vh]" 
+        <button className="ml-[-0.5vh] text-[4vh]" 
                 onClick={toggleFullscreen}
         >
             {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}

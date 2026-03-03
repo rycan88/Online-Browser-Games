@@ -136,6 +136,19 @@ export const Zoomable = ({viewportSize, shouldLockTransform, transform, setTrans
         });
     };
 
+    const maxX = gridSizePx * transform.scale - viewportSize;
+    const maxY = gridSizePx * transform.scale - viewportSize;
+    
+    if (clamp(transform.offsetX, 0, maxX) !== transform.offsetX || clamp(transform.offsetY, 0, maxY) !== transform.offsetY) {
+        setTransform((t) => {
+            return {
+                ...t,
+                offsetX: clamp(t.offsetX, 0, maxX),
+                offsetY: clamp(t.offsetY, 0, maxY),
+            };
+        });
+    }
+
     return (
         <div
             className="overflow-hidden relative border border-slate-100 select-none touch-none"

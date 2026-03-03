@@ -46,17 +46,6 @@ const getScoringSection = (coords) => {
     return Array.from(biggestSection);
 }
 
-export const countVowels = (word) => {
-    let counter = 0;
-    const vowels = "AEIOU";
-    
-    for (const letter of word.toUpperCase()) {
-        if (vowels.includes(letter)) { counter += 1 };
-    }
-    
-    return counter;
-}
-
 export const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
 // x 0 1 2 3  4

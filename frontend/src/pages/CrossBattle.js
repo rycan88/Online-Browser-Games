@@ -7,62 +7,34 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { useEffect, useState } from 'react';
 import { CrossBattleHand } from '../components/cross-battle/CrossBattleHand';
-import { countVowels, scoreGrid } from '../components/cross-battle/CrossBattleUtils';
+import { scoreGrid } from '../components/cross-battle/CrossBattleUtils';
 import useScrabbleDictionary from '../hooks/useScrabbleDictionary';
-import { Overlay } from '../components/Overlay';
 import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattleResultsOverlay';
 import { useOrientation } from '../hooks/useOrientation';
+import getSocket from '../socket';
+import LoadingScreen from '../components/LoadingScreen';
+import { FullscreenButton } from '../components/FullscreenButton';
+import { InfoButton } from '../components/InfoButton';
 import useFullscreen from '../hooks/useFullscreen';
+import { CrossBattleSubmitButton } from '../components/cross-battle/CrossBattleSubmitButton';
 
 // Scale properly for different sizes
 // Allow swap tiles
 
 // Work for multiplayer
 
-export const CrossBattle = ({}) => {
+const socket = getSocket();
+
+export const CrossBattle = ({roomCode}) => {
     const orientation = useOrientation();
     const dictionary = useScrabbleDictionary();
-    
+    const isFullscreen = useFullscreen();
+
     useEffect(() => {
         window.scrollTo(0, 1000);
     }, []);
 
-    // Scrabble tile counts
-    const allLetterTiles = {1: "JQXZV", 2: "BWYK", 3: "FMPHC", 4: "DUG", 6: "NRTSL", 8: "O", 9: "AI", 12: "E"};
-    const letterCounts = {}
-    let letterTileString = "";
-
-    Object.entries(allLetterTiles).forEach((entry) => {
-        for (const char of entry[1]) {
-            letterTileString += char.repeat(Number(entry[0]));
-            letterCounts[char] = entry[0];
-        }
-    });
-    
-    const randomCombo = (str, length) => {
-        const tilePoolLength = str.length;
-        while (true) {
-            let newLetters = "";
-            const counter = {}
-            while (newLetters.length < length) {
-                const num = Math.floor(Math.random() * tilePoolLength);
-                const letter = str[num];
-                if (!counter[letter]) { counter[letter] = 0; }
-                
-                if (counter[letter] >= letterCounts[letter]) {
-                    continue;
-                }
-
-                counter[letter] += 1; 
-                newLetters += str[num];
-            }
-            if (countVowels(newLetters) >= 5 && countVowels(newLetters) <= 11) {
-                return newLetters
-            }
-        }
-    }
-
-    const [letters, setLetters] = useState(randomCombo(letterTileString, 22));
+    const [letters, setLetters] = useState("");
 
     const gridSize = 33;
 
@@ -79,10 +51,15 @@ export const CrossBattle = ({}) => {
     
     useEffect(() => {
         const handleResize = () => {
-            const newViewportSize = orientation === "landscape" ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95);
-            setViewportSize(newViewportSize);
+            const isLandscape = window.innerWidth > window.innerHeight;
+            const newViewportSize = isLandscape ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95);
             
+            const viewTiles = newViewportSize > 700 ? 15 : (newViewportSize > 400 ? 11 : 9);
+            const tileSize = newViewportSize / viewTiles;
+            setViewportSize(newViewportSize);
+
             setTransform((prev) => {
+                console.log(tileSize, newViewportSize, prev.tileSize, prev.viewportSize);
                 return ({
                     ...prev,
                     tileSize: tileSize,
@@ -95,10 +72,24 @@ export const CrossBattle = ({}) => {
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-    }, [orientation, tileSize])
+    }, [])
 
 
+    const [dataInitialized, setDataInitialized] = useState(false);
 
+    useEffect(() => {
+        socket.on('receive_players_data', (playersData, letters) => {
+            setTileToSpace(playersData.tileToSpace);
+            setLetters(letters);
+            setDataInitialized(true);
+        });
+
+        socket.emit("get_all_cross_battle_data", roomCode);
+
+        return () => {
+            socket.off('receive_players_data');
+        }
+    }, []);
 
     const [score, setScore] = useState(0); 
     const [validWords, setValidWords] = useState([]);
@@ -107,18 +98,13 @@ export const CrossBattle = ({}) => {
     const [tileCoords, setTileCoords] = useState([]);
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
+    const [hasSubmitted, setHasSubmitted] = useState(false);
 
     const onClose = () => {
         setShouldShowResults(false);
     }
 
-    const [tileToSpace, setTileToSpace] = useState(() => {
-        const initial = {}
-        for (let index = 0; index < letters.length; index++) {
-            initial[index] = `handSpace-${String(index)}`;
-        }
-        return initial;
-    });
+    const [tileToSpace, setTileToSpace] = useState({});
 
     const moveTile = (endId, tileIndex) => {
         setTileToSpace(prev => {
@@ -155,6 +141,10 @@ export const CrossBattle = ({}) => {
     const [activeData, setActiveData] = useState({});
     const [draggingStyle, setDraggingStyle] = useState({});
     const [hoveredSpaceId, setHoveredSpaceId] = useState(null);
+
+    if (!dataInitialized) {
+        return <LoadingScreen />;
+    }
 
     const handleDragMove = (event) => {
         const { over, delta } = event;
@@ -196,7 +186,7 @@ export const CrossBattle = ({}) => {
         setActiveData({})
         setHoveredSpaceId(null);
     }
-
+    
     return (
         <DndContext
             modifiers={[restrictToWindowEdges]}
@@ -208,7 +198,7 @@ export const CrossBattle = ({}) => {
             onDragMove={handleDragMove}
 
         >
-            <div className="crossBattlePage entirePage">
+            <div className={`crossBattlePage entirePage ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
                 <CrossBattleResultsOverlay
                     validWords={validWords}
                     invalidWords={invalidWords} 
@@ -218,11 +208,11 @@ export const CrossBattle = ({}) => {
                     onClose={onClose}
                     isOpen={shouldShowResults}
                 />     
-
-                <div className={`flex ${orientation !== "landscape" && "flex-col"} items-center justify-center h-full`}>
-                    <div className={`flex justify-around items-center`}>
-                        <button className="gradientButton"                 
-                            onClick={() => {
+                <div className="topTaskBar">
+                    <CrossBattleSubmitButton 
+                        hasSubmitted={hasSubmitted} 
+                        setHasSubmitted={setHasSubmitted}
+                        onClickAction = {() => {
                                 const {validWords: newValidWords, invalidWords: newInvalidWords, score: newScore, unusedLetters, coords: tileCoords} = scoreGrid(tileToSpace, letters, dictionary);
                                 setValidWords(newValidWords);
                                 setInvalidWords(newInvalidWords);
@@ -230,11 +220,16 @@ export const CrossBattle = ({}) => {
                                 setUnusedLetters(unusedLetters);
                                 setShouldShowResults(true);
                                 setTileCoords(tileCoords);
-                            }}>
-                            Submit
-                        </button>
-                    </div>
-
+                            }}
+                        
+                    />
+                    <InfoButton buttonType="info" fullScreen={isFullscreen} />
+                    <InfoButton buttonType="settings" fullScreen={isFullscreen} />
+                    <FullscreenButton shouldRotate={false}/>
+                </div>
+                <div className={`flex ${orientation !== "landscape" && "flex-col"} items-center justify-center h-full`}>
+                    <div style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 4, width: orientation === "landscape" ? tileSize * 3 : tileSize * 8.5}} />
+                    
                     <CrossBattleGrid 
                         tileSize={tileSize} 
                         gridSize={gridSize} 
@@ -265,7 +260,7 @@ export const CrossBattle = ({}) => {
                         </div>
                     ) : null}
                 </DragOverlay>
-                <div className="entirePage bg-black/70 z-[-10]"></div>
+                <div className={`entirePage bg-black/70 z-[-10] ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}></div>
             </div>
 
         </DndContext>

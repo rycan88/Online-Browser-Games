@@ -36,7 +36,18 @@ export const Room = (props) => {
     const [teamData, setTeamData] = useState([]);
     const [teamMode, setTeamMode] = useState(false);
 
-    const canStart = teamMode ? teamData.length * 2 === players.length : players.length >= 2;
+    const isEnoughPlayers = () => {
+        if (gameName === "telepath" && teamMode) {
+            return teamData.length * 2 === players.length;
+        } else if (gameName === "cross_battle") {
+            return true;
+        } else {
+            return players.length >= 2;
+        }
+    };
+        
+    const canStart = isEnoughPlayers();
+
     useEffect(() => {
         socket.on('update_players', (players) => {
             setPlayers(players);

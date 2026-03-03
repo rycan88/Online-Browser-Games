@@ -6,7 +6,6 @@ import { CrossBattleHandSpace } from "./CrossBattleHandSpace";
 
 export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation}) => {
     const tiles = [];
-
     for (let index = 0; index < letters.length; index++) {
 
             const id = `handSpace-${String(index)}`;

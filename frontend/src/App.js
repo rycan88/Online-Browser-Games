@@ -28,7 +28,7 @@ import { CrossBattle } from './pages/CrossBattle';
 export const AppContext = createContext();
 const socket = getSocket();
 
-const gameNames = ["telepath", "thirty_one", "rock_paper_scissors_melee", "hana"]
+const gameNames = ["telepath", "thirty_one", "rock_paper_scissors_melee", "hana", "cross_battle"]
 
 function App() {
   const client = new QueryClient();
@@ -44,6 +44,8 @@ function App() {
       return <RPSMelee roomCode={roomCode} />
     } else if (gameName === "hana") {
       return <Hanabi roomCode={roomCode} />
+    } else if (gameName === "cross_battle") {
+      return <CrossBattle roomCode={roomCode} />
     }
     return <></>
   }

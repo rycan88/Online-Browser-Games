@@ -56,6 +56,12 @@ export const SidebarData = [
         isMain: false,
     },
     {
+        title: "Cross Battle Lobby",
+        icon: <LuFlower />,
+        link: "/cross_battle/lobby",
+        isMain: false,
+    },
+    {
         title: "About",
         icon: <FaInfoCircle/>,
         link: "/about",

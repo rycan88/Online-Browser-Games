@@ -29,9 +29,12 @@ export const InfoButton = ({buttonStyle, buttonType="info", children, fullScreen
             >
                 {buttonIcon[buttonType]}
             </div>
-            <Overlay isOpen={isOpen} onClose={toggleOverlay} fullScreen={fullScreen}>
-                { childrenWithClose }
-            </Overlay>
+            { isOpen &&
+                <Overlay isOpen={isOpen} onClose={toggleOverlay} fullScreen={fullScreen}>
+                    { childrenWithClose }
+                </Overlay>
+            }
+
         </>
     )
 }

@@ -43,6 +43,7 @@ const { telepathEvents } = require("./telepath/telepathEvents");
 const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
 const { rpsMeleeEvents } = require("./rps-melee/rpsMeleeEvents");
 const { hanabiEvents } = require("./hanabi/hanabiEvents");
+const { crossBattleEvents } = require("./cross-battle/crossBattleEvents");
 
 // Lobby Rooms
 const rooms = {};
@@ -54,6 +55,9 @@ const deleteTimers = {};
 
 // rooms[roomCode].players are the unique players in the lobby
 // rooms[roomCode].spectators can include the same userId more than once, but different socketId
+
+// Make sure to update the bottom when a new game is added
+// Also update GamesDatajs, SidebarData.js and App.js
 
 io.on("connection", (socket) => {
     const userId = socket.handshake.query.userId;
@@ -234,7 +238,7 @@ io.on("connection", (socket) => {
     thirtyOneEvents(io, socket, rooms);
     rpsMeleeEvents(io, socket, rooms);
     hanabiEvents(io, socket, rooms);
-
+    crossBattleEvents(io, socket, rooms);
 })
 
 const PORT = process.env.PORT || 5000;

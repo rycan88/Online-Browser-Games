@@ -56,7 +56,7 @@
   }
 
   .topTaskBar { 
-    @apply flex absolute w-full justify-end gap-[calc(min(1%,8px))] top-[0] right-[0] pt-[1vh] pr-[calc(min(2%,8px))]
+    @apply flex absolute w-full justify-end gap-[calc(min(2%,14px))] top-[0] right-[0] pt-[1vh] pr-[calc(min(2%,14px))]
   }
 }
 

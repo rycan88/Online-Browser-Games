@@ -87,7 +87,7 @@ export const CrossBattleResultsOverlay = ({playersData, isOpen}) => {
         return arr.map((playerData) => {
             const isCurrentPlayer = playerData.nameData.userId === currentUser;
             return (
-                <div className={`flex flex-col rounded-t-md  text-center py-[5px] px-[30px] backdrop-blur-md
+                <div className={`flex flex-col rounded-t-md  text-center pt-[5px] pb-[8px] px-[30px] backdrop-blur-md
                                  ${isCurrentPlayer ? "cursor-default bg-[rgb(22,70,110)]" 
                                                    : "hover:cursor-pointer hover:bg-[rgb(22,66,110)] bg-slate-800"}`
                                 }

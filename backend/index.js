@@ -45,6 +45,9 @@ const { rpsMeleeEvents } = require("./rps-melee/rpsMeleeEvents");
 const { hanabiEvents } = require("./hanabi/hanabiEvents");
 const { crossBattleEvents } = require("./cross-battle/crossBattleEvents");
 
+const { loadScrabbleDictionary } = require("./utils/dictionaryUtils");
+loadScrabbleDictionary();
+
 // Lobby Rooms
 const rooms = {};
 const teamGames = ["telepath"];

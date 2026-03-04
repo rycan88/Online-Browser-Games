@@ -160,7 +160,9 @@ const setUpGameData = (io, rooms, roomCode) => {
             rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history, gameInProgress: true, finalTurn: null, gameMode: gameMode, gameModeSetting: gameMode};
         } else if (gameName === "cross_battle") {
             const letters = randomCombo(22);
-            rooms[roomCode].gameData = {letters: letters};
+            const playerDataArray = Object.values(rooms[roomCode].playersData);
+
+            rooms[roomCode].gameData = {letters: letters, shouldShowResults: false, playerDataArray: playerDataArray};
         }
     }
 }

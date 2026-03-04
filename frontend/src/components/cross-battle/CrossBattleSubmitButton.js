@@ -10,7 +10,6 @@ export const CrossBattleSubmitButton = ({hasSubmitted, setHasSubmitted, onClickA
                     if (!hasSubmitted) {
                         onClickAction()
                     }
-                    setHasSubmitted(!hasSubmitted);
                 }}
             >
                 { hasSubmitted ?

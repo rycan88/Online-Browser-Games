@@ -1,14 +1,11 @@
-import { closestCenter, DndContext, DragOverlay, KeyboardSensor, PointerSensor, rectIntersection, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, DragOverlay, KeyboardSensor, PointerSensor, rectIntersection, useSensor, useSensors } from '@dnd-kit/core';
 import { CrossBattleGrid } from '../components/cross-battle/CrossBattleGrid';
 import { CrossBattleTile } from '../components/cross-battle/CrossBattleTile';
-import { DraggableItem } from '../components/hanabi/DraggableItem';
 import '../css/CrossBattle.css';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { useEffect, useState } from 'react';
 import { CrossBattleHand } from '../components/cross-battle/CrossBattleHand';
-import { scoreGrid } from '../components/cross-battle/CrossBattleUtils';
-import useScrabbleDictionary from '../hooks/useScrabbleDictionary';
 import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattleResultsOverlay';
 import { useOrientation } from '../hooks/useOrientation';
 import getSocket from '../socket';
@@ -27,7 +24,6 @@ const socket = getSocket();
 
 export const CrossBattle = ({roomCode}) => {
     const orientation = useOrientation();
-    const dictionary = useScrabbleDictionary();
     const isFullscreen = useFullscreen();
 
     useEffect(() => {
@@ -59,7 +55,6 @@ export const CrossBattle = ({roomCode}) => {
             setViewportSize(newViewportSize);
 
             setTransform((prev) => {
-                console.log(tileSize, newViewportSize, prev.tileSize, prev.viewportSize);
                 return ({
                     ...prev,
                     tileSize: tileSize,
@@ -76,29 +71,35 @@ export const CrossBattle = ({roomCode}) => {
 
 
     const [dataInitialized, setDataInitialized] = useState(false);
+    const [hasSubmitted, setHasSubmitted] = useState(false);
+    const [playersData, setPlayersData] = useState([]);
+
+    const [shouldShowResults, setShouldShowResults] = useState(false);
 
     useEffect(() => {
-        socket.on('receive_players_data', (playersData, letters) => {
-            setTileToSpace(playersData.tileToSpace);
+        socket.on('receive_player_data', (playerData, letters) => {
+            setTileToSpace(playerData.tileToSpace);
+            setHasSubmitted(playerData.hasSubmitted);
             setLetters(letters);
             setDataInitialized(true);
+        });
+
+        socket.on('receive_players_data', (playersData) => {
+            setPlayersData(playersData)
+        });
+
+        socket.on('receive_should_show_results', (shouldShowResults) => {
+            setShouldShowResults(shouldShowResults);
         });
 
         socket.emit("get_all_cross_battle_data", roomCode);
 
         return () => {
+            socket.off('receive_player_data');
             socket.off('receive_players_data');
+            socket.off('receive_should_show_results');
         }
     }, []);
-
-    const [score, setScore] = useState(0); 
-    const [validWords, setValidWords] = useState([]);
-    const [invalidWords, setInvalidWords] = useState([]);
-    const [unusedLetters, setUnusedLetters] = useState([]);
-    const [tileCoords, setTileCoords] = useState([]);
-
-    const [shouldShowResults, setShouldShowResults] = useState(false);
-    const [hasSubmitted, setHasSubmitted] = useState(false);
 
     const onClose = () => {
         setShouldShowResults(false);
@@ -110,6 +111,8 @@ export const CrossBattle = ({roomCode}) => {
         setTileToSpace(prev => {
             const next = { ...prev };
             next[tileIndex] = endId;
+
+            socket.emit("cross_battle_send_tile_to_space_data", roomCode, next);
             return next;
         });
     }
@@ -120,7 +123,8 @@ export const CrossBattle = ({roomCode}) => {
         
             next[tileIndex1] = prev[tileIndex2];
             next[tileIndex2] = prev[tileIndex1];
-
+            
+            socket.emit("cross_battle_send_tile_to_space_data", roomCode, next);
             return next;
         });
     }
@@ -200,11 +204,7 @@ export const CrossBattle = ({roomCode}) => {
         >
             <div className={`crossBattlePage entirePage ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
                 <CrossBattleResultsOverlay
-                    validWords={validWords}
-                    invalidWords={invalidWords} 
-                    unusedLetters={unusedLetters}
-                    score={score}
-                    tileCoords={tileCoords}
+                    playersData={playersData}
                     onClose={onClose}
                     isOpen={shouldShowResults}
                 />     
@@ -213,13 +213,8 @@ export const CrossBattle = ({roomCode}) => {
                         hasSubmitted={hasSubmitted} 
                         setHasSubmitted={setHasSubmitted}
                         onClickAction = {() => {
-                                const {validWords: newValidWords, invalidWords: newInvalidWords, score: newScore, unusedLetters, coords: tileCoords} = scoreGrid(tileToSpace, letters, dictionary);
-                                setValidWords(newValidWords);
-                                setInvalidWords(newInvalidWords);
-                                setScore(newScore);
-                                setUnusedLetters(unusedLetters);
-                                setShouldShowResults(true);
-                                setTileCoords(tileCoords);
+                                socket.emit("cross_battle_has_submitted", roomCode, !hasSubmitted);
+                                setHasSubmitted(!hasSubmitted);
                             }}
                         
                     />

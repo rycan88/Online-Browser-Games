@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useOrientation } from "../../hooks/useOrientation";
 import getSocket from "../../socket";
 import { Overlay } from "../Overlay";
+import { ReadyStatusIcon } from "../ReadyStatusIcon";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
@@ -85,7 +86,7 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
         return arr.map((playerData) => {
             const isCurrentPlayer = playerData.nameData.userId === currentUser;
             return (
-                <div className={`flex flex-col rounded-t-md  text-center pt-[5px] pb-[8px] px-[30px] backdrop-blur-md
+                <div className={`flex flex-col rounded-t-md  text-center pt-[5px] pb-[8px] px-[40px] backdrop-blur-md
                                  ${isCurrentPlayer ? "cursor-default bg-[rgb(22,70,110)]" 
                                                    : "hover:cursor-pointer hover:bg-[rgb(22,66,110)] bg-slate-800"}`
                                 }
@@ -93,7 +94,10 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
                         setCurrentUser(playerData.nameData.userId);
                      }}
                 >
-                    <div> { playerData.nameData.nickname } </div>
+                    <div className="absolute right-[10px] top-1/2 -translate-y-1/2">
+                        <ReadyStatusIcon isReady={ playerData.isReady }/>
+                    </div>
+                    <div>  { playerData.nameData.nickname } </div>
                     <div className={`${playerData.score > 0 ? "text-green-500" : "text-red-400"}`}> 
                         { `(${playerData.score})` } 
                     </div>

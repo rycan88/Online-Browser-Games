@@ -5,8 +5,8 @@ const crossBattleEvents = (io, socket, rooms) => {
         if (rooms[roomCode]) {
             socket.emit("receive_players_data", rooms[roomCode].playersData);
             socket.emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
-            
-            socket.emit("receive_player_data", rooms[roomCode].playersData[socket.userId], rooms[roomCode].gameData.letters);
+            socket.emit("receive_letters", rooms[roomCode].gameData.letters);
+            socket.emit("receive_player_data", rooms[roomCode].playersData[socket.userId]);
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
         }
@@ -39,6 +39,11 @@ const crossBattleEvents = (io, socket, rooms) => {
         if (!rooms[roomCode] || rooms[roomCode].gameData.shouldShowResults) { return; }
         
         rooms[roomCode].playersData[socket.userId].tileToSpace = tileToSpace;
+
+        if (rooms[roomCode].playersData[socket.userId].hasSubmitted) {
+            rooms[roomCode].playersData[socket.userId].hasSubmitted = false;
+            socket.emit("receive_player_data", rooms[roomCode].playersData[socket.userId]);
+        }
     });
 
     socket.on("cross_battle_is_ready", (roomCode, isReady) => {
@@ -53,6 +58,8 @@ const crossBattleEvents = (io, socket, rooms) => {
 
             io.to(roomCode).emit("start_new_round");
         }
+
+        io.to(roomCode).emit("receive_players_data", playersData);
     });
 }
 

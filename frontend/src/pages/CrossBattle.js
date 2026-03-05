@@ -98,8 +98,11 @@ export const CrossBattle = ({roomCode}) => {
         socket.on('receive_player_data', (playerData, letters) => {
             setTileToSpace(playerData.tileToSpace);
             setHasSubmitted(playerData.hasSubmitted);
-            setLetters(letters);
             setDataInitialized(true);
+        });
+
+        socket.on('receive_letters', (letters) => {
+            setLetters(letters);
         });
 
         socket.on('receive_players_data', (playersData) => {
@@ -129,6 +132,7 @@ export const CrossBattle = ({roomCode}) => {
             socket.off('receive_players_data');
             socket.off('receive_should_show_results');
             socket.off('start_new_round');
+            socket.off('receive_letters');
             socket.off('room_error');
             window.removeEventListener("visibilitychange", handleVisibilityChange);
         }
@@ -151,6 +155,7 @@ export const CrossBattle = ({roomCode}) => {
     }
 
     const swapTiles = (tileIndex1, tileIndex2) => {
+        if (tileIndex1 === tileIndex2) { return; }
         setTileToSpace(prev => {
             const next = { ...prev };
         

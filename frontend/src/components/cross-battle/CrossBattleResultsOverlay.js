@@ -15,12 +15,10 @@ const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42,
 
 const socket = getSocket();
 
-export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen}) => {
+export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, currentUser, setCurrentUser}) => {
     const orientation = useOrientation();
     const validWordsText = [];
-    
-    const [currentUser, setCurrentUser] = useState(socket.userId);  
-    
+        
     if (!currentUser || !playersData) { 
         return <></> 
     }

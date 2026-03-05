@@ -14,14 +14,20 @@ import { FullscreenButton } from '../components/FullscreenButton';
 import { InfoButton } from '../components/InfoButton';
 import useFullscreen from '../hooks/useFullscreen';
 import { CrossBattleSubmitButton } from '../components/cross-battle/CrossBattleSubmitButton';
+import { useNavigate } from 'react-router-dom';
 
 // Add next game button
+// Recenter board each round
+
 
 const socket = getSocket();
 
 export const CrossBattle = ({roomCode}) => {
     const orientation = useOrientation();
     const isFullscreen = useFullscreen();
+    const navigate = useNavigate();
+
+    const [currentUser, setCurrentUser] = useState(socket.userId);  
 
     useEffect(() => {
         window.scrollTo(0, 1000);
@@ -36,11 +42,20 @@ export const CrossBattle = ({roomCode}) => {
     const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 11 : 9);
     const tileSize = viewportSize / viewTiles;
 
-    const centerTile = Math.floor(gridSize / 2);
+    const getCenterTransform = () => {
+        const viewportSize = (orientation === "landscape" ? window.innerHeight * 0.80 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95)); 
 
-    const initialX = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
-    const initialY = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
-    const [transform, setTransform] = useState({offsetX: initialX, offsetY: initialY, scale: 1, viewportSize: viewportSize, tileSize: tileSize});
+        const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 11 : 9);
+        const tileSize = viewportSize / viewTiles;
+
+        const centerTile = Math.floor(gridSize / 2);
+
+        const initialX = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
+        const initialY = (centerTile * tileSize + tileSize / 2) - viewportSize / 2;
+        
+        return {offsetX: initialX, offsetY: initialY, scale: 1, viewportSize: viewportSize, tileSize: tileSize};
+    }
+    const [transform, setTransform] = useState(getCenterTransform());
     
     useEffect(() => {
         const handleResize = () => {
@@ -73,6 +88,12 @@ export const CrossBattle = ({roomCode}) => {
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
 
+    const handleVisibilityChange = () => {
+        if (!document.hidden) {
+            socket.emit("get_all_cross_battle_data", roomCode);
+        }
+    }
+
     useEffect(() => {
         socket.on('receive_player_data', (playerData, letters) => {
             setTileToSpace(playerData.tileToSpace);
@@ -90,8 +111,16 @@ export const CrossBattle = ({roomCode}) => {
         });
 
         socket.on('start_new_round', () => {
+            setTransform(getCenterTransform());
+            setCurrentUser(socket.userId);
             socket.emit('get_all_cross_battle_data', roomCode);
-        })
+        });
+
+        socket.on('room_error', (errorMessage) => {
+            navigate(`/cross_battle/lobby`, { state: {error: errorMessage}});
+        });
+
+        window.addEventListener("visibilitychange", handleVisibilityChange);
 
         socket.emit("get_all_cross_battle_data", roomCode);
 
@@ -100,6 +129,8 @@ export const CrossBattle = ({roomCode}) => {
             socket.off('receive_players_data');
             socket.off('receive_should_show_results');
             socket.off('start_new_round');
+            socket.off('room_error');
+            window.removeEventListener("visibilitychange", handleVisibilityChange);
         }
     }, []);
 
@@ -210,6 +241,8 @@ export const CrossBattle = ({roomCode}) => {
                     playersData={playersData}
                     onClose={onClose}
                     isOpen={shouldShowResults}
+                    currentUser={currentUser}
+                    setCurrentUser={setCurrentUser}
                 />     
                 <div className="topTaskBar">
                     <CrossBattleSubmitButton 

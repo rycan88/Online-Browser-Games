@@ -15,6 +15,7 @@ import { InfoButton } from '../components/InfoButton';
 import useFullscreen from '../hooks/useFullscreen';
 import { CrossBattleSubmitButton } from '../components/cross-battle/CrossBattleSubmitButton';
 import { useNavigate } from 'react-router-dom';
+import { CrossBattlePlayerList } from '../components/cross-battle/CrossBattlePlayerList';
 
 // Add next game button
 // Recenter board each round
@@ -107,6 +108,7 @@ export const CrossBattle = ({roomCode}) => {
 
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData)
+            setHasSubmitted(playersData[socket.userId].hasSubmitted);
         });
 
         socket.on('receive_should_show_results', (shouldShowResults) => {
@@ -255,6 +257,7 @@ export const CrossBattle = ({roomCode}) => {
                         hasSubmitted={hasSubmitted} 
                         setHasSubmitted={setHasSubmitted}
                     />
+                    <CrossBattlePlayerList playersData={playersData} />
                     <InfoButton buttonType="info" fullScreen={isFullscreen} />
                     <InfoButton buttonType="settings" fullScreen={isFullscreen} />
                     <FullscreenButton shouldRotate={false}/>

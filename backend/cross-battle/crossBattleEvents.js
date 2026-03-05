@@ -29,10 +29,11 @@ const crossBattleEvents = (io, socket, rooms) => {
                 );
             });            
 
-            io.to(roomCode).emit("receive_players_data", playersData);
             io.to(roomCode).emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
 
         }
+        
+        io.to(roomCode).emit("receive_players_data", playersData);
     });
 
     socket.on("cross_battle_send_tile_to_space_data", (roomCode, tileToSpace) => {
@@ -43,6 +44,7 @@ const crossBattleEvents = (io, socket, rooms) => {
         if (rooms[roomCode].playersData[socket.userId].hasSubmitted) {
             rooms[roomCode].playersData[socket.userId].hasSubmitted = false;
             socket.emit("receive_player_data", rooms[roomCode].playersData[socket.userId]);
+            io.to(roomCode).emit("receive_players_data", rooms[roomCode].playersData);
         }
     });
 

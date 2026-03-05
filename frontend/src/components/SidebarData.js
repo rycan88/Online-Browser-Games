@@ -5,6 +5,7 @@ import { IoIosColorPalette } from "react-icons/io";
 import { GiBrain } from "react-icons/gi";
 import { GiCardAceSpades } from "react-icons/gi";
 import { LuFlower } from "react-icons/lu";
+import { FaSquareXmark } from "react-icons/fa6";
 
 export const SidebarData = [
     {
@@ -51,13 +52,7 @@ export const SidebarData = [
     },
     {
         title: "Cross Battle",
-        icon: <LuFlower />,
-        link: "/cross_battle",
-        isMain: false,
-    },
-    {
-        title: "Cross Battle Lobby",
-        icon: <LuFlower />,
+        icon: <FaSquareXmark />,
         link: "/cross_battle/lobby",
         isMain: false,
     },

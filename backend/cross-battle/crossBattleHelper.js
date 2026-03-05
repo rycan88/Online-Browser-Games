@@ -1,4 +1,5 @@
 const { isValidWord } = require("../utils/dictionaryUtils");
+const { crossBattlePlayerData } = require("./crossBattlePlayerData");
 
 const countVowels = (word) => {
     let counter = 0;
@@ -222,10 +223,35 @@ const scoreGrid = (tileToSpace, letters) => {
     return {validWords, invalidWords, score, unusedLetters, coords};
 }
 
+const crossBattleConfigurePlayersData = (rooms, roomCode) => {
+    const players = rooms[roomCode].players;
+    
+    const playersData = {}
 
+    const initial = {}
+    for (let index = 0; index < 22; index++) {
+        initial[index] = `handSpace-${String(index)}`;
+    }
+    
+    players.forEach((player) => {
+        playersData[player.userId] = crossBattlePlayerData(player); 
+        playersData[player.userId].tileToSpace = initial;                  
+    })     
+    
+    rooms[roomCode].playersData = playersData;  
+}
+
+const crossBattleConfigureGameData = (rooms, roomCode) => {
+    const letters = randomCombo(22);
+    const playerDataArray = Object.values(rooms[roomCode].playersData);
+
+    rooms[roomCode].gameData = {letters: letters, shouldShowResults: false, playerDataArray: playerDataArray};
+}
 
 module.exports = {
     randomCombo,
     scoreGrid,
     crossBattleScoring,
+    crossBattleConfigurePlayersData,
+    crossBattleConfigureGameData
 }

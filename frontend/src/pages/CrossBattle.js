@@ -15,10 +15,7 @@ import { InfoButton } from '../components/InfoButton';
 import useFullscreen from '../hooks/useFullscreen';
 import { CrossBattleSubmitButton } from '../components/cross-battle/CrossBattleSubmitButton';
 
-// Scale properly for different sizes
-// Allow swap tiles
-
-// Work for multiplayer
+// Add next game button
 
 const socket = getSocket();
 
@@ -34,7 +31,7 @@ export const CrossBattle = ({roomCode}) => {
 
     const gridSize = 33;
 
-    const [viewportSize, setViewportSize] = useState(orientation === "landscape" ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95)); 
+    const [viewportSize, setViewportSize] = useState(orientation === "landscape" ? window.innerHeight * 0.80 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95)); 
     
     const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 11 : 9);
     const tileSize = viewportSize / viewTiles;
@@ -48,7 +45,7 @@ export const CrossBattle = ({roomCode}) => {
     useEffect(() => {
         const handleResize = () => {
             const isLandscape = window.innerWidth > window.innerHeight;
-            const newViewportSize = isLandscape ? window.innerHeight * 0.85 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95);
+            const newViewportSize = isLandscape ? window.innerHeight * 0.80 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95);
             
             const viewTiles = newViewportSize > 700 ? 15 : (newViewportSize > 400 ? 11 : 9);
             const tileSize = newViewportSize / viewTiles;
@@ -92,12 +89,17 @@ export const CrossBattle = ({roomCode}) => {
             setShouldShowResults(shouldShowResults);
         });
 
+        socket.on('start_new_round', () => {
+            socket.emit('get_all_cross_battle_data', roomCode);
+        })
+
         socket.emit("get_all_cross_battle_data", roomCode);
 
         return () => {
             socket.off('receive_player_data');
             socket.off('receive_players_data');
             socket.off('receive_should_show_results');
+            socket.off('start_new_round');
         }
     }, []);
 
@@ -202,21 +204,18 @@ export const CrossBattle = ({roomCode}) => {
             onDragMove={handleDragMove}
 
         >
-            <div className={`crossBattlePage entirePage ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
+            <div className={`crossBattlePage entirePage select-none ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
                 <CrossBattleResultsOverlay
+                    roomCode={roomCode}
                     playersData={playersData}
                     onClose={onClose}
                     isOpen={shouldShowResults}
                 />     
                 <div className="topTaskBar">
                     <CrossBattleSubmitButton 
+                        roomCode={roomCode}
                         hasSubmitted={hasSubmitted} 
                         setHasSubmitted={setHasSubmitted}
-                        onClickAction = {() => {
-                                socket.emit("cross_battle_has_submitted", roomCode, !hasSubmitted);
-                                setHasSubmitted(!hasSubmitted);
-                            }}
-                        
                     />
                     <InfoButton buttonType="info" fullScreen={isFullscreen} />
                     <InfoButton buttonType="settings" fullScreen={isFullscreen} />

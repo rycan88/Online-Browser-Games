@@ -1,15 +1,16 @@
 
 import { FaCheck } from "react-icons/fa6";
 import { IoMdUndo } from "react-icons/io";
+import getSocket from "../../socket";
 
-export const CrossBattleSubmitButton = ({hasSubmitted, setHasSubmitted, onClickAction}) => {
+const socket = getSocket();
+export const CrossBattleSubmitButton = ({roomCode, hasSubmitted, setHasSubmitted}) => {
     return (
         <>
             <div className={`flex items-center justify-center text-slate-100 text-[3vh] hover:cursor-pointer shadow-xl`}
                 onClick={() => {
-                    if (!hasSubmitted) {
-                        onClickAction()
-                    }
+                    socket.emit("cross_battle_has_submitted", roomCode, !hasSubmitted);
+                    setHasSubmitted(!hasSubmitted);
                 }}
             >
                 { hasSubmitted ?

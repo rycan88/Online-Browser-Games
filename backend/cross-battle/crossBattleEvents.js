@@ -1,4 +1,4 @@
-const { scoreGrid } = require("./crossBattleHelper");
+const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData } = require("./crossBattleHelper");
 
 const crossBattleEvents = (io, socket, rooms) => {    
     socket.on("get_all_cross_battle_data", (roomCode) => {
@@ -39,6 +39,20 @@ const crossBattleEvents = (io, socket, rooms) => {
         if (!rooms[roomCode] || rooms[roomCode].gameData.shouldShowResults) { return; }
         
         rooms[roomCode].playersData[socket.userId].tileToSpace = tileToSpace;
+    });
+
+    socket.on("cross_battle_is_ready", (roomCode, isReady) => {
+        if (!rooms[roomCode]) { return; }
+
+        const playersData = rooms[roomCode].playersData;
+        playersData[socket.userId].isReady = isReady;
+
+        if (Object.values(playersData).every((data) => data.isReady === true)) {
+            crossBattleConfigurePlayersData(rooms, roomCode);
+            crossBattleConfigureGameData(rooms, roomCode);
+
+            io.to(roomCode).emit("start_new_round");
+        }
     });
 }
 

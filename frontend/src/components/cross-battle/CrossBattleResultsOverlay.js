@@ -15,7 +15,7 @@ const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42,
 
 const socket = getSocket();
 
-export const CrossBattleResultsOverlay = ({playersData, isOpen}) => {
+export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen}) => {
     const orientation = useOrientation();
     const validWordsText = [];
     
@@ -106,6 +106,15 @@ export const CrossBattleResultsOverlay = ({playersData, isOpen}) => {
 
     return (
         <Overlay isOpen={isOpen}>
+            {   
+                <div className="gradientButton absolute top-4 right-4 text-slate-200 text-[2vh] p-[1vh]"
+                    onClick={() => {
+                        socket.emit("cross_battle_is_ready", roomCode, true);
+                    }}
+                >
+                    {socket.isReady ? "Waiting for others..." : "Next Game" }
+                </div>
+            }
             <div className="myContainerCard gap-[0px] text-[2vh] pt-[2vh] pb-[3vh] select-none bg-gradient-to-tr from-slate-950 to-slate-950">
                 <div className="flex w-full text-left translate-y-[2px] text-sm overflow-x-scroll">
                     { tabBarElements() }

@@ -1,7 +1,7 @@
 import "../css/Overlay.css";
 import { IoMdClose } from "react-icons/io";
 
-export function Overlay({ isOpen, onClose, overlayCornerData=null, children, fullScreen=false }) {
+export function Overlay({ isOpen, onClose, children, fullScreen=false }) {
     return (
         <div>
             {isOpen ? (
@@ -14,7 +14,7 @@ export function Overlay({ isOpen, onClose, overlayCornerData=null, children, ful
                                 }
                             }
                         }}>
-                        {   onClose && !overlayCornerData &&
+                        {   onClose &&
                             <div className="absolute top-4 right-4 text-slate-200 text-[40px]"
                                 onClick={(e) => {
                                     if (onClose) {

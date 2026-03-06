@@ -127,6 +127,7 @@ export const CrossBattle = ({roomCode}) => {
 
         window.addEventListener("visibilitychange", handleVisibilityChange);
 
+        socket.emit('join_room', roomCode);
         socket.emit("get_all_cross_battle_data", roomCode);
 
         return () => {

@@ -114,7 +114,7 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
                         socket.emit("cross_battle_is_ready", roomCode, true);
                     }}
                 >
-                    {socket.isReady ? "Waiting for others..." : "Next Game" }
+                    {playersData[socket.userId].isReady ? "Waiting for others..." : "Next Game" }
                 </div>
             }
             <div className="myContainerCard gap-[0px] text-[2vh] pt-[2vh] pb-[3vh] select-none bg-gradient-to-tr from-slate-950 to-slate-950">

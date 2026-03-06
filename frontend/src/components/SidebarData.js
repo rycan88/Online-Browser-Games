@@ -9,12 +9,6 @@ import { FaSquareXmark } from "react-icons/fa6";
 
 export const SidebarData = [
     {
-        title: "Home",
-        icon: <MdHome/>,
-        link: "/home",
-        isMain: true,
-    },
-    {
         title: "Games",
         icon: <IoLogoGameControllerB/>,
         link: "/games",

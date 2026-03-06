@@ -125,6 +125,10 @@ export const CrossBattle = ({roomCode}) => {
             navigate(`/cross_battle/lobby`, { state: {error: errorMessage}});
         });
 
+        socket.on('connect', () => {
+            socket.emit('get_all_cross_battle_data', roomCode);
+        });
+
         window.addEventListener("visibilitychange", handleVisibilityChange);
 
         socket.emit('join_room', roomCode);
@@ -137,6 +141,7 @@ export const CrossBattle = ({roomCode}) => {
             socket.off('start_new_round');
             socket.off('receive_letters');
             socket.off('room_error');
+            socket.off('connect');
             window.removeEventListener("visibilitychange", handleVisibilityChange);
         }
     }, []);

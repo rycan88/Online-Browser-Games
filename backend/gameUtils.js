@@ -144,7 +144,7 @@ const setUpGameData = (io, rooms, roomCode) => {
             
             rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history, gameInProgress: true, finalTurn: null, gameMode: gameMode, gameModeSetting: gameMode};
         } else if (gameName === "cross_battle") {
-            crossBattleConfigureGameData(rooms, roomCode);
+            crossBattleConfigureGameData(io, rooms, roomCode);
         }
     }
 }

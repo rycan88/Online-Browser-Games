@@ -87,7 +87,7 @@ export const Lobby = ({gameName}) => {
                 <InfoButton buttonType="info">
                     {Rules[gameName]}
                 </InfoButton>
-                <div className="text-slate-200">
+                <div className="flex justify-center items-center text-slate-200">
                     <FullscreenButton shouldRotate={false}/>
                 </div>
             </div>

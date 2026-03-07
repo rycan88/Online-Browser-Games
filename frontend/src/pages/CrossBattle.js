@@ -4,7 +4,7 @@ import { CrossBattleTile } from '../components/cross-battle/CrossBattleTile';
 import '../css/CrossBattle.css';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CrossBattleHand } from '../components/cross-battle/CrossBattleHand';
 import { CrossBattleResultsOverlay } from '../components/cross-battle/CrossBattleResultsOverlay';
 import { useOrientation } from '../hooks/useOrientation';
@@ -16,9 +16,10 @@ import useFullscreen from '../hooks/useFullscreen';
 import { CrossBattleSubmitButton } from '../components/cross-battle/CrossBattleSubmitButton';
 import { useNavigate } from 'react-router-dom';
 import { CrossBattlePlayerList } from '../components/cross-battle/CrossBattlePlayerList';
+import { CrossBattleSettings, getCrossBattleCanTileSwap } from '../components/cross-battle/CrossBattleSettings';
+import { RiInfinityFill, RiTimerLine } from 'react-icons/ri';
 
-// Add next game button
-// Recenter board each round
+// Bug fix: Dont let timeLimit change immediately after changing it
 
 
 const socket = getSocket();
@@ -27,6 +28,13 @@ export const CrossBattle = ({roomCode}) => {
     const orientation = useOrientation();
     const isFullscreen = useFullscreen();
     const navigate = useNavigate();
+
+    const [rerender, setRerender] = useState(false);
+    const triggerRerender = () => {
+        setRerender(!rerender);
+    }
+
+    const canTileSwap = getCrossBattleCanTileSwap();
 
     const [currentUser, setCurrentUser] = useState(socket.userId);  
 
@@ -95,8 +103,13 @@ export const CrossBattle = ({roomCode}) => {
         }
     }
 
+    const [timeRemaining, setTimeRemaining] = useState(0);
+    const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120};
+    const timerId = useRef(null);
+    const [timeLimit, setTimeLimit] = useState("90s");
+
     useEffect(() => {
-        socket.on('receive_player_data', (playerData, letters) => {
+        socket.on('receive_player_data', (playerData) => {
             setTileToSpace(playerData.tileToSpace);
             setHasSubmitted(playerData.hasSubmitted);
             setDataInitialized(true);
@@ -119,7 +132,38 @@ export const CrossBattle = ({roomCode}) => {
             setTransform(getCenterTransform());
             setCurrentUser(socket.userId);
             socket.emit('get_all_cross_battle_data', roomCode);
+            timerId.current = null;
         });
+
+        socket.on('receive_all_data', () => {
+            socket.emit('get_all_cross_battle_data', roomCode);
+        });
+
+        socket.on('receive_timer_data', (timerData) => {
+            const {roundStartTime, timeLimit, shouldShowResults} = timerData;
+
+            setTimeLimit(timeLimit);
+
+            if (!shouldShowResults && Object.keys(timeControls).includes(timeLimit)) {
+                const diff = roundStartTime + timeControls[timeLimit] * 1000 - Date.now();
+                const diffSec = Math.floor((diff) / 1000);
+                const remaining = Math.min(Math.max(0, diffSec), timeControls[timeLimit]);
+
+                setTimeRemaining(remaining);
+
+                if (!timerId.current && remaining > 0) {
+                    timerId.current = setInterval(() => {
+                        setTimeRemaining((previous) => {
+                            if (previous <= 1) {
+                                clearInterval(timerId.current);
+                                return 0;
+                            } 
+                            return previous - 1
+                        });
+                    }, 1000)
+                }
+            }
+        })
 
         socket.on('room_error', (errorMessage) => {
             navigate(`/cross_battle/lobby`, { state: {error: errorMessage}});
@@ -137,9 +181,11 @@ export const CrossBattle = ({roomCode}) => {
         return () => {
             socket.off('receive_player_data');
             socket.off('receive_players_data');
+            socket.off('receive_all_data');
             socket.off('receive_should_show_results');
             socket.off('start_new_round');
             socket.off('receive_letters');
+            socket.off('receive_timer_data');
             socket.off('room_error');
             socket.off('connect');
             window.removeEventListener("visibilitychange", handleVisibilityChange);
@@ -174,6 +220,10 @@ export const CrossBattle = ({roomCode}) => {
             return next;
         });
     }
+
+    if (shouldShowResults) {
+        clearInterval(timerId.current);    
+    } 
 
     // Tile index to space Id
     const spaceToTile = (spaceId) => {
@@ -227,7 +277,7 @@ export const CrossBattle = ({roomCode}) => {
 
         if (spaceToTile(over.id) == null) {
             moveTile(over.id, active.data.current.tileIndex);
-        } else {
+        } else if (canTileSwap) {
             swapTiles(spaceToTile(over.id), active.data.current.tileIndex);
         }
 
@@ -236,7 +286,7 @@ export const CrossBattle = ({roomCode}) => {
         setActiveData({})
         setHoveredSpaceId(null);
     }
-    
+
     return (
         <DndContext
             modifiers={[restrictToWindowEdges]}
@@ -265,11 +315,24 @@ export const CrossBattle = ({roomCode}) => {
                     />
                     <CrossBattlePlayerList playersData={playersData} />
                     <InfoButton buttonType="info" fullScreen={isFullscreen} />
-                    <InfoButton buttonType="settings" fullScreen={isFullscreen} />
+                    <InfoButton buttonType="settings" fullScreen={isFullscreen}>
+                        <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode}/>
+                    </InfoButton> 
                     <FullscreenButton shouldRotate={false}/>
                 </div>
+
+                <div className={`absolute flex justify-center items-center left-[20px] top-[10px] gap-[6px] h-[6vh] text-[3vh] ${timeRemaining < 10 && timeLimit !== "unlimited" && "text-red-500"}`}>
+                    <div><RiTimerLine /></div>
+                    { timeLimit === "unlimited" ?
+                        <RiInfinityFill />
+                    :
+                        <div>{timeRemaining}</div>
+                    }
+                    
+                </div>
+                
                 <div className={`flex ${orientation !== "landscape" && "flex-col"} items-center justify-center h-full`}>
-                    <div style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 4, width: orientation === "landscape" ? tileSize * 3 : tileSize * 8.5}} />
+                    <div style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 2, width: orientation === "landscape" ? tileSize * 3 : tileSize * 8.5}} />
                     
                     <CrossBattleGrid 
                         tileSize={tileSize} 

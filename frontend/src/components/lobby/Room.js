@@ -16,12 +16,13 @@ import { HanabiSettings } from "../hanabi/HanabiSettings";
 import { HanabiRules } from "../hanabi/HanabiRules";
 import { FullscreenButton } from "../FullscreenButton";
 import useFullscreen from "../../hooks/useFullscreen";
+import { CrossBattleSettings } from "../cross-battle/CrossBattleSettings";
 
 const socket = getSocket();
 
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
 const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />}
-const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />, "hana": <HanabiSettings />}
+const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />, "hana": <HanabiSettings />, "cross_battle": <CrossBattleSettings />}
 
 // roomCode: string
 // gameName: string
@@ -113,7 +114,7 @@ export const Room = (props) => {
                         {React.cloneElement(Settings[gameName], { roomCode: roomCode})}
                     </InfoButton>  
                 } 
-                <div className="text-slate-200">
+                <div className="flex justify-center items-center text-slate-200">
                     <FullscreenButton shouldRotate={false}/>
                 </div>
             </div>

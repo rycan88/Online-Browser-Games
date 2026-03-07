@@ -1,4 +1,4 @@
-const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData } = require("./crossBattleHelper");
+const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound } = require("./crossBattleHelper");
 
 const crossBattleEvents = (io, socket, rooms) => {    
     socket.on("get_all_cross_battle_data", (roomCode) => {
@@ -6,6 +6,10 @@ const crossBattleEvents = (io, socket, rooms) => {
             socket.emit("receive_players_data", rooms[roomCode].playersData);
             socket.emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
             socket.emit("receive_letters", rooms[roomCode].gameData.letters);
+            socket.emit("receive_timer_data", {roundStartTime: rooms[roomCode].gameData.roundStartTime, 
+                                               timeLimit: rooms[roomCode].gameData.timeLimit,
+                                               shouldShowResults: rooms[roomCode].gameData.shouldShowResults,
+                                              });
             socket.emit("receive_player_data", rooms[roomCode].playersData[socket.userId]);
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
@@ -21,16 +25,7 @@ const crossBattleEvents = (io, socket, rooms) => {
         playersData[socket.userId].hasSubmitted = hasSubmitted;
 
         if (Object.values(playersData).every((data) => data.hasSubmitted === true)) {
-            rooms[roomCode].gameData.shouldShowResults = true;
-
-            Object.values(playersData).map((playerData) => {
-                Object.assign(playerData, 
-                    scoreGrid(playerData.tileToSpace, gameData.letters)
-                );
-            });            
-
-            io.to(roomCode).emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
-
+            crossBattleEndRound(io, rooms, roomCode);
         }
         
         io.to(roomCode).emit("receive_players_data", playersData);
@@ -56,12 +51,27 @@ const crossBattleEvents = (io, socket, rooms) => {
 
         if (Object.values(playersData).every((data) => data.isReady === true)) {
             crossBattleConfigurePlayersData(rooms, roomCode);
-            crossBattleConfigureGameData(rooms, roomCode);
+            crossBattleConfigureGameData(io, rooms, roomCode);
+
+            crossBattleSetTimer(io, rooms, roomCode);
 
             io.to(roomCode).emit("start_new_round");
         }
 
         io.to(roomCode).emit("receive_players_data", playersData);
+    });
+
+    socket.on("get_cross_battle_settings_data", (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+        
+        socket.emit("receive_settings_data", {timeLimit: rooms[roomCode].gameData.timeLimit});
+    });
+
+     socket.on("set_cross_battle_settings_data", (roomCode, data) => {
+        if (!rooms[roomCode] || !data) { return; }
+        
+        rooms[roomCode].gameData.timeLimit = data.timeLimit;
+        io.to(roomCode).emit("receive_settings_data", {timeLimit: rooms[roomCode].gameData.timeLimit});
     });
 }
 

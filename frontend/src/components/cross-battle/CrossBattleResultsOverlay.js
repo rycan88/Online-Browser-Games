@@ -3,6 +3,11 @@ import { useOrientation } from "../../hooks/useOrientation";
 import getSocket from "../../socket";
 import { Overlay } from "../Overlay";
 import { ReadyStatusIcon } from "../ReadyStatusIcon";
+import useFullscreen from "../../hooks/useFullscreen";
+import { CrossBattlePlayerList } from "./CrossBattlePlayerList";
+import { InfoButton } from "../InfoButton";
+import { CrossBattleSettings } from "./CrossBattleSettings";
+import { FullscreenButton } from "../FullscreenButton";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
@@ -19,7 +24,8 @@ const socket = getSocket();
 export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, currentUser, setCurrentUser}) => {
     const orientation = useOrientation();
     const validWordsText = [];
-        
+    const isFullscreen = useFullscreen();
+
     if (!currentUser || !playersData) { 
         return <></> 
     }
@@ -108,15 +114,25 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
 
     return (
         <Overlay isOpen={isOpen}>
-            {   
-                <div className="gradientButton absolute top-4 right-4 text-slate-200 text-[2vh] p-[1vh]"
+            <div className="topTaskBar">
+                <div className="gradientButton text-slate-200 text-[2vh] p-[1vh]"
                     onClick={() => {
                         socket.emit("cross_battle_is_ready", roomCode, true);
                     }}
                 >
                     {playersData[socket.userId].isReady ? "Waiting for others..." : "Next Game" }
                 </div>
-            }
+
+                <InfoButton buttonType="info" fullScreen={isFullscreen} />
+                <InfoButton buttonType="settings" fullScreen={isFullscreen}>
+                    <CrossBattleSettings roomCode={roomCode}/>
+                </InfoButton> 
+                <FullscreenButton shouldRotate={false}/>
+            </div>
+
+            
+
+            
             <div className="myContainerCard gap-[0px] text-[2vh] pt-[2vh] pb-[3vh] select-none bg-gradient-to-tr from-slate-950 to-slate-950">
                 <div className="flex w-full text-left translate-y-[2px] text-sm overflow-x-scroll">
                     { tabBarElements() }

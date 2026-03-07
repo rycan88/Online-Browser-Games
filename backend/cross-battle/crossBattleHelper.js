@@ -241,11 +241,40 @@ const crossBattleConfigurePlayersData = (rooms, roomCode) => {
     rooms[roomCode].playersData = playersData;  
 }
 
-const crossBattleConfigureGameData = (rooms, roomCode) => {
+const crossBattleConfigureGameData = (io, rooms, roomCode) => {
     const letters = randomCombo(22);
     const playerDataArray = Object.values(rooms[roomCode].playersData);
+    
 
-    rooms[roomCode].gameData = {letters: letters, shouldShowResults: false, playerDataArray: playerDataArray};
+    rooms[roomCode].gameData = {letters: letters, shouldShowResults: false, playerDataArray: playerDataArray, timeLimit: rooms[roomCode].gameData.timeLimit ?? "10s"};
+    crossBattleSetTimer(io, rooms, roomCode);
+}
+
+const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120};
+const crossBattleSetTimer = (io, rooms, roomCode) => {
+    const gameData = rooms[roomCode].gameData;
+
+    if (Object.keys(timeControls).includes(gameData.timeLimit)) {
+        gameData.roundStartTime = Date.now() + 2000; // Gives the players 2 more second
+        setTimeout(() => {
+            crossBattleEndRound(io, rooms, roomCode)
+            io.to(roomCode).emit("receive_all_data");
+        }, (timeControls[gameData.timeLimit] + 2) * 1000);
+    }
+}
+
+const crossBattleEndRound = (io, rooms, roomCode) => {
+    rooms[roomCode].gameData.shouldShowResults = true;
+    const playersData = rooms[roomCode].playersData;
+    const gameData = rooms[roomCode].gameData;
+
+    Object.values(playersData).map((playerData) => {
+        Object.assign(playerData, 
+            scoreGrid(playerData.tileToSpace, gameData.letters)
+        );
+    });            
+
+    io.to(roomCode).emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
 }
 
 module.exports = {
@@ -253,5 +282,7 @@ module.exports = {
     scoreGrid,
     crossBattleScoring,
     crossBattleConfigurePlayersData,
-    crossBattleConfigureGameData
+    crossBattleConfigureGameData,
+    crossBattleSetTimer,
+    crossBattleEndRound,
 }

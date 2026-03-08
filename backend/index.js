@@ -129,7 +129,7 @@ io.on("connection", (socket) => {
         } else if (gameName === "hana") {
             rooms[roomCode].gameData = {gameModeSetting: {"extraSuitType": "none"}};
         } else if (gameName === "cross_battle") {
-            rooms[roomCode].gameData = {timeLimit: "90s"};
+            rooms[roomCode].gameData = {timeLimit: "unlimited"};
         }
 
         socket.emit('room_created', gameName, roomCode);

@@ -106,7 +106,7 @@ export const CrossBattle = ({roomCode}) => {
     const [timeRemaining, setTimeRemaining] = useState(0);
     const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120};
     const timerId = useRef(null);
-    const [timeLimit, setTimeLimit] = useState("90s");
+    const [timeLimit, setTimeLimit] = useState("unlimited");
 
     useEffect(() => {
         socket.on('receive_player_data', (playerData) => {
@@ -321,7 +321,7 @@ export const CrossBattle = ({roomCode}) => {
                     <FullscreenButton shouldRotate={false}/>
                 </div>
 
-                <div className={`absolute flex justify-center items-center left-[20px] top-[10px] gap-[6px] h-[6vh] text-[3vh] ${timeRemaining < 10 && timeLimit !== "unlimited" && "text-red-500"}`}>
+                <div className={`absolute flex justify-center items-center left-[20px] top-[1vh] gap-[6px] h-[6vh] text-[3vh] ${timeRemaining < 10 && timeLimit !== "unlimited" && "text-red-500"}`}>
                     <div><RiTimerLine /></div>
                     { timeLimit === "unlimited" ?
                         <RiInfinityFill />

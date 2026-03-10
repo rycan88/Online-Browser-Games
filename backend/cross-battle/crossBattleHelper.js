@@ -25,7 +25,6 @@ Object.entries(allLetterTiles).forEach((entry) => {
 
 const randomCombo = (length) => {
     const tilePoolLength = letterTileString.length;
-    let redraws = 0;
     while (true) {
         let newLetters = "";
         const counter = {}
@@ -52,7 +51,6 @@ const randomCombo = (length) => {
         }
 
         if (countVowels(newLetters) >= 5 && countVowels(newLetters) <= 11) {
-            console.log(redraws, "redraws");
             return newLetters
         }
     }

@@ -312,7 +312,7 @@ export const CrossBattle = ({roomCode}) => {
                 />     
 
                 { !shouldShowResults &&
-                    <div className="topTaskBar z-[1]">
+                    <div className="topTaskBar z-[11]">
                         <CrossBattleSubmitButton 
                             roomCode={roomCode}
                             hasSubmitted={hasSubmitted} 
@@ -321,7 +321,7 @@ export const CrossBattle = ({roomCode}) => {
                         <CrossBattlePlayerList playersData={playersData} />
                         <InfoButton buttonType="info" fullScreen={isFullscreen} />
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>
-                            <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode}/>
+                            <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode} shouldShowResults={shouldShowResults}/>
                         </InfoButton> 
                         <FullscreenButton shouldRotate={false}/>
                     </div>

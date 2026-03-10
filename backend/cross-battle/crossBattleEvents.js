@@ -25,11 +25,12 @@ const crossBattleEvents = (io, socket, rooms) => {
 
         playersData[socket.userId].hasSubmitted = hasSubmitted;
 
+        io.to(roomCode).emit("receive_players_data", playersData);
+
         if (Object.values(playersData).every((data) => data.hasSubmitted === true)) {
             crossBattleEndRound(io, rooms, roomCode);
+            io.to(roomCode).emit("receive_all_data");
         }
-        
-        io.to(roomCode).emit("receive_players_data", playersData);
     });
 
     socket.on("cross_battle_send_tile_to_space_data", (roomCode, tileToSpace) => {

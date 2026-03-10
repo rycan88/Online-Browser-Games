@@ -274,8 +274,6 @@ const crossBattleEndRound = (io, rooms, roomCode) => {
             scoreGrid(playerData.tileToSpace, gameData.letters)
         );
     });            
-
-    io.to(roomCode).emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
 }
 
 module.exports = {

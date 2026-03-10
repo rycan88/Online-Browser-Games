@@ -115,13 +115,14 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
     return (
         <Overlay isOpen={isOpen}>
             <div className="topTaskBar">
-                <div className="gradientButton text-slate-200 text-[2vh] p-[1vh]"
+                <button className="gradientButton text-slate-200 text-[2vh] p-[1vh]"
                     onClick={() => {
                         socket.emit("cross_battle_is_ready", roomCode, true);
                     }}
+                    disabled={playersData[socket.userId].isReady}
                 >
                     {playersData[socket.userId].isReady ? "Waiting for others..." : "Next Game" }
-                </div>
+                </button>
 
                 <InfoButton buttonType="info" fullScreen={isFullscreen} />
                 <InfoButton buttonType="settings" fullScreen={isFullscreen}>

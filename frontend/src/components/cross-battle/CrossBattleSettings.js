@@ -16,7 +16,6 @@ export const CrossBattleSettings = ({roomCode, closeOverlay}) => {
 
     const handleSave = () => {
         Cookies.set(canTileSwapCookieName, canTileSwap.toString(), { expires: 365});
-        console.log(canTileSwap.toString())
 
         const settingsData = {
             timeLimit: timeLimit,

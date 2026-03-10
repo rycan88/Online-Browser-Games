@@ -306,19 +306,22 @@ export const CrossBattle = ({roomCode}) => {
                     currentUser={currentUser}
                     setCurrentUser={setCurrentUser}
                 />     
-                <div className="topTaskBar">
-                    <CrossBattleSubmitButton 
-                        roomCode={roomCode}
-                        hasSubmitted={hasSubmitted} 
-                        setHasSubmitted={setHasSubmitted}
-                    />
-                    <CrossBattlePlayerList playersData={playersData} />
-                    <InfoButton buttonType="info" fullScreen={isFullscreen} />
-                    <InfoButton buttonType="settings" fullScreen={isFullscreen}>
-                        <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode}/>
-                    </InfoButton> 
-                    <FullscreenButton shouldRotate={false}/>
-                </div>
+
+                { !shouldShowResults &&
+                    <div className="topTaskBar z-[1]">
+                        <CrossBattleSubmitButton 
+                            roomCode={roomCode}
+                            hasSubmitted={hasSubmitted} 
+                            setHasSubmitted={setHasSubmitted}
+                        />
+                        <CrossBattlePlayerList playersData={playersData} />
+                        <InfoButton buttonType="info" fullScreen={isFullscreen} />
+                        <InfoButton buttonType="settings" fullScreen={isFullscreen}>
+                            <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode}/>
+                        </InfoButton> 
+                        <FullscreenButton shouldRotate={false}/>
+                    </div>
+                }
 
                 <div className={`absolute flex justify-center items-center left-[20px] top-[1vh] gap-[6px] h-[6vh] text-[3vh] ${timeRemaining < 10 && timeLimit !== "unlimited" && "text-red-500"}`}>
                     <div><RiTimerLine /></div>

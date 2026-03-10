@@ -7,6 +7,7 @@ const crossBattleEvents = (io, socket, rooms) => {
             socket.emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
             socket.emit("receive_letters", rooms[roomCode].gameData.letters);
             socket.emit("receive_timer_data", {roundStartTime: rooms[roomCode].gameData.roundStartTime, 
+                                               roundEndTime: rooms[roomCode].gameData.roundEndTime,
                                                timeLimit: rooms[roomCode].gameData.timeLimit,
                                                shouldShowResults: rooms[roomCode].gameData.shouldShowResults,
                                               });

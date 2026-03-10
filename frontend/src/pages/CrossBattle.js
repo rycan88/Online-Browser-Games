@@ -125,6 +125,10 @@ export const CrossBattle = ({roomCode}) => {
         });
 
         socket.on('receive_should_show_results', (shouldShowResults) => {
+            if (shouldShowResults) {
+                clearInterval(timerId.current);  
+                timerId.current = null;  
+            } 
             setShouldShowResults(shouldShowResults);
         });
 
@@ -140,14 +144,12 @@ export const CrossBattle = ({roomCode}) => {
         });
 
         socket.on('receive_timer_data', (timerData) => {
-            const {roundStartTime, timeLimit, shouldShowResults} = timerData;
+            const {roundStartTime, roundEndTime, timeLimit, shouldShowResults} = timerData;
 
             setTimeLimit(timeLimit);
 
             if (!shouldShowResults && Object.keys(timeControls).includes(timeLimit)) {
-                const diff = roundStartTime + timeControls[timeLimit] * 1000 - Date.now();
-                const diffSec = Math.floor((diff) / 1000);
-                const remaining = Math.min(Math.max(0, diffSec), timeControls[timeLimit]);
+                const remaining = Math.min(Math.max(0, Math.floor((roundEndTime - Date.now()) / 1000)), timeControls[timeLimit]);
 
                 setTimeRemaining(remaining);
 
@@ -156,6 +158,7 @@ export const CrossBattle = ({roomCode}) => {
                         setTimeRemaining((previous) => {
                             if (previous <= 1) {
                                 clearInterval(timerId.current);
+                                timerId.current = null;
                                 return 0;
                             } 
                             return previous - 1
@@ -220,10 +223,6 @@ export const CrossBattle = ({roomCode}) => {
             return next;
         });
     }
-
-    if (shouldShowResults) {
-        clearInterval(timerId.current);    
-    } 
 
     // Tile index to space Id
     const spaceToTile = (spaceId) => {

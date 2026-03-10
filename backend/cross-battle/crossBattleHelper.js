@@ -256,6 +256,7 @@ const crossBattleSetTimer = (io, rooms, roomCode) => {
 
     if (Object.keys(timeControls).includes(gameData.timeLimit)) {
         gameData.roundStartTime = Date.now() + 2000; // Gives the players 2 more second
+        gameData.roundEndTime = Date.now() + (timeControls[gameData.timeLimit] + 2) * 1000;
         setTimeout(() => {
             crossBattleEndRound(io, rooms, roomCode)
             io.to(roomCode).emit("receive_all_data");

@@ -97,10 +97,12 @@ export const CrossBattle = ({roomCode}) => {
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
 
+    const resync = () => {
+        socket.emit("get_all_cross_battle_data", roomCode);
+    }
+
     const handleVisibilityChange = () => {
-        if (!document.hidden) {
-            socket.emit("get_all_cross_battle_data", roomCode);
-        }
+        if (!document.hidden) { resync(); }
     }
 
     const [timeRemaining, setTimeRemaining] = useState(0);
@@ -172,14 +174,14 @@ export const CrossBattle = ({roomCode}) => {
             navigate(`/cross_battle/lobby`, { state: {error: errorMessage}});
         });
 
-        socket.on('connect', () => {
-            socket.emit('get_all_cross_battle_data', roomCode);
-        });
+        socket.on('connect', resync);
+        socket.on('reconnect', resync);
 
         window.addEventListener("visibilitychange", handleVisibilityChange);
+        window.addEventListener("focus", resync);
 
         socket.emit('join_room', roomCode);
-        socket.emit("get_all_cross_battle_data", roomCode);
+        resync();
 
         return () => {
             socket.off('receive_player_data');
@@ -191,7 +193,9 @@ export const CrossBattle = ({roomCode}) => {
             socket.off('receive_timer_data');
             socket.off('room_error');
             socket.off('connect');
+            socket.off('reconnect');
             window.removeEventListener("visibilitychange", handleVisibilityChange);
+            window.removeEventListener("focus", resync);
         }
     }, []);
 

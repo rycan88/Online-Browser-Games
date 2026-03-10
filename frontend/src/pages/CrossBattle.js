@@ -98,6 +98,9 @@ export const CrossBattle = ({roomCode}) => {
     const [shouldShowResults, setShouldShowResults] = useState(false);
 
     const resync = () => {
+        if (!socket.connected) {
+            socket.connect();
+        }
         socket.emit("get_all_cross_battle_data", roomCode);
     }
 
@@ -179,6 +182,7 @@ export const CrossBattle = ({roomCode}) => {
 
         window.addEventListener("visibilitychange", handleVisibilityChange);
         window.addEventListener("focus", resync);
+        window.addEventListener("pageshow", resync);
 
         socket.emit('join_room', roomCode);
         resync();
@@ -196,6 +200,7 @@ export const CrossBattle = ({roomCode}) => {
             socket.off('reconnect');
             window.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("focus", resync);
+            window.removeEventListener("pageshow", resync);
         }
     }, []);
 

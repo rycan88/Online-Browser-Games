@@ -25,6 +25,7 @@ Object.entries(allLetterTiles).forEach((entry) => {
 
 const randomCombo = (length) => {
     const tilePoolLength = letterTileString.length;
+    let redraws = 0;
     while (true) {
         let newLetters = "";
         const counter = {}
@@ -40,7 +41,18 @@ const randomCombo = (length) => {
             counter[letter] += 1; 
             newLetters += letterTileString[num];
         }
+
+        if (newLetters.includes("Q") && !newLetters.includes("U")) {
+            const qIndex = newLetters.indexOf("Q");
+            if (qIndex === length - 1) {
+                newLetters = "U" + newLetters.slice(1);
+            } else {
+                newLetters = newLetters.slice(0, qIndex + 1) + "U" + newLetters.slice(qIndex + 2);
+            }
+        }
+
         if (countVowels(newLetters) >= 5 && countVowels(newLetters) <= 11) {
+            console.log(redraws, "redraws");
             return newLetters
         }
     }

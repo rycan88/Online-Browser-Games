@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 
 const socket = getSocket()
 
-const timeLimitChoices = {"unlimited": "Unlimited", "15s": "15s", "60s": "60s", "90s": "90s", "120s": "120s"}
+const timeLimitChoices = {"unlimited": "Unlimited", "30s": "30s", "60s": "60s", "90s": "90s", "120s": "120s", "180s": "180s"}
 const canTileSwapCookieName = "crossBattleCanTileSwap";
 export const CrossBattleSettings = ({roomCode, closeOverlay}) => {
     const [timeLimit, setTimeLimit] = useState("unlimited");

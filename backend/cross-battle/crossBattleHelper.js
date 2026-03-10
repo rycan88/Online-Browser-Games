@@ -250,7 +250,7 @@ const crossBattleConfigureGameData = (io, rooms, roomCode) => {
     crossBattleSetTimer(io, rooms, roomCode);
 }
 
-const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120};
+const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180};
 const crossBattleSetTimer = (io, rooms, roomCode) => {
     const gameData = rooms[roomCode].gameData;
 

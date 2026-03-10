@@ -19,14 +19,15 @@ export const Games = () => {
                                             ${isLandscape ? 
                                                 "w-[calc(max(500px,25%))] h-[60vh] text-[min(3vh,1em)] pt-[6vh]" 
                                                 :
-                                                "w-[40vw] h-[55vw] text-[min(2vw,1em)] pt-[6vw]"
+                                                "w-[40vw] h-[55vw] text-[min(2vw,1em)] pt-[6vw] pb-[2vh]"
                                             }
                                             `} 
+                                key={gameData.title}
                                 onClick={() => {
                                     navigate(gameData.link);
                                 }}
                             >
-                                <h1 className={`myContainerCardTitle ${!isLandscape && "text-[2vw] py-[1vw] px-[4vw] h-[8vw] -top-[4vw] rounded-[3vw]"}`}>{gameData.title}</h1>
+                                <h1 className={`myContainerCardTitle ${!isLandscape && "text-[2vw] py-[1vw] px-[4vw] h-[8vw] -top-[4vw] rounded-[2vw]"}`}>{gameData.title}</h1>
                                 <div className="flex gap-[16px] w-full justify-center">
                                     <div className="myContainerCardInnerBox px-[3%] py-[2%]">{gameData.playerLimitText}</div>
                                     <div className="myContainerCardInnerBox px-[3%] py-[2%]">{gameData.duration}</div>
@@ -36,11 +37,11 @@ export const Games = () => {
                                         <img className="h-full rounded-[5%]" src={`${process.env.PUBLIC_URL}/images/${gameData.logoLink}`} alt="logo" />
                                     </div>    
                                 }
-
-                                <div className='myContainerCardInnerBox px-[10%] py-[3%]'>
-                                    <div>{gameData.description}</div>
+                                <div className='flex-1 flex items-center justify-center'>
+                                    <div className='myContainerCardInnerBox px-[10%] py-[3%]'>
+                                        <div>{gameData.description}</div>
+                                    </div>
                                 </div>
-
                             </div>
                         );
                     })

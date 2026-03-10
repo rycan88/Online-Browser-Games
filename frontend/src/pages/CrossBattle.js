@@ -104,7 +104,7 @@ export const CrossBattle = ({roomCode}) => {
     }
 
     const [timeRemaining, setTimeRemaining] = useState(0);
-    const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120};
+    const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180};
     const timerId = useRef(null);
     const [timeLimit, setTimeLimit] = useState("unlimited");
 

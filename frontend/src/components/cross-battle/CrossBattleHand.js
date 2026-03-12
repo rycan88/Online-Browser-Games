@@ -80,7 +80,10 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
     return (
         <div className="relative flex flex-col">
             <button className="absolute hover:scale-110"
-                    style={{fontSize: tileSize * 0.5, top: orientation === "landscape" && -tileSize * 0.5, right: -tileSize * 0.5, bottom: orientation === "portrait" && tileSize * 0.5}}
+                    style={{fontSize: tileSize * 0.75, 
+                            top: orientation === "landscape" && -tileSize * 0.75, 
+                            right: orientation === "portrait" ? tileSize * 0.25 : -tileSize * 0.75, 
+                            bottom: orientation === "portrait" && -tileSize * 0.75}}
                     onClick={shuffleTiles} 
             >
                 <IoShuffle />

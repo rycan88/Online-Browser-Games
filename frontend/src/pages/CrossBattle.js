@@ -327,6 +327,7 @@ export const CrossBattle = ({roomCode}) => {
                     isOpen={shouldShowResults}
                     currentUser={currentUser}
                     setCurrentUser={setCurrentUser}
+                    letters={letters}
                 />     
 
                 { !shouldShowResults &&
@@ -339,7 +340,7 @@ export const CrossBattle = ({roomCode}) => {
                         <CrossBattlePlayerList playersData={playersData} />
                         <InfoButton buttonType="info" fullScreen={isFullscreen} />
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>
-                            <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode} shouldShowResults={shouldShowResults}/>
+                            <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode} shouldShowResults={shouldShowResults} />
                         </InfoButton> 
                         <FullscreenButton shouldRotate={false}/>
                     </div>
@@ -356,7 +357,7 @@ export const CrossBattle = ({roomCode}) => {
                 </div>
                 
                 <div className={`flex ${orientation !== "landscape" && "flex-col"} items-center justify-center h-full`}>
-                    <div style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 2, width: orientation === "landscape" ? tileSize * 3 : tileSize * 8.5}} />
+                    <div style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 1.5, width: orientation === "landscape" ? tileSize * 3 : tileSize * 8.5}} />
                     
                     <CrossBattleGrid 
                         tileSize={tileSize} 

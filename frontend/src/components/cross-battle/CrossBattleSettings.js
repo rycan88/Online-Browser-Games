@@ -4,13 +4,14 @@ import getSocket from "../../socket";
 import { SettingsSaveButton } from "../SettingsSaveButton";
 import { ChoiceDropdown } from "../ChoiceDropdown";
 import Cookies from "js-cookie";
+import { CrossBattleCopySeedButton } from "./CrossBattleCopySeedButton";
 
 
 const socket = getSocket()
 
 const timeLimitChoices = {"unlimited": "Unlimited", "30s": "30s", "60s": "60s", "90s": "90s", "120s": "120s", "180s": "180s"}
 const canTileSwapCookieName = "crossBattleCanTileSwap";
-export const CrossBattleSettings = ({roomCode, closeOverlay, shouldShowResults=true}) => {
+export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShowResults}) => {
     const [timeLimit, setTimeLimit] = useState("unlimited");
     const [canTileSwap, setCanTileSwap] = useState(true);
 
@@ -57,8 +58,14 @@ export const CrossBattleSettings = ({roomCode, closeOverlay, shouldShowResults=t
 
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
                     <div>Time Mode</div>
-                    <ChoiceDropdown selectedChoice={timeLimit} setSelectedChoice={setTimeLimit} choices={timeLimitChoices} isDisabled={!shouldShowResults}/>
+                    <ChoiceDropdown selectedChoice={timeLimit} setSelectedChoice={setTimeLimit} choices={timeLimitChoices} isDisabled={shouldShowResults === false}/>
                 </div>
+                { shouldShowResults &&
+                    <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
+                        <div>Seed</div>
+                        <CrossBattleCopySeedButton letters={letters}/>
+                    </div>
+                }
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">
                     <div>Disable Tile Swapping</div>
                     <ToggleSwitch isOn={!canTileSwap} onAction={() => {setCanTileSwap(false)}} offAction={() => {setCanTileSwap(true)}} bgColour="bg-sky-600"/>

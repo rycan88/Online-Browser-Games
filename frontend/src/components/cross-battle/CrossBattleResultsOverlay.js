@@ -21,7 +21,7 @@ const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42,
 
 const socket = getSocket();
 
-export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, currentUser, setCurrentUser}) => {
+export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, currentUser, setCurrentUser, letters}) => {
     const orientation = useOrientation();
     const validWordsText = [];
     const isFullscreen = useFullscreen();
@@ -126,7 +126,7 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
 
                 <InfoButton buttonType="info" fullScreen={isFullscreen} />
                 <InfoButton buttonType="settings" fullScreen={isFullscreen}>
-                    <CrossBattleSettings roomCode={roomCode}/>
+                    <CrossBattleSettings roomCode={roomCode} shouldShowResults={true} letters={letters}/>
                 </InfoButton> 
                 <FullscreenButton shouldRotate={false}/>
             </div>

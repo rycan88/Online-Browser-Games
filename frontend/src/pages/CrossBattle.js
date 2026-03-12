@@ -248,7 +248,7 @@ export const CrossBattle = ({roomCode}) => {
 
     // Tile index to space Id
     const spaceToTile = (spaceId) => {
-        return Object.entries(tileToSpace).find(([, value]) => value === spaceId)?.[0];
+        return Object.entries(tileToSpace).find(([, value]) => value === spaceId)?.[0] ?? null;
     }
 
     const sensors = useSensors(
@@ -377,6 +377,8 @@ export const CrossBattle = ({roomCode}) => {
                         tileToSpace={tileToSpace}
                         letters={letters}
                         orientation={orientation}
+                        setTileToSpace={setTileToSpace}
+                        roomCode={roomCode}
                     />
                 </div>
 

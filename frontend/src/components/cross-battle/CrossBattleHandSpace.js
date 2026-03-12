@@ -6,10 +6,10 @@ import { DraggableItem } from "../hanabi/DraggableItem";
 import getSocket from "../../socket";
 
 const socket = getSocket()
-export const CrossBattleHandSpace = ({tileSize, id, tileData}) => {
+export const CrossBattleHandSpace = ({tileSize, id, tileData, handOpacity}) => {
     const { active, isOver, setNodeRef } = useDroppable({ id });
 
-    const {letter, tileIndex, isHovered} = tileData;
+    const {letter, tileIndex} = tileData;
 
     return (
         <div className={`flex items-center justify-center border border-dashed bg-[rgba(182,188,226,0.3)] border-[rgb(182,188,226)] text-black rounded-[10%]`} 
@@ -18,9 +18,12 @@ export const CrossBattleHandSpace = ({tileSize, id, tileData}) => {
         >
             {tileIndex != null && 
                 <div className={`z-[10]`}>
-                    <DraggableItem id={`${letter}-${String(tileIndex)}`} data={{type: "crossBattleTile", letter: letter, tileIndex: tileIndex}}>
+                    <DraggableItem key={`${letter}-${String(tileIndex)}`} 
+                                   id={`${letter}-${String(tileIndex)}`} 
+                                   data={{type: "crossBattleTile", letter: letter, tileIndex: tileIndex}}>
                         <CrossBattleTile tileSize={tileSize} 
                                         tileLetter={letter}
+                                        opacity={handOpacity}
                         />
                     </DraggableItem>
                 </div>

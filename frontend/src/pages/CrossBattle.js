@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { CrossBattlePlayerList } from '../components/cross-battle/CrossBattlePlayerList';
 import { CrossBattleSettings, getCrossBattleCanTileSwap } from '../components/cross-battle/CrossBattleSettings';
 import { RiInfinityFill, RiTimerLine } from 'react-icons/ri';
+import { refreshPage } from '../utils';
 
 // Bug fix: Dont let timeLimit change immediately after changing it
 
@@ -99,13 +100,10 @@ export const CrossBattle = ({roomCode}) => {
 
     const resync = () => {
         if (!socket.connected) {
-            socket.connect();
+            refreshPage();
+            console.log("Refreshed");
         }
         socket.emit("get_all_cross_battle_data", roomCode);
-    }
-
-    const handleVisibilityChange = () => {
-        if (!document.hidden) { resync(); }
     }
 
     const [timeRemaining, setTimeRemaining] = useState(0);
@@ -179,6 +177,21 @@ export const CrossBattle = ({roomCode}) => {
 
         socket.on('connect', resync);
         socket.on('reconnect', resync);
+
+
+        let hiddenTime = null;
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "hidden") {
+                hiddenTime = Date.now();
+            }
+
+            if (document.visibilityState === "visible") {
+                if (hiddenTime && Date.now() - hiddenTime > 2 * 60 * 1000) { // Away longer than 2 min
+                    refreshPage();
+                }
+            }
+        }
 
         window.addEventListener("visibilitychange", handleVisibilityChange);
         window.addEventListener("focus", resync);
@@ -361,6 +374,7 @@ export const CrossBattle = ({roomCode}) => {
                     <CrossBattleHand 
                         tileSize={tileSize}
                         spaceToTile={spaceToTile}
+                        tileToSpace={tileToSpace}
                         letters={letters}
                         orientation={orientation}
                     />

@@ -44,7 +44,7 @@
   }
 
   .myContainerCardInnerBox {
-    @apply bg-sky-800/30 shadow-xl rounded-[10%] border-[1px] border-sky-700;
+    @apply bg-sky-800/30 shadow-xl rounded-[6px] border-[1px] border-sky-700;
   }
 
   .myContainerCardCenterScrollBox {

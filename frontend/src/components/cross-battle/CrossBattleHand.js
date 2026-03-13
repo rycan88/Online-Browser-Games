@@ -10,7 +10,9 @@ import { useFlipAnimation } from "../../hooks/useFlipAnimation";
 const socket = getSocket();
 
 export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, tileToSpace, setTileToSpace, roomCode}) => {
-    const registerTile = useFlipAnimation([tileToSpace])
+    const [isShuffling, setIsShuffling] = useState(false);
+    const registerTile = useFlipAnimation([tileToSpace], isShuffling)
+
 
     let handArray = [];
     const filledSpaces = [] // Indeces of tiles that are in hand
@@ -28,6 +30,8 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
     }
 
     const shuffleTiles = () => {
+        setIsShuffling(true);
+
         const tileCount = filledSpaces.length;
         for (let i = tileCount - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -48,6 +52,10 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
             socket.emit("cross_battle_send_tile_to_space_data", roomCode, next);
             return next;
         }) 
+
+        setTimeout(() => {
+            setIsShuffling(false);
+        }, 300)
     }
 
     return (

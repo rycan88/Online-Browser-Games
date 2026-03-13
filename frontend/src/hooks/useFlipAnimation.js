@@ -1,6 +1,6 @@
 import { useRef, useLayoutEffect } from "react";
 
-export const useFlipAnimation = (deps) => {
+export const useFlipAnimation = (deps, isEnabled) => {
   const elements = useRef(new Map());
   const positions = useRef(new Map());
 
@@ -15,6 +15,11 @@ export const useFlipAnimation = (deps) => {
     elements.current.forEach((el, id) => {
       newPositions.set(id, el.getBoundingClientRect());
     });
+
+    if (!isEnabled) {
+        positions.current = newPositions;
+        return;
+    }
 
     elements.current.forEach((el, id) => {
       const oldPos = positions.current.get(id);

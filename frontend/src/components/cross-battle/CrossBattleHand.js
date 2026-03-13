@@ -13,7 +13,7 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
     const registerTile = useFlipAnimation([tileToSpace])
 
     let handArray = [];
-    const filledSpaces = []
+    const filledSpaces = [] // Indeces of tiles that are in hand
     for (let index = 0; index < letters.length; index++) {
         const id = `handSpace-${String(index)}`;
 
@@ -21,7 +21,7 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
         const num = tileIndex == null ? null : Number(tileIndex);
 
         if (num != null) {
-            filledSpaces.push(index);
+            filledSpaces.push(num);
         }
 
         handArray.push(num);
@@ -31,14 +31,14 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
         const tileCount = filledSpaces.length;
         for (let i = tileCount - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [handArray[filledSpaces[i]], handArray[filledSpaces[j]]] = [handArray[filledSpaces[j]], handArray[filledSpaces[i]]]
+            [filledSpaces[i], filledSpaces[j]] = [filledSpaces[j], filledSpaces[i]];
         }
 
         setTileToSpace((prev) => {
             const next = { ...prev }
-            for (let i = 0; i < handArray.length; i++) {
+            for (let i = 0; i < filledSpaces.length; i++) {
                 const id = `handSpace-${String(i)}`;
-                const tileIndex = handArray[i]; 
+                const tileIndex = filledSpaces[i]; 
 
                 if (tileIndex != null) {
                     next[tileIndex] = id;

@@ -5,11 +5,12 @@ import { CrossBattleGridSpace } from "./CrossBattleGridSpace";
 import { CrossBattleHandSpace } from "./CrossBattleHandSpace";
 import { IoShuffle } from "react-icons/io5";
 import getSocket from "../../socket";
+import { useFlipAnimation } from "../../hooks/useFlipAnimation";
 
 const socket = getSocket();
 
 export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, tileToSpace, setTileToSpace, roomCode}) => {
-    const [handOpacity, setHandOpacity] = useState(1);
+    const registerTile = useFlipAnimation([tileToSpace])
 
     let handArray = [];
     const filledSpaces = []
@@ -27,54 +28,26 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
     }
 
     const shuffleTiles = () => {
-        setHandOpacity(0);
+        const tileCount = filledSpaces.length;
+        for (let i = tileCount - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [handArray[filledSpaces[i]], handArray[filledSpaces[j]]] = [handArray[filledSpaces[j]], handArray[filledSpaces[i]]]
+        }
 
-        setTimeout(() => {
-            const tileCount = filledSpaces.length;
-            for (let i = tileCount - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [handArray[filledSpaces[i]], handArray[filledSpaces[j]]] = [handArray[filledSpaces[j]], handArray[filledSpaces[i]]]
-            }
+        setTileToSpace((prev) => {
+            const next = { ...prev }
+            for (let i = 0; i < handArray.length; i++) {
+                const id = `handSpace-${String(i)}`;
+                const tileIndex = handArray[i]; 
 
-            setTileToSpace((prev) => {
-                const next = { ...prev }
-                for (let i = 0; i < handArray.length; i++) {
-                    const id = `handSpace-${String(i)}`;
-                    const tileIndex = handArray[i]; 
-
-                    if (tileIndex != null) {
-                        next[tileIndex] = id;
-                    }
+                if (tileIndex != null) {
+                    next[tileIndex] = id;
                 }
-                
-                socket.emit("cross_battle_send_tile_to_space_data", roomCode, next);
-                return next;
-            })
-
-            setTimeout(() => {
-                setHandOpacity(1);
-            }, 100);
- 
-        }, 300);
-    }
-
-    const tiles = [];
-        
-    for (let index = 0; index < letters.length; index++) {
-        const id = `handSpace-${String(index)}`;
-
-        let tileIndex = spaceToTile(id);
-        let letter = tileIndex != null ? letters[tileIndex] : null;
-
-        tiles.push(
-            <CrossBattleHandSpace 
-                key={id} 
-                id={id} 
-                tileSize={tileSize} 
-                tileData={{letter, tileIndex}}
-                handOpacity={handOpacity}
-            />
-        )
+            }
+            
+            socket.emit("cross_battle_send_tile_to_space_data", roomCode, next);
+            return next;
+        }) 
     }
 
     return (
@@ -101,7 +74,7 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
                                 id={id} 
                                 tileSize={tileSize} 
                                 tileData={{letter, tileIndex}}
-                                handOpacity={handOpacity}
+                                registerTile={registerTile}
                             />          
                     })
                 }

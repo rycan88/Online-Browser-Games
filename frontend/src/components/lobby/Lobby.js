@@ -13,8 +13,9 @@ import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
 import { HanabiRules } from "../hanabi/HanabiRules";
 import { FullscreenButton } from "../FullscreenButton";
 import useFullscreen from "../../hooks/useFullscreen";
+import { CrossBattleRules } from "../cross-battle/CrossBattleRules";
 
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />}
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />, "crossBattle": <CrossBattleRules />}
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {

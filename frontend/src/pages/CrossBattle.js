@@ -19,6 +19,7 @@ import { CrossBattlePlayerList } from '../components/cross-battle/CrossBattlePla
 import { CrossBattleSettings, getCrossBattleCanTileSwap } from '../components/cross-battle/CrossBattleSettings';
 import { RiInfinityFill, RiTimerLine } from 'react-icons/ri';
 import { refreshPage } from '../utils';
+import { CrossBattleRules } from '../components/cross-battle/CrossBattleRules';
 
 // Bug fix: Dont let timeLimit change immediately after changing it
 
@@ -338,7 +339,9 @@ export const CrossBattle = ({roomCode}) => {
                             setHasSubmitted={setHasSubmitted}
                         />
                         <CrossBattlePlayerList playersData={playersData} />
-                        <InfoButton buttonType="info" fullScreen={isFullscreen} />
+                        <InfoButton buttonType="info" fullScreen={isFullscreen}>
+                            <CrossBattleRules />
+                        </InfoButton>
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>
                             <CrossBattleSettings triggerRerender={triggerRerender} roomCode={roomCode} shouldShowResults={shouldShowResults} />
                         </InfoButton> 

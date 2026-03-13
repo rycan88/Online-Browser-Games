@@ -8,6 +8,7 @@ import { CrossBattlePlayerList } from "./CrossBattlePlayerList";
 import { InfoButton } from "../InfoButton";
 import { CrossBattleSettings } from "./CrossBattleSettings";
 import { FullscreenButton } from "../FullscreenButton";
+import { CrossBattleRules } from "./CrossBattleRules";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
@@ -124,7 +125,9 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
                     {playersData[socket.userId].isReady ? "Waiting for others..." : "Next Game" }
                 </button>
 
-                <InfoButton buttonType="info" fullScreen={isFullscreen} />
+                <InfoButton buttonType="info" fullScreen={isFullscreen}>
+                    <CrossBattleRules />
+                </InfoButton>
                 <InfoButton buttonType="settings" fullScreen={isFullscreen}>
                     <CrossBattleSettings roomCode={roomCode} shouldShowResults={true} letters={letters}/>
                 </InfoButton> 

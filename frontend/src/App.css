@@ -48,11 +48,11 @@
   }
 
   .myContainerCardCenterScrollBox {
-    @apply flex flex-col h-[70%] overflow-y-auto;
+    @apply flex flex-col h-[80%] overflow-y-auto;
   }
 
   .myContainerCardBottomButton {
-    @apply p-2 absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[clamp(100px,25%,200px)] h-[clamp(50px,12%,100px)] rounded-lg text-[2vh];
+    @apply p-2 absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[clamp(20px,25%,200px)] h-[clamp(10px,12%,100px)] rounded-lg text-[2vh];
   }
 
   .topTaskBar { 

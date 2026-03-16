@@ -95,7 +95,7 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
                 }
                 { !gameInProgress &&
                     <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
-                        <div>Set Next Seed</div>
+                        <div>Set Seed</div>
                         <input
                             type="text"
                             value={nextSeed}
@@ -109,7 +109,7 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
                         <button className="gradientButton py-[6px] px-[12px] rounded-lg"
                                 onClick={handlePasteSeed}
                         >
-                            Paste Seed
+                            Paste
                         </button>
                     </div>
                 }

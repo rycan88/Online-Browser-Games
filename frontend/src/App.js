@@ -110,7 +110,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="App select-none">
       <AppContext.Provider value={{ rooms, setRooms }}>
         <QueryClientProvider client={client}>
           <Router>

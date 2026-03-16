@@ -16,7 +16,8 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
 
     let handArray = [];
     const filledSpaces = [] // Indeces of tiles that are in hand
-    for (let index = 0; index < letters.length; index++) {
+
+    for (let index = 0; index < 22; index++) {
         const id = `handSpace-${String(index)}`;
 
         const tileIndex = spaceToTile(id);

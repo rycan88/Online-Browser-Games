@@ -238,8 +238,11 @@ const crossBattleConfigurePlayersData = (rooms, roomCode) => {
     
     const playersData = {}
 
+    const nextSeed = rooms[roomCode].gameData.nextSeed;
+    const letterLength = nextSeed ? nextSeed.length : 22;
+
     const initial = {}
-    for (let index = 0; index < 22; index++) {
+    for (let index = 0; index < letterLength; index++) {
         initial[index] = `handSpace-${String(index)}`;
     }
     
@@ -252,11 +255,12 @@ const crossBattleConfigurePlayersData = (rooms, roomCode) => {
 }
 
 const crossBattleConfigureGameData = (io, rooms, roomCode) => {
-    const letters = randomCombo(22);
+    const nextSeed = rooms[roomCode].gameData.nextSeed;
+    const isSeeded = nextSeed ? true : false; 
+    const letters = isSeeded ? nextSeed : randomCombo(22);
     const playerDataArray = Object.values(rooms[roomCode].playersData);
-    
 
-    rooms[roomCode].gameData = {letters: letters, shouldShowResults: false, playerDataArray: playerDataArray, timeLimit: rooms[roomCode].gameData.timeLimit ?? "10s"};
+    rooms[roomCode].gameData = {letters: letters, shouldShowResults: false, playerDataArray: playerDataArray, timeLimit: rooms[roomCode].gameData.timeLimit ?? "10s", nextSeed: "", isSeeded: isSeeded};
     crossBattleSetTimer(io, rooms, roomCode);
 }
 

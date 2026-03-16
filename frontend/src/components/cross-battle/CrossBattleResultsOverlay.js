@@ -9,6 +9,7 @@ import { InfoButton } from "../InfoButton";
 import { CrossBattleSettings } from "./CrossBattleSettings";
 import { FullscreenButton } from "../FullscreenButton";
 import { CrossBattleRules } from "./CrossBattleRules";
+import { GiSprout } from "react-icons/gi";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
@@ -22,7 +23,7 @@ const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42,
 
 const socket = getSocket();
 
-export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, currentUser, setCurrentUser, letters}) => {
+export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, currentUser, setCurrentUser, letters, isSeeded}) => {
     const orientation = useOrientation();
     const validWordsText = [];
     const isFullscreen = useFullscreen();
@@ -116,7 +117,7 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
     return (
         <Overlay isOpen={isOpen}>
             <div className="topTaskBar">
-                <button className="gradientButton text-slate-200 text-[2vh] p-[1vh]"
+                <button className="gradientButton text-slate-200 py-[6px] px-[12px] rounded-lg mx-[6px]"
                     onClick={() => {
                         socket.emit("cross_battle_is_ready", roomCode, true);
                     }}
@@ -183,8 +184,12 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
                             </div>
                         </div>
 
-                        <div className={`${orientation === "landscape" ? "w-[50%]": "h-[40%]"} aspect-square grid grid-cols-[repeat(16,1fr)] grid-rows-[repeat(16,1fr)] border border-slate-500`}>
+                        <div className={`relative ${orientation === "landscape" ? "w-[50%]": "h-[40%]"} aspect-square grid grid-cols-[repeat(16,1fr)] grid-rows-[repeat(16,1fr)] border border-slate-500`}>
                             {gridArray}
+                            { isSeeded &&
+                                <div className="absolute right-[2px] top-[2px]">🌱</div>
+                            }
+
                         </div>
                     </div>
                 </div>

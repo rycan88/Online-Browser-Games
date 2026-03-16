@@ -5,6 +5,7 @@ import { SettingsSaveButton } from "../SettingsSaveButton";
 import { ChoiceDropdown } from "../ChoiceDropdown";
 import Cookies from "js-cookie";
 import { CrossBattleCopySeedButton } from "./CrossBattleCopySeedButton";
+import { SectionHeading } from "../SectionHeading";
 
 
 const socket = getSocket()
@@ -14,12 +15,43 @@ const canTileSwapCookieName = "crossBattleCanTileSwap";
 export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShowResults}) => {
     const [timeLimit, setTimeLimit] = useState("unlimited");
     const [canTileSwap, setCanTileSwap] = useState(true);
+    const [nextSeed, setNextSeed] = useState("");
+
+    const handleSeedChange = (e) => {
+    let value = e.target.value;
+
+    // Remove non-letters
+    value = value.replace(/[^a-zA-Z]/g, "");
+
+    // Convert to uppercase
+    value = value.toUpperCase();
+
+    // Limit to 22 characters
+    value = value.slice(0, 22);
+
+    setNextSeed(value);
+    };
+
+    const handlePasteSeed = async () => {
+        try {
+            let text = await navigator.clipboard.readText();
+
+            // sanitize
+            text = text.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 22);
+
+            setNextSeed(text);
+        } catch (err) {
+            console.error("Failed to read clipboard:", err);
+        }
+    };
+
 
     const handleSave = () => {
         Cookies.set(canTileSwapCookieName, canTileSwap.toString(), { expires: 365});
 
         const settingsData = {
             timeLimit: timeLimit,
+            nextSeed: nextSeed,
         }
         socket.emit('set_cross_battle_settings_data', roomCode, settingsData);
 
@@ -28,11 +60,10 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
     useEffect(() => {
         socket.on('receive_settings_data', (settingsData) => {
             if (!settingsData) { return; }
-            const timeLimit = settingsData.timeLimit;
-
-            if (timeLimit) {
-                setTimeLimit(timeLimit)
-            }
+            const {timeLimit, nextSeed} = settingsData;
+            
+            if (timeLimit) { setTimeLimit(timeLimit) }
+            if (nextSeed) { setNextSeed(nextSeed) }
         });
 
         const canTileSwap = getCrossBattleCanTileSwap();
@@ -45,34 +76,48 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
         }
     }, [])
 
-
-    useEffect(() => {
-
-    }, [])
-
+    const gameInProgress = (shouldShowResults === false);
 
     return (
         <div className="myContainerCard">
             <div className="myContainerCardTitle">Settings</div>
             <div className="myContainerCardCenterScrollBox gap-[2vh] w-[90%] mt-[2vh]">
-
+                <SectionHeading text="Game Settings" />
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
                     <div>Time Mode</div>
-                    <ChoiceDropdown selectedChoice={timeLimit} setSelectedChoice={setTimeLimit} choices={timeLimitChoices} isDisabled={shouldShowResults === false}/>
+                    <ChoiceDropdown selectedChoice={timeLimit} setSelectedChoice={setTimeLimit} choices={timeLimitChoices} isDisabled={gameInProgress}/>
                 </div>
                 { shouldShowResults &&
                     <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
-                        <div>Seed</div>
+                        <div>Get Seed</div>
                         <CrossBattleCopySeedButton letters={letters}/>
                     </div>
                 }
+                { !gameInProgress &&
+                    <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
+                        <div>Set Next Seed</div>
+                        <input
+                            type="text"
+                            value={nextSeed}
+                            onChange={handleSeedChange}
+                            placeholder="Enter seed..."
+                            className="px-3 py-2 rounded-md bg-sky-950/60 border border-sky-700 text-slate-200 placeholder-slate-400 font-mono outline-none
+                                     focus:border-sky-400 focus:ring-2 focus:ring-sky-500/40 transition w-[50%]"
+                            isDisabled={true}
+                        />
+
+                        <button className="gradientButton py-[6px] px-[12px] rounded-lg"
+                                onClick={handlePasteSeed}
+                        >
+                            Paste Seed
+                        </button>
+                    </div>
+                }
+                <SectionHeading text="User Settings" />
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">
                     <div>Disable Tile Swapping</div>
                     <ToggleSwitch isOn={!canTileSwap} onAction={() => {setCanTileSwap(false)}} offAction={() => {setCanTileSwap(true)}} bgColour="bg-sky-600"/>
                 </div>
-
-
-
             </div>
             
             <SettingsSaveButton handleSave={handleSave} closeOverlay={closeOverlay}/>

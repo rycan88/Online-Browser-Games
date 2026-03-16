@@ -21,7 +21,7 @@ export const CrossBattleRules = () => {
                 <h1 className="w-full text-[1.5em] pl-3 underline">Scoring</h1>
                 <div className="myContainerCardInnerBox flex-col py-[1vh] px-[2vh]">
                     <div className="indent">Points will be calculated based on valid words, invalid words, and unused tiles. It is considered a valid word if it is in the 2022 Collins Scrabble Dictionary. Note: Proper nouns are often not included in this dictionary. 
-                        Points are calculated using the formula <InlineMath math="\frac{n^2 + n - 6}{2}" />, where <InlineMath math="n" /> is the length of the word. Below are the points awarded for each valid word based on word length.
+                        Below are the points awarded for each valid word based on word length.
                     </div>
                     <div className="grid grid-cols-3 md:grid-cols-5 gap-2 text-center my-[4vh]">
                         {pointSystem.map(([len,score]) => (
@@ -40,8 +40,10 @@ export const CrossBattleRules = () => {
                 </div>
                 <h1 className="w-full text-[1.5em] pl-3 underline">Additional Features</h1>
                 <div className="myContainerCardInnerBox flex-col py-[1vh] px-[2vh]">
-                    <div className="indent">Dropping a tile onto another tile will swap the positions of the two tiles! This feature can be toggled off in the settings if it is ruining your gameplay.
-                    </div>
+                    <div className="indent">Dropping a tile onto another tile will swap the positions of the two tiles! This feature can be toggled off in the settings if it is ruining your gameplay.</div>
+                </div>
+                <div className="myContainerCardInnerBox flex-col py-[1vh] px-[2vh]">
+                    <div className="indent">Time constraints can also be adjusted in the settings to add a sense of urgency while trying to create long words. 120 seconds would be a standard time limit.</div>
                 </div>
             </div>
 

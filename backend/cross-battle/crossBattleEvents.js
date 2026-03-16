@@ -11,6 +11,7 @@ const crossBattleEvents = (io, socket, rooms) => {
                                                timeLimit: rooms[roomCode].gameData.timeLimit,
                                                shouldShowResults: rooms[roomCode].gameData.shouldShowResults,
                                               });
+            socket.emit("receive_is_seeded", rooms[roomCode].gameData.isSeeded);
             socket.emit("receive_player_data", rooms[roomCode].playersData[socket.userId]);
         } else {
             socket.emit('room_error', `Lobby ${roomCode} does not exist`);
@@ -66,14 +67,23 @@ const crossBattleEvents = (io, socket, rooms) => {
     socket.on("get_cross_battle_settings_data", (roomCode) => {
         if (!rooms[roomCode]) { return; }
         
-        socket.emit("receive_settings_data", {timeLimit: rooms[roomCode].gameData.timeLimit});
+        socket.emit("receive_settings_data", 
+            {timeLimit: rooms[roomCode].gameData.timeLimit,
+             nextSeed: rooms[roomCode].gameData.nextSeed,
+            }
+        );
     });
 
      socket.on("set_cross_battle_settings_data", (roomCode, data) => {
         if (!rooms[roomCode] || !data) { return; }
         
         rooms[roomCode].gameData.timeLimit = data.timeLimit;
-        io.to(roomCode).emit("receive_settings_data", {timeLimit: rooms[roomCode].gameData.timeLimit});
+        rooms[roomCode].gameData.nextSeed = data.nextSeed;
+        io.to(roomCode).emit("receive_settings_data",             
+            {timeLimit: rooms[roomCode].gameData.timeLimit,
+             nextSeed: rooms[roomCode].gameData.nextSeed,
+            }
+        );
     });
 }
 

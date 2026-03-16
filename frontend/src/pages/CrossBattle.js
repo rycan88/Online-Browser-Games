@@ -96,6 +96,7 @@ export const CrossBattle = ({roomCode}) => {
     const [dataInitialized, setDataInitialized] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false);
     const [playersData, setPlayersData] = useState([]);
+    const [isSeeded, setIsSeeded] = useState(false);
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
 
@@ -145,6 +146,10 @@ export const CrossBattle = ({roomCode}) => {
 
         socket.on('receive_all_data', () => {
             socket.emit('get_all_cross_battle_data', roomCode);
+        });
+
+        socket.on('receive_is_seeded', (isSeeded) => {
+            setIsSeeded(isSeeded);
         });
 
         socket.on('receive_timer_data', (timerData) => {
@@ -209,6 +214,7 @@ export const CrossBattle = ({roomCode}) => {
             socket.off('start_new_round');
             socket.off('receive_letters');
             socket.off('receive_timer_data');
+            socket.off('receive_is_seeded');
             socket.off('room_error');
             socket.off('connect');
             socket.off('reconnect');
@@ -329,6 +335,7 @@ export const CrossBattle = ({roomCode}) => {
                     currentUser={currentUser}
                     setCurrentUser={setCurrentUser}
                     letters={letters}
+                    isSeeded={isSeeded}
                 />     
 
                 { !shouldShowResults &&

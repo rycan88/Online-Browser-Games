@@ -3,19 +3,12 @@ import "../../css/Lobby.css";
 import { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import getSocket from "../../socket";
-import { TelepathRules } from "../telepath/TelepathRules";
-
 import { AppContext } from "../../App";
 import { InfoButton } from "../InfoButton";
-import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { GamesData } from "../GamesData";
-import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
-import { HanabiRules } from "../hanabi/HanabiRules";
 import { FullscreenButton } from "../FullscreenButton";
 import useFullscreen from "../../hooks/useFullscreen";
-import { CrossBattleRules } from "../cross-battle/CrossBattleRules";
-
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />, "crossBattle": <CrossBattleRules />}
+import { Rules } from "./Room";
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {

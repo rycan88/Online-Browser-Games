@@ -56,8 +56,6 @@ const crossBattleEvents = (io, socket, rooms) => {
             crossBattleConfigurePlayersData(rooms, roomCode);
             crossBattleConfigureGameData(io, rooms, roomCode);
 
-            crossBattleSetTimer(io, rooms, roomCode);
-
             io.to(roomCode).emit("start_new_round");
         }
 

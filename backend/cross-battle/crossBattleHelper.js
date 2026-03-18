@@ -260,6 +260,11 @@ const crossBattleConfigureGameData = (io, rooms, roomCode) => {
     const letters = isSeeded ? nextSeed : randomCombo(22);
     const playerDataArray = Object.values(rooms[roomCode].playersData);
 
+    const gameData = rooms[roomCode].gameData;
+    if (gameData.timeout) {
+        clearTimeout(gameData.timeout);
+    }
+
     rooms[roomCode].gameData = {letters: letters, shouldShowResults: false, playerDataArray: playerDataArray, timeLimit: rooms[roomCode].gameData.timeLimit ?? "10s", nextSeed: "", isSeeded: isSeeded};
     crossBattleSetTimer(io, rooms, roomCode);
 }
@@ -271,14 +276,17 @@ const crossBattleSetTimer = (io, rooms, roomCode) => {
     if (Object.keys(timeControls).includes(gameData.timeLimit)) {
         gameData.roundStartTime = Date.now() + 2000; // Gives the players 2 more second
         gameData.roundEndTime = Date.now() + (timeControls[gameData.timeLimit] + 2) * 1000;
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
             crossBattleEndRound(io, rooms, roomCode)
             io.to(roomCode).emit("receive_all_data");
         }, (timeControls[gameData.timeLimit] + 2) * 1000);
+
+        gameData.timeout = timeout;
     }
 }
 
 const crossBattleEndRound = (io, rooms, roomCode) => {
+    if (rooms[roomCode].gameData.shouldShowResults) { return; }
     rooms[roomCode].gameData.shouldShowResults = true;
     const playersData = rooms[roomCode].playersData;
     const gameData = rooms[roomCode].gameData;
@@ -287,7 +295,7 @@ const crossBattleEndRound = (io, rooms, roomCode) => {
         Object.assign(playerData, 
             scoreGrid(playerData.tileToSpace, gameData.letters)
         );
-    });            
+    });
 }
 
 module.exports = {

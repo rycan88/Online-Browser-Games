@@ -1,3 +1,4 @@
+const { isValidWord } = require("../utils/dictionaryUtils");
 const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound } = require("./crossBattleHelper");
 
 const crossBattleEvents = (io, socket, rooms) => {    
@@ -82,6 +83,14 @@ const crossBattleEvents = (io, socket, rooms) => {
              nextSeed: rooms[roomCode].gameData.nextSeed,
             }
         );
+    });
+
+    socket.on("check_cross_battle_word", (roomCode, word) => {
+        if (!rooms[roomCode] || !word) { return; }
+        
+        const isValid = isValidWord(word);
+        socket.emit("receive_is_word_valid", isValid);              
+    
     });
 }
 

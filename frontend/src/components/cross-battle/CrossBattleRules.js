@@ -20,7 +20,7 @@ export const CrossBattleRules = () => {
 
                 <h1 className="w-full text-[1.5em] pl-3 underline">Scoring</h1>
                 <div className="myContainerCardInnerBox flex-col py-[1vh] px-[2vh]">
-                    <div className="indent">Points will be calculated based on valid words, invalid words, and unused tiles. It is considered a valid word if it is in the 2022 Collins Scrabble Dictionary. Note: Proper nouns are often not included in this dictionary. 
+                    <div className="indent">Points will be calculated based on valid words, invalid words, and unused tiles. It is considered a valid word if it is in the 2022 Collins Scrabble Dictionary. Note: Proper nouns are often not included in this dictionary and the biggest word length is 15 letters. 
                         Below are the points awarded for each valid word based on word length.
                     </div>
                     <div className="grid grid-cols-3 md:grid-cols-5 gap-2 text-center my-[4vh]">
@@ -44,6 +44,9 @@ export const CrossBattleRules = () => {
                 </div>
                 <div className="myContainerCardInnerBox flex-col py-[1vh] px-[2vh]">
                     <div className="indent">Time constraints can also be adjusted in the settings to add a sense of urgency while trying to create long words. 120 seconds would be a standard time limit.</div>
+                </div>
+                <div className="myContainerCardInnerBox flex-col py-[1vh] px-[2vh]">
+                    <div className="indent">While looking at results, you can find a valid word checker in the settings.</div>
                 </div>
             </div>
 

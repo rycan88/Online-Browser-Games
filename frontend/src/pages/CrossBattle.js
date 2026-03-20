@@ -112,6 +112,7 @@ export const CrossBattle = ({roomCode}) => {
     const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180};
     const timerId = useRef(null);
     const [timeLimit, setTimeLimit] = useState("unlimited");
+    const [longestWordsData, setLongestWordsData] = useState([]);
 
     useEffect(() => {
         socket.on('receive_player_data', (playerData) => {
@@ -177,6 +178,12 @@ export const CrossBattle = ({roomCode}) => {
             }
         })
 
+        socket.on('receive_longest_words_data', (longestWordsData) => {
+            if (longestWordsData != null) {
+                setLongestWordsData(longestWordsData);
+            }
+        })
+
         socket.on('room_error', (errorMessage) => {
             navigate(`/cross_battle/lobby`, { state: {error: errorMessage}});
         });
@@ -215,6 +222,7 @@ export const CrossBattle = ({roomCode}) => {
             socket.off('receive_letters');
             socket.off('receive_timer_data');
             socket.off('receive_is_seeded');
+            socket.off('receive_longest_words');
             socket.off('room_error');
             socket.off('connect');
             socket.off('reconnect');
@@ -336,6 +344,7 @@ export const CrossBattle = ({roomCode}) => {
                     setCurrentUser={setCurrentUser}
                     letters={letters}
                     isSeeded={isSeeded}
+                    longestWordsData={longestWordsData}
                 />     
 
                 { !shouldShowResults &&

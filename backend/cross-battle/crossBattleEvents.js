@@ -6,6 +6,10 @@ const crossBattleEvents = (io, socket, rooms) => {
         if (rooms[roomCode]) {
             socket.emit("receive_players_data", rooms[roomCode].playersData);
             socket.emit("receive_should_show_results", rooms[roomCode].gameData.shouldShowResults);
+            if (rooms[roomCode].gameData.shouldShowResults && rooms[roomCode].gameData.longestWordsData != null) {
+                socket.emit("receive_longest_words_data", rooms[roomCode].gameData.longestWordsData);
+            }
+
             socket.emit("receive_letters", rooms[roomCode].gameData.letters);
             socket.emit("receive_timer_data", {roundStartTime: rooms[roomCode].gameData.roundStartTime, 
                                                roundEndTime: rooms[roomCode].gameData.roundEndTime,

@@ -1,4 +1,4 @@
-const { isValidWord } = require("../utils/dictionaryUtils");
+const { isValidWord, getLongestWords } = require("../utils/dictionaryUtils");
 const { crossBattlePlayerData } = require("./crossBattlePlayerData");
 
 const countVowels = (word) => {
@@ -291,11 +291,26 @@ const crossBattleEndRound = (io, rooms, roomCode) => {
     const playersData = rooms[roomCode].playersData;
     const gameData = rooms[roomCode].gameData;
 
+
+
+    gameData.lobbyLongestWords = new Set();
     Object.values(playersData).map((playerData) => {
         Object.assign(playerData, 
             scoreGrid(playerData.tileToSpace, gameData.letters)
         );
     });
+
+    const longestWords = getLongestWords(gameData.letters);
+    gameData.longestWordsData = longestWords.map((word) => {
+        const foundWordPlayers = [];
+        Object.values(playersData).map((playerData) => {
+            if (playerData.validWords.includes(word)) {
+                foundWordPlayers.push(playerData.nameData.userId);
+            }            
+        });
+
+        return {word: word, players: foundWordPlayers};
+    })
 }
 
 module.exports = {

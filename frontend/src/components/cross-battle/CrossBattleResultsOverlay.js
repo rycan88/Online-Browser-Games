@@ -237,7 +237,7 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
                             {longestWordsData.map((data, i) => (
                                 <div
                                     key={data.word}
-                                    className={`grid grid-cols-[40px_1fr_50px] px-3 py-2 hover:bg-sky-800/40 rounded transition ${data.players.includes(socket.userId) ? "bg-amber-400/80" : (data.players.length > 0 && "bg-green-300/30")}`}
+                                    className={`grid grid-cols-[40px_1fr_50px] px-3 py-2 rounded transition ${data.players.includes(socket.userId) ? "bg-amber-400/80" : (data.players.length > 0 ? "bg-green-300/30" : "hover:bg-sky-800/40")}`}
                                 >
                                     <div className={`${data.players.length > 0 ? "text-slate-200" : "text-slate-400"}`}>{i + 1}</div>
 

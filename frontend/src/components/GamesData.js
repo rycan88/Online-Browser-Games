@@ -50,10 +50,10 @@ export const GamesData = [
     {
         id: "cross_battle",
         title: "Cross Battle",
-        logoLink: "/hana-logo.png",
+        logoLink: "/cross-battle-logo.png",
         link: "/cross_battle/lobby",
         playerLimitText: <div className="gamesDataInfoContainer"><IoPerson />1-99 players</div>,
         duration: <div className="gamesDataInfoContainer"><FaClock />1-5 min</div>,
-        description: "Create words in a cross formation to score highest!"
+        description: "Create a grid of words to score the highest!"
     },
 ]

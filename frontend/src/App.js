@@ -23,12 +23,11 @@ import { ThirtyOne } from './pages/ThirtyOne';
 import LoadingScreen from './components/LoadingScreen';
 import { RPSMelee } from './pages/RPSMelee';
 import { Hanabi } from './pages/Hanabi';
-import { CrossBattle } from './pages/CrossBattle';
 
 export const AppContext = createContext();
 const socket = getSocket();
 
-const gameNames = ["telepath", "thirty_one", "rock_paper_scissors_melee", "hana", "cross_battle"]
+const gameNames = ["telepath", "thirty_one", "rock_paper_scissors_melee", "hana"]
 
 function App() {
   const client = new QueryClient();
@@ -44,8 +43,6 @@ function App() {
       return <RPSMelee roomCode={roomCode} />
     } else if (gameName === "hana") {
       return <Hanabi roomCode={roomCode} />
-    } else if (gameName === "cross_battle") {
-      return <CrossBattle roomCode={roomCode} />
     }
     return <></>
   }
@@ -110,7 +107,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App select-none">
+    <div className="App">
       <AppContext.Provider value={{ rooms, setRooms }}>
         <QueryClientProvider client={client}>
           <Router>
@@ -127,7 +124,6 @@ function App() {
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
               <Route path="/thirty_one" element={<ThirtyOne />} />
-              <Route path="/cross_battle" element={<CrossBattle />} />
               <Route path="*" element={isDataLoaded ? <ErrorPage/> : <LoadingScreen />} />
             </Routes>
           </Router>

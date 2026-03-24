@@ -1,9 +1,0 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  .crossBattlePage {
-    @apply bg-letterTiles items-center z-[-20] text-white;
-  }
-}

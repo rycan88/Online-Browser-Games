@@ -36,7 +36,7 @@
   }
 
   .myContainerCard {
-    @apply relative flex flex-col w-[95vw] md:w-[calc(min(800px,80%))] h-[80%] mt-[4vh] justify-start items-center gap-[4px] pt-[5vh] px-[2vw] pb-[5vh] text-slate-200 bg-gradient-to-tr from-sky-950 to-sky-900 border-2 border-slate-400 rounded-xl shadow-xl;
+    @apply relative flex flex-col w-[calc(min(800px,80%))] h-[80%] mt-[6vh] justify-start items-center gap-[4px] pt-[5vh] px-[2vw] pb-[5vh] text-slate-200 bg-gradient-to-tr from-sky-950 to-sky-900 border-2 border-slate-400 rounded-xl shadow-xl;
   }
 
   .myContainerCardTitle {
@@ -44,27 +44,19 @@
   }
 
   .myContainerCardInnerBox {
-    @apply bg-sky-800/30 shadow-xl rounded-[6px] border-[1px] border-sky-700;
+    @apply bg-sky-800/30 shadow-xl rounded-lg border-[1px] border-sky-700;
   }
 
   .myContainerCardCenterScrollBox {
-    @apply flex flex-col h-[80%] overflow-y-auto;
+    @apply flex flex-col h-[70%] overflow-y-auto;
   }
 
   .myContainerCardBottomButton {
-    @apply p-2 absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[clamp(20px,25%,200px)] h-[clamp(10px,12%,100px)] rounded-lg text-[2vh];
+    @apply p-2 absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[clamp(100px,25%,200px)] h-[clamp(50px,12%,100px)] rounded-lg text-[2vh];
   }
 
   .topTaskBar { 
-    @apply flex absolute w-full justify-end gap-[calc(min(2%,14px))] top-[0] right-[0] pt-[1vh] pr-[calc(min(2%,14px))]
-  }
-
-  .dropdownMenu {
-    @apply p-[3px] rounded-md border bg-white text-gray-800 border-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500;
-  }
-
-  .dropdownMenu:disabled {
-    @apply disabled:bg-gray-100 disabled:text-gray-600 disabled:border-gray-200 disabled:cursor-not-allowed disabled:opacity-70;
+    @apply flex absolute w-full justify-end gap-[calc(min(1%,8px))] top-[0] right-[0] pt-[1vh] pr-[calc(min(2%,8px))]
   }
 }
 

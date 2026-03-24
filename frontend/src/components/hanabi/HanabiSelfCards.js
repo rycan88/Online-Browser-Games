@@ -40,7 +40,7 @@ export const HanabiSelfCards = ({selfCardIds, myData, cardWidth, isMyTurn, isFin
                         const suit = cardData.suit;
                         
                         return (
-                            <SortableItem key={id} id={id} data={{type: "card"}}>
+                            <SortableItem key={id} id={id} type={"card"}>
                                 <HanabiCard number={number} 
                                         suit={suit}
                                         width={cardWidth}

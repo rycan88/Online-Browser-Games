@@ -223,7 +223,7 @@ const hanabiEvents = (io, socket, rooms) => {
         const playersData = rooms[roomCode].playersData;
         playersData[socket.userId].isReady = true;
 
-        if (Object.values(playersData).every((data) => data.isReady === true)) {
+        if (!Object.values(playersData).find((data) => data.isReady === false)) {
             setUpPlayerData(rooms, roomCode);
             setUpGameData(io, rooms, roomCode);
             io.to(roomCode).emit('start_new_round');

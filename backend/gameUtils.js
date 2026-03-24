@@ -6,8 +6,6 @@ const { getCurrentPlayers } = require("./thirty-one/thirtyOneHelper");
 const { rpsMeleePlayerData } = require("./rps-melee/rpsMeleePlayerData");
 const { HanabiDeck } = require("./cards/HanabiDeck");
 const { hanabiPlayerData } = require("./hanabi/hanabiPlayerData");
-const { crossBattlePlayerData } = require("./cross-battle/crossBattlePlayerData");
-const { randomCombo, crossBattleConfigurePlayersData, crossBattleConfigureGameData } = require("./cross-battle/crossBattleHelper");
 
 const setUpPlayerData = (rooms, roomCode) => {
     const gameName = rooms[roomCode].gameName;
@@ -78,8 +76,6 @@ const setUpPlayerData = (rooms, roomCode) => {
         })                   
 
         rooms[roomCode].playersData = playersData;   
-    } else if (gameName === "cross_battle") {
-        crossBattleConfigurePlayersData(rooms, roomCode);
     }
 }
 
@@ -143,8 +139,6 @@ const setUpGameData = (io, rooms, roomCode) => {
             const history = [{"type": "start", "player": playerDataArray[startingTurn].nameData.userId}];
             
             rooms[roomCode].gameData = {deck: deck, discardPile: discardPile, playPile: playPile, tokenCount: 8, turn: startingTurn, lives: 3, playerDataArray: playerDataArray, history: history, gameInProgress: true, finalTurn: null, gameMode: gameMode, gameModeSetting: gameMode};
-        } else if (gameName === "cross_battle") {
-            crossBattleConfigureGameData(io, rooms, roomCode);
         }
     }
 }

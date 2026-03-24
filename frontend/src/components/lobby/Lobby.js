@@ -3,12 +3,18 @@ import "../../css/Lobby.css";
 import { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import getSocket from "../../socket";
+import { TelepathRules } from "../telepath/TelepathRules";
+
 import { AppContext } from "../../App";
 import { InfoButton } from "../InfoButton";
+import { ThirtyOneRules } from "../thirty-one/ThirtyOneRules";
 import { GamesData } from "../GamesData";
+import { RPSMeleeRules } from "../rps-melee/RPSMeleeRules";
+import { HanabiRules } from "../hanabi/HanabiRules";
 import { FullscreenButton } from "../FullscreenButton";
 import useFullscreen from "../../hooks/useFullscreen";
-import { Rules } from "./Room";
+
+const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />}
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {
@@ -81,13 +87,13 @@ export const Lobby = ({gameName}) => {
                 <InfoButton buttonType="info">
                     {Rules[gameName]}
                 </InfoButton>
-                <div className="flex justify-center items-center text-slate-200">
+                <div className="text-slate-200">
                     <FullscreenButton shouldRotate={false}/>
                 </div>
             </div>
 
             <div className="lobbyBox">
-                <h1 className="gameTitle">{gameData ? gameData.title : ""}</h1>
+                <h1 className="gameTitle">{gameData.title}</h1>
 
                 <div className="flex gap-[16px] w-full h-[15%] pt-[5%] justify-center items-center text-black">
                     <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg">{gameData.playerLimitText}</div>

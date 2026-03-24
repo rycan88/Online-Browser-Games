@@ -385,7 +385,7 @@ export const Hanabi = ({roomCode}) => {
                             />
                     }
                     
-                    <div className="absolute flex flex-col gap-[2%] left-[3%] h-[25%] w-[min(220px,10vw)]">
+                    <div className="absolute flex flex-col gap-[2%] left-[3%] h-[25%] w-[min(140px,9vw)]">
                         <div className="flex h-full w-full items-center gap-[10px] text-[3vh]">
                             <div className="flex w-[40%] justify-center items-center text-[3.5vh]"><FaHeart className="text-red-500"/></div>
                             <div className={lives <= 1 && "text-red-600"}>{lives}</div>

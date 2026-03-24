@@ -1,4 +1,4 @@
-export const ChoiceDropdown = ({selectedChoice, setSelectedChoice, choices, isDisabled=false}) => {
+export const ChoiceDropdown = ({selectedChoice, setSelectedChoice, choices}) => {
     if (!choices) {
         return <></>
     }
@@ -9,10 +9,7 @@ export const ChoiceDropdown = ({selectedChoice, setSelectedChoice, choices, isDi
 
     return (
         <div>
-            <select className="dropdownMenu" 
-                    id="choices" value={selectedChoice} 
-                    onChange={handleSelect} 
-                    disabled={isDisabled}>
+            <select className="text-black" id="choices" value={selectedChoice} onChange={handleSelect}>
                 {
                     Object.entries(choices).map(([value, label]) => {
                         return <option value={value}>{label}</option>

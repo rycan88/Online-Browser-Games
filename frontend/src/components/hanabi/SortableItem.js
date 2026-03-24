@@ -1,7 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable"
 
-export const SortableItem = ({ id, children, data}) => {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({ id, data: data})
+export const SortableItem = ({ id, children, type}) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging} = useSortable({ id, data: { type } })
 
     return (
         <div ref={setNodeRef} 

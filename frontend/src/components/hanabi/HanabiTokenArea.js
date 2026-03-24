@@ -17,7 +17,7 @@ export const HanabiTokenArea = ({tokenSize=50, tokenCount}) => {
              {
                 [...Array(Number(tokenCount))].map((_, index) => {
                     return (
-                        <DraggableItem id={"Token"+index} data={{type: "token"}}>
+                        <DraggableItem id={"Token"+index} type="token">
                             <HanabiClueToken size={tokenSize} />
                         </DraggableItem>
                     ) 

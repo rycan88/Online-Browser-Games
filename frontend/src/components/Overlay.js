@@ -14,7 +14,7 @@ export function Overlay({ isOpen, onClose, children, fullScreen=false }) {
                                 }
                             }
                         }}>
-                        {   onClose &&
+                        {   onClose && 
                             <div className="absolute top-4 right-4 text-slate-200 text-[40px]"
                                 onClick={(e) => {
                                     if (onClose) {

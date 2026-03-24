@@ -5,14 +5,9 @@ import { IoIosColorPalette } from "react-icons/io";
 import { GiBrain } from "react-icons/gi";
 import { GiCardAceSpades } from "react-icons/gi";
 import { LuFlower } from "react-icons/lu";
+import { FaSquareXmark } from "react-icons/fa6";
 
 export const SidebarData = [
-    {
-        title: "Home",
-        icon: <MdHome/>,
-        link: "/home",
-        isMain: true,
-    },
     {
         title: "Games",
         icon: <IoLogoGameControllerB/>,
@@ -47,6 +42,12 @@ export const SidebarData = [
         title: "Hana",
         icon: <LuFlower />,
         link: "/hana/lobby",
+        isMain: false,
+    },
+    {
+        title: "Cross Battle",
+        icon: <FaSquareXmark />,
+        link: "/cross_battle/lobby",
         isMain: false,
     },
     {

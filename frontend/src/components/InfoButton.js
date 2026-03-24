@@ -20,18 +20,22 @@ export const InfoButton = ({buttonStyle, buttonType="info", children, fullScreen
         return React.cloneElement(child, { closeOverlay: closeOverlay});
     });
 
-    return (
-        <>
+    return (      
+        <div className="flex items-center">
             <div className={`flex items-center justify-center text-sky-700 text-[3vh] hover:cursor-pointer shadow-xl ${buttonStyle}`}
                 onClick={() => {
                     toggleOverlay();
                 }}
             >
                 {buttonIcon[buttonType]}
+
             </div>
-            <Overlay isOpen={isOpen} onClose={toggleOverlay} fullScreen={fullScreen}>
-                { childrenWithClose }
-            </Overlay>
-        </>
+            { isOpen &&
+                <Overlay isOpen={isOpen} onClose={toggleOverlay} fullScreen={fullScreen}>
+                    { childrenWithClose }
+                </Overlay>
+            }
+        </div>  
+
     )
 }

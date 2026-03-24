@@ -16,12 +16,14 @@ import { HanabiSettings } from "../hanabi/HanabiSettings";
 import { HanabiRules } from "../hanabi/HanabiRules";
 import { FullscreenButton } from "../FullscreenButton";
 import useFullscreen from "../../hooks/useFullscreen";
+import { CrossBattleSettings } from "../cross-battle/CrossBattleSettings";
+import { CrossBattleRules } from "../cross-battle/CrossBattleRules";
 
 const socket = getSocket();
 
 const Titles = {"telepath": "Telepath", "thirty_one": "31", "rock_paper_scissors_melee": "RPS Melee"}
-const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />}
-const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />, "hana": <HanabiSettings />}
+export const Rules = {"telepath": <TelepathRules />, "thirty_one": <ThirtyOneRules />, "rock_paper_scissors_melee": <RPSMeleeRules />, "hana": <HanabiRules />, "cross_battle": <CrossBattleRules />}
+const Settings = {"telepath": <TelepathSettings />, "rock_paper_scissors_melee": <RPSMeleeSettings />, "hana": <HanabiSettings />, "cross_battle": <CrossBattleSettings />}
 
 // roomCode: string
 // gameName: string
@@ -36,7 +38,18 @@ export const Room = (props) => {
     const [teamData, setTeamData] = useState([]);
     const [teamMode, setTeamMode] = useState(false);
 
-    const canStart = teamMode ? teamData.length * 2 === players.length : players.length >= 2;
+    const isEnoughPlayers = () => {
+        if (gameName === "telepath" && teamMode) {
+            return teamData.length * 2 === players.length;
+        } else if (gameName === "cross_battle") {
+            return true;
+        } else {
+            return players.length >= 2;
+        }
+    };
+        
+    const canStart = isEnoughPlayers();
+
     useEffect(() => {
         socket.on('update_players', (players) => {
             setPlayers(players);
@@ -102,7 +115,7 @@ export const Room = (props) => {
                         {React.cloneElement(Settings[gameName], { roomCode: roomCode})}
                     </InfoButton>  
                 } 
-                <div className="text-slate-200">
+                <div className="flex justify-center items-center text-slate-200">
                     <FullscreenButton shouldRotate={false}/>
                 </div>
             </div>

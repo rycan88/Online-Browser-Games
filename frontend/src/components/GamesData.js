@@ -47,4 +47,13 @@ export const GamesData = [
         duration: <div className="gamesDataInfoContainer"><FaClock />20-40 min</div>,
         description: "Work together to create a beautiful display of flowers for the celebration!"
     },
+    {
+        id: "cross_battle",
+        title: "Cross Battle",
+        logoLink: "/cross-battle-logo.png",
+        link: "/cross_battle/lobby",
+        playerLimitText: <div className="gamesDataInfoContainer"><IoPerson />1-99 players</div>,
+        duration: <div className="gamesDataInfoContainer"><FaClock />1-5 min</div>,
+        description: "Create a grid of words to score the highest!"
+    },
 ]

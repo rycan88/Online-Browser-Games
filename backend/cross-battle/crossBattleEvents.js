@@ -1,3 +1,4 @@
+const { updateRoomHost } = require("../serverUtils");
 const { isValidWord } = require("../utils/dictionaryUtils");
 const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound } = require("./crossBattleHelper");
 
@@ -75,6 +76,9 @@ const crossBattleEvents = (io, socket, rooms) => {
              nextSeed: rooms[roomCode].gameData.nextSeed,
             }
         );
+
+        updateRoomHost(rooms, roomCode);
+        io.to(roomCode).emit("receive_room_host_id", rooms[roomCode].roomHostId);
     });
 
      socket.on("set_cross_battle_settings_data", (roomCode, data) => {

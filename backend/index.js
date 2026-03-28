@@ -37,7 +37,7 @@ const io = new Server(server, {
 });
 
 
-const { User, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms} = require("./serverUtils");
+const { User, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms, updateRoomHost} = require("./serverUtils");
 const { setUpPlayerData, setUpGameData } = require("./gameUtils");
 const { telepathEvents } = require("./telepath/telepathEvents");
 const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
@@ -106,7 +106,7 @@ io.on("connection", (socket) => {
     socket.on('create_room', (gameName, roomCode) => {
         //socket.leaveAll();
         leaveAllRooms(io, rooms, deleteTimers, socket);
-        rooms[roomCode] = { players: [], spectators: [], gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
+        rooms[roomCode] = { players: [], spectators: [], roomHostId: currentUser.userId, gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
         if (gameName === "telepath") {
             rooms[roomCode].teamMode = true;
         }
@@ -164,9 +164,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on('leave_room', (roomCode) => {
-        if (rooms[roomCode] && containsSocketId(rooms[roomCode].players, socket.id)) {
+        if (rooms[roomCode] && containsUserId(rooms[roomCode].players, socket.userId)) {
             socket.leave(roomCode);
-            rooms[roomCode].players = rooms[roomCode].players.filter(user => user.socketId !== socket.id);
+
+            rooms[roomCode].players = rooms[roomCode].players.filter(user => user.userId !== socket.userId);
             rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.userId !== socket.userId);
 
             if (rooms[roomCode].players.length === 0) {
@@ -176,7 +177,10 @@ io.on("connection", (socket) => {
             } else {
                 if (teamGames.includes(rooms[roomCode].gameName)) {
                     removeFromTeamList(io, rooms, roomCode, currentUser, -1);
-                }    
+                }
+                    
+                updateRoomHost(rooms, roomCode);
+                io.to(roomCode).emit('receive_room_host_id', rooms[roomCode].roomHostId);
                 io.to(roomCode).emit('update_players', rooms[roomCode].players);
             }
         } else {
@@ -185,7 +189,7 @@ io.on("connection", (socket) => {
     });
     
     socket.on('start_game', (roomCode) => {
-        if (rooms[roomCode] && !rooms[roomCode].gameStarted) {
+        if (rooms[roomCode] && !rooms[roomCode].gameStarted && socket.userId === rooms[roomCode].roomHostId) {
             setUpPlayerData(rooms, roomCode);
             setUpGameData(io, rooms, roomCode);
             rooms[roomCode].gameStarted = true;
@@ -216,6 +220,9 @@ io.on("connection", (socket) => {
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
             io.to(roomCode).emit('update_team_mode', rooms[roomCode].teamMode);
+            
+            updateRoomHost(rooms, roomCode);
+            io.to(roomCode).emit('receive_room_host_id', rooms[roomCode].roomHostId);
         }
     });
 

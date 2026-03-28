@@ -14,13 +14,22 @@ const containsUserId = (lst, userId) => {
     return lst.find(user => user.userId === userId);
 }
 
-const getRoomLeader = (rooms, roomCode) => {
+const updateRoomHost = (rooms, roomCode) => {
     if (rooms[roomCode].players.length > 0) {
-        return rooms[roomCode].players[0];
+        rooms[roomCode].roomHostId = rooms[roomCode].players[0].userId;
+    } else {
+        rooms[roomCode].roomHostId = null;
     }
 }
 
-// leaveAllRooms removes the current user's socket from all rooms, and replaces it with another socket with same socketid if found
+const isRoomHost = (rooms, roomCode, userId) => {
+    const roomHost = getRoomHost(rooms, roomCode);
+    if (roomHost === null) { return false; }
+    
+    return userId === roomHost; 
+}
+
+// leaveAllRooms removes the current user's socket from all rooms, and replaces it with another socket with same userid if found
 const leaveAllRooms = (io, rooms, deleteTimers, currentSocket) => {
     if (!currentSocket) { return; }
     Object.keys(rooms).forEach((roomCode) => {
@@ -30,7 +39,7 @@ const leaveAllRooms = (io, rooms, deleteTimers, currentSocket) => {
         //currentSocket.leave(roomCode);
 
         rooms[roomCode].spectators = rooms[roomCode].spectators.filter(user => user.socketId !== currentSocket.id);
-        const otherAcc = rooms[roomCode].spectators.find(user => user.userId === currentSocket.id);
+        const otherAcc = rooms[roomCode].spectators.find(user => user.userId === currentSocket.userId);
 
         if (otherAcc) {
             rooms[roomCode].players.splice(currentIndex, 1, otherAcc);
@@ -43,6 +52,8 @@ const leaveAllRooms = (io, rooms, deleteTimers, currentSocket) => {
                 startDeleteTimer(rooms, deleteTimers, roomCode);
             }
         } else {
+            updateRoomHost(rooms, roomCode);
+            io.to(roomCode).emit('receive_room_host_id', rooms[roomCode].roomHostId);
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
             removeFromTeamList(io, rooms, roomCode, currentSocket.id, -1);
         }
@@ -114,7 +125,8 @@ const startDeleteTimer = (rooms, deleteTimers, roomCode) => {
 
 module.exports = {
     User,
-    getRoomLeader,
+    updateRoomHost,
+    isRoomHost,
     leaveAllRooms,
     addToTeamList,
     removeFromTeamList,

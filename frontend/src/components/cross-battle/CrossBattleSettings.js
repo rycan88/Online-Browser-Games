@@ -19,6 +19,8 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
     const [validWordText, setValidWordText] = useState("");
     const [isValidWord, setIsValidWord] = useState(null);
 
+    const [isRoomHost, setIsRoomHost] = useState(null);
+
     const handleSeedChange = (e) => {
         let value = e.target.value;
 
@@ -98,6 +100,11 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
             setIsValidWord(isValid);
         });
 
+        socket.on('receive_room_host_id', (roomHostId) => {
+            const isRoomHost = socket.userId === roomHostId;
+            setIsRoomHost(isRoomHost);
+        });
+
         const canTileSwap = getCrossBattleCanTileSwap();
         setCanTileSwap(canTileSwap);
         socket.emit('get_cross_battle_settings_data', roomCode);
@@ -105,7 +112,7 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
         return () => {
             socket.off('receive_settings_data');
             socket.off('receive_is_word_valid');
-            //socket.off('update_team_mode');
+            socket.off('receive_room_host_id');
         }
     }, [])
 
@@ -118,8 +125,8 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
             <div className="myContainerCardCenterScrollBox gap-[2vh] w-[90%] mt-[2vh]">
                 <SectionHeading text="Game Settings" />
                 <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
-                    <div>Time Mode</div>
-                    <ChoiceDropdown selectedChoice={timeLimit} setSelectedChoice={setTimeLimit} choices={timeLimitChoices} isDisabled={gameInProgress}/>
+                    <div className={`${!isRoomHost && "opacity-50"}`}>Time Mode</div>
+                    <ChoiceDropdown selectedChoice={timeLimit} setSelectedChoice={setTimeLimit} choices={timeLimitChoices} isDisabled={gameInProgress || !isRoomHost}/>
                 </div>
                 { shouldShowResults &&
                     <div className="myContainerCardInnerBox py-2 px-[5%] flex items-center justify-between">                    
@@ -135,12 +142,14 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
                             onChange={handleSeedChange}
                             placeholder="Enter seed..."
                             className="px-[3%] py-2 rounded-md bg-sky-950/60 border border-sky-700 text-slate-200 placeholder-slate-400 font-mono outline-none
-                                     focus:border-sky-400 focus:ring-2 focus:ring-sky-500/40 transition w-[50%]"
-                            isDisabled={true}
+                                     focus:border-sky-400 focus:ring-2 focus:ring-sky-500/40 transition w-[50%]     
+                                     disabled:bg-sky-900/40 disabled:text-slate-500 disabled:border-sky-800 disabled:cursor-not-allowed disabled:opacity-70 disabled:focus:ring-0 disabled:focus:border-sky-700"
+                            disabled={!isRoomHost}
                         />
 
                         <button className="gradientButton py-[6px] px-[12px] rounded-lg"
                                 onClick={handlePasteSeed}
+                                disabled={!isRoomHost}
                         >
                             Paste Seed
                         </button>

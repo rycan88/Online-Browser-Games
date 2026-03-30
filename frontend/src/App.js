@@ -11,7 +11,7 @@ import { Room } from  "./components/lobby/Room";
 
 import { createContext, useState, useEffect } from "react";
 
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import getSocket from "./socket";
 import { ErrorPage } from './pages/ErrorPage';
@@ -24,6 +24,7 @@ import LoadingScreen from './components/LoadingScreen';
 import { RPSMelee } from './pages/RPSMelee';
 import { Hanabi } from './pages/Hanabi';
 import { CrossBattle } from './pages/CrossBattle';
+import { LobbyRedirect } from './components/lobby/LobbyRedirect';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -53,7 +54,6 @@ function App() {
   const roomRoutes = (rooms) => {
     return Object.keys(rooms).map((roomCode) => {
       const gameName = rooms[roomCode];
-      console.log(`/${gameName}/lobby/${roomCode}`)
 
       return <Route key={roomCode} 
                     path={`/${gameName}/lobby/${roomCode}`} 
@@ -73,12 +73,24 @@ function App() {
   const lobbyRoutes = () => {
     return gameNames.map((gameName) => {
       return (
-        <Route key={gameName}
+          <Route key={gameName}
                 path={`/${gameName}/lobby`} 
                 element={<Lobby gameName={gameName}/>} 
           />
       );
     });
+  }
+
+  const redirectLobbyRoutes = (rooms) => {
+      return gameNames.map((gameName) => {
+          return (
+              <Route
+                key={gameName + "-redirect"}
+                path={`/${gameName}/lobby/:roomCode`}
+                element={<LobbyRedirect rooms={rooms} gameName={gameName}/>}
+              />
+          );
+      })
   }
 
   useEffect(() => {
@@ -109,6 +121,8 @@ function App() {
     };
   }, []);
 
+  if (!isDataLoaded) return <></>
+
   return (
     <div className="App select-none">
       <AppContext.Provider value={{ rooms, setRooms }}>
@@ -121,6 +135,7 @@ function App() {
               {lobbyRoutes()}
               {roomRoutes(rooms)}
               {gameRoutes(rooms)}
+              {redirectLobbyRoutes(rooms)}
               <Route path="/hana" element={<Hanabi/>} />
               <Route path="/games" element={<Games/>} />
               <Route path="/profile" element={<Profile/>} />

@@ -217,12 +217,25 @@ io.on("connection", (socket) => {
 
     socket.on('get_all_players', (roomCode) => {
         if (rooms[roomCode]) {
+            const isPlayer = rooms[roomCode].players.some((player) => player.userId === socket.userId);
+
+            if (!isPlayer) { socket.emit("room_error", `You are no longer in lobby ${roomCode}`) };
+
             io.to(roomCode).emit('update_players', rooms[roomCode].players);
             io.to(roomCode).emit('update_team_data', rooms[roomCode].teamData);
             io.to(roomCode).emit('update_team_mode', rooms[roomCode].teamMode);
             
             updateRoomHost(rooms, roomCode);
             io.to(roomCode).emit('receive_room_host_id', rooms[roomCode].roomHostId);
+        }
+    });
+
+    socket.on('kick_player', (roomCode, kickPlayer) => {
+        if (rooms[roomCode]) {
+            rooms[roomCode].players = rooms[roomCode].players.filter((player) => player.userId !== kickPlayer.userId);
+
+            io.to(roomCode).emit('request_players');
+            io.sockets.sockets.get(kickPlayer.socketId)?.leave(roomCode);
         }
     });
 

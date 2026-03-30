@@ -66,6 +66,10 @@ export const Room = ({gameName, roomCode}) => {
             setTeamMode(teamMode);
         });
 
+        socket.on('request_players', () => {
+            socket.emit("get_all_players", roomCode);
+        })
+
         socket.on('game_started', () => {
             navigate(`/${gameName}/${roomCode}`);
         });
@@ -82,6 +86,7 @@ export const Room = ({gameName, roomCode}) => {
             socket.off('update_team_data');
             socket.off('update_team_mode');
             socket.off('receive_room_host_id');
+            socket.off('request_players');
             socket.off('game_started');
             socket.off('room_error');
         };
@@ -138,7 +143,7 @@ export const Room = ({gameName, roomCode}) => {
                     ?
                     <TeamList roomCode={roomCode} teamData={teamData} canStart={canStart}/>
                     :
-                    <PlayerList players={players}/>
+                    <PlayerList players={players} isRoomHost={isRoomHost} roomCode={roomCode}/>
                     }
                 </div>
                 <h2 className="errorText">{isEnoughPlayers() ? "" : (teamMode ? "Needs 2 players on each team" : "Needs at least 2 players")}</h2>

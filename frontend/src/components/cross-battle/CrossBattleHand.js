@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { DropZone } from "../hanabi/DropZone";
-import { Zoomable } from "../Zoomable";
-import { CrossBattleGridSpace } from "./CrossBattleGridSpace";
+import { VscDebugRestart } from "react-icons/vsc";
 import { CrossBattleHandSpace } from "./CrossBattleHandSpace";
 import { IoShuffle } from "react-icons/io5";
 import getSocket from "../../socket";
 import { useFlipAnimation } from "../../hooks/useFlipAnimation";
+import { ConfirmOverlay } from "../ConfirmOverlay";
 
 const socket = getSocket();
 
-export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, tileToSpace, setTileToSpace, roomCode}) => {
+export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, tileToSpace, setTileToSpace, roomCode, setShowReturnToRackOverlay}) => {
     const [isShuffling, setIsShuffling] = useState(false);
     const registerTile = useFlipAnimation([tileToSpace], isShuffling)
 
@@ -59,17 +58,34 @@ export const CrossBattleHand = ({tileSize, spaceToTile, letters, orientation, ti
         }, 300)
     }
 
+    const landscapeDisteMult = 0.65;
+
+
     return (
         <div className="relative flex flex-col">
             <button className="absolute hover:scale-110"
                     style={{fontSize: tileSize * 0.75, 
-                            top: orientation === "landscape" && -tileSize * 0.75, 
-                            right: orientation === "portrait" ? tileSize * 0.25 : -tileSize * 0.75, 
+                            top: orientation === "landscape" && -tileSize * landscapeDisteMult, 
+                            right: orientation === "portrait" ? tileSize * 0.25 : -tileSize * landscapeDisteMult, 
                             bottom: orientation === "portrait" && -tileSize * 0.75}}
                     onClick={shuffleTiles} 
             >
                 <IoShuffle />
             </button>
+            <button className="absolute hover:scale-110"
+                    style={{fontSize: tileSize * 0.65, 
+                            right: orientation === "landscape" && -tileSize * landscapeDisteMult,
+                            left: orientation === "portrait" && tileSize * 0.25, 
+                            bottom: orientation === "landscape" ? -tileSize * landscapeDisteMult : -tileSize * 0.75, 
+                            }}
+                    onClick={() => {
+                        setShowReturnToRackOverlay(true);
+                    }} 
+            >
+                <VscDebugRestart />
+            </button>
+
+
             <div className={`flex ${orientation === "landscape" ? "flex-col" : "mt-[2vh]"} flex-wrap items-center justify-center`}
                     style={{height: orientation === "landscape" ? tileSize * 11.5 : tileSize * 4, width: orientation === "landscape" ? tileSize * 3 : tileSize * 8.5}}
             >

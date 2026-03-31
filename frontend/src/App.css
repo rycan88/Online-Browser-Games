@@ -18,6 +18,14 @@
   .gradientButton:disabled {
     @apply bg-none bg-sky-700/30 cursor-not-allowed;
   }
+  
+  .grayGradientButton {
+    @apply bg-gradient-to-tr from-slate-800 to-slate-700;
+  }
+
+  .grayGradientButton:hover {
+    @apply bg-gradient-to-tr from-slate-700 to-slate-600;
+  }
 
   .redGradientButton {
     @apply bg-gradient-to-tr from-red-950 to-red-500;

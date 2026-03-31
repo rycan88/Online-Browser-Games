@@ -20,6 +20,7 @@ import { CrossBattleSettings, getCrossBattleCanTileSwap } from '../components/cr
 import { RiInfinityFill, RiTimerLine } from 'react-icons/ri';
 import { refreshPage } from '../utils';
 import { CrossBattleRules } from '../components/cross-battle/CrossBattleRules';
+import { ConfirmOverlay } from '../components/ConfirmOverlay';
 
 // Bug fix: Dont let timeLimit change immediately after changing it
 
@@ -50,13 +51,13 @@ export const CrossBattle = ({roomCode}) => {
 
     const [viewportSize, setViewportSize] = useState(orientation === "landscape" ? window.innerHeight * 0.80 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95)); 
     
-    const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 11 : 9);
+    const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 13 : 9);
     const tileSize = viewportSize / viewTiles;
 
     const getCenterTransform = () => {
         const viewportSize = (orientation === "landscape" ? window.innerHeight * 0.80 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95)); 
 
-        const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 11 : 9);
+        const viewTiles = viewportSize > 700 ? 15 : (viewportSize > 400 ? 13 : 9);
         const tileSize = viewportSize / viewTiles;
 
         const centerTile = Math.floor(gridSize / 2);
@@ -73,7 +74,7 @@ export const CrossBattle = ({roomCode}) => {
             const isLandscape = window.innerWidth > window.innerHeight;
             const newViewportSize = isLandscape ? window.innerHeight * 0.80 : Math.min(window.innerHeight * 0.60, window.innerWidth * 0.95);
             
-            const viewTiles = newViewportSize > 700 ? 15 : (newViewportSize > 400 ? 11 : 9);
+            const viewTiles = newViewportSize > 700 ? 15 : (newViewportSize > 400 ? 13 : 9);
             const tileSize = newViewportSize / viewTiles;
             setViewportSize(newViewportSize);
 
@@ -275,7 +276,8 @@ export const CrossBattle = ({roomCode}) => {
     const [activeType, setActiveType] = useState(null);
     const [activeData, setActiveData] = useState({});
     const [draggingStyle, setDraggingStyle] = useState({});
-    const [hoveredSpaceId, setHoveredSpaceId] = useState(null);
+
+    const [showReturnToRackOverlay, setShowReturnToRackOverlay] = useState(false);
 
     if (!dataInitialized) {
         return <LoadingScreen />;
@@ -299,7 +301,6 @@ export const CrossBattle = ({roomCode}) => {
 
         if (over) {
             setDraggingStyle({});
-            setHoveredSpaceId(over.id);
         }
     }
 
@@ -319,8 +320,9 @@ export const CrossBattle = ({roomCode}) => {
         setDraggingStyle({});
         setActiveType(null);
         setActiveData({})
-        setHoveredSpaceId(null);
     }
+
+
 
     return (
         <DndContext
@@ -345,6 +347,21 @@ export const CrossBattle = ({roomCode}) => {
                     isSeeded={isSeeded}
                     longestWordsData={longestWordsData}
                 />     
+
+                <ConfirmOverlay isOpen={showReturnToRackOverlay} 
+                                onClose={() => {setShowReturnToRackOverlay(false)}}
+                                onConfirm={() => {
+                                    socket.emit("cross_battle_return_tiles_to_rack", roomCode)
+                                    setShowReturnToRackOverlay(false);
+                                }}
+                                titleText="Reset Tiles to Rack?"
+                                confirmText="Reset Tiles"
+                                cancelText="Cancel"
+                >
+                    <>
+                    This will move all tiles back to your rack.
+                    </>
+                </ConfirmOverlay>
 
                 { !shouldShowResults &&
                     <div className="topTaskBar z-[11]">
@@ -398,6 +415,7 @@ export const CrossBattle = ({roomCode}) => {
                         orientation={orientation}
                         setTileToSpace={setTileToSpace}
                         roomCode={roomCode}
+                        setShowReturnToRackOverlay={setShowReturnToRackOverlay}
                     />
                 </div>
 

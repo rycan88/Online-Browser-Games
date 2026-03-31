@@ -1,6 +1,6 @@
 const { updateRoomHost } = require("../serverUtils");
 const { isValidWord } = require("../utils/dictionaryUtils");
-const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound } = require("./crossBattleHelper");
+const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound, getStartingTileToSpace } = require("./crossBattleHelper");
 
 const crossBattleEvents = (io, socket, rooms) => {    
     socket.on("get_all_cross_battle_data", (roomCode) => {
@@ -99,6 +99,13 @@ const crossBattleEvents = (io, socket, rooms) => {
         const isValid = isValidWord(word);
         socket.emit("receive_is_word_valid", isValid);              
     
+    });
+
+    socket.on("cross_battle_return_tiles_to_rack", (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+        
+        rooms[roomCode].playersData[socket.userId].tileToSpace = getStartingTileToSpace(rooms[roomCode].gameData.letters.length);
+        socket.emit("receive_all_data");
     });
 }
 

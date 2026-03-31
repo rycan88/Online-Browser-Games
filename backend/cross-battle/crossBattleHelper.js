@@ -233,18 +233,23 @@ const scoreGrid = (tileToSpace, letters) => {
     return {validWords, invalidWords, score, unusedLetters, coords};
 }
 
+const getStartingTileToSpace = (wordLength) => {
+    const initial = {}
+    for (let index = 0; index < wordLength; index++) {
+        initial[index] = `handSpace-${String(index)}`;
+    }
+    return initial;
+}
+
 const crossBattleConfigurePlayersData = (rooms, roomCode) => {
     const players = rooms[roomCode].players;
     
     const playersData = {}
 
     const nextSeed = rooms[roomCode].gameData.nextSeed;
-    const letterLength = nextSeed ? nextSeed.length : 22;
+    const wordLength = nextSeed ? nextSeed.length : 22;
 
-    const initial = {}
-    for (let index = 0; index < letterLength; index++) {
-        initial[index] = `handSpace-${String(index)}`;
-    }
+    const initial = getStartingTileToSpace(wordLength);
     
     players.forEach((player) => {
         playersData[player.userId] = crossBattlePlayerData(player); 
@@ -316,6 +321,7 @@ const crossBattleEndRound = (io, rooms, roomCode) => {
 module.exports = {
     randomCombo,
     scoreGrid,
+    getStartingTileToSpace,
     crossBattleScoring,
     crossBattleConfigurePlayersData,
     crossBattleConfigureGameData,

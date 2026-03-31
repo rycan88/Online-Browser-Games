@@ -103,7 +103,6 @@ export const CrossBattle = ({roomCode}) => {
     const resync = () => {
         if (!socket.connected) {
             refreshPage();
-            console.log("Refreshed");
         }
         socket.emit("get_all_cross_battle_data", roomCode);
     }

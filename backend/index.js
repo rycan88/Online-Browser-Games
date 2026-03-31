@@ -234,7 +234,7 @@ io.on("connection", (socket) => {
         if (rooms[roomCode]) {
             rooms[roomCode].players = rooms[roomCode].players.filter((player) => player.userId !== kickPlayer.userId);
 
-            io.to(roomCode).emit('request_players');
+            io.to(roomCode).emit('request_room_resync');
             io.sockets.sockets.get(kickPlayer.socketId)?.leave(roomCode);
         }
     });

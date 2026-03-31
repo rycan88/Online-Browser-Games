@@ -2,7 +2,7 @@ import getSocket from "../../socket";
 
 const socket = getSocket();
 
-export const PlayerList = ({players, isRoomHost, roomCode}) => {
+export const PlayerList = ({players, isRoomHost, setKickPlayer}) => {
     return (
         <div className="flex flex-col gap-2">
             <div className={`flex items-center gap-3 py-[1vh] text-sm font-semibold tracking-wider text-slate-800`}>
@@ -19,7 +19,7 @@ export const PlayerList = ({players, isRoomHost, roomCode}) => {
                     <div className={`flex items-center justify-center text-[2.2vh] w-full`}>
                         <div className={`${isPlayer ? "text-sky-700" : (isRoomHost && "cursor-pointer hover:text-yellow-800 hover:underline")}`}
                              onClick={() => {
-                                socket.emit("kick_player", roomCode, player);
+                                setKickPlayer(player);
                              }}
                         >
                             {player.nickname}

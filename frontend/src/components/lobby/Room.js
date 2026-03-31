@@ -17,6 +17,8 @@ import { FullscreenButton } from "../FullscreenButton";
 import useFullscreen from "../../hooks/useFullscreen";
 import { CrossBattleSettings } from "../cross-battle/CrossBattleSettings";
 import { CrossBattleRules } from "../cross-battle/CrossBattleRules";
+import { refreshPage } from "../../utils";
+import { ConfirmOverlay } from "../ConfirmOverlay";
 
 const socket = getSocket();
 
@@ -35,6 +37,7 @@ export const Room = ({gameName, roomCode}) => {
     const [teamData, setTeamData] = useState([]);
     const [teamMode, setTeamMode] = useState(false);
     const [isRoomHost, setIsRoomHost] = useState(null);
+    const [kickPlayer, setKickPlayer] = useState(null); // Namedata of player to kick
 
     const isEnoughPlayers = () => {
         if (gameName === "telepath" && teamMode) {
@@ -47,6 +50,13 @@ export const Room = ({gameName, roomCode}) => {
     };
     
     const canStart = isEnoughPlayers() && isRoomHost;
+
+    const resync = () => {
+        if (!socket.connected) {
+            refreshPage();
+        }
+        socket.emit("get_all_players", roomCode);
+    }
 
     useEffect(() => {
         socket.on('receive_room_host_id', (roomHostId) => {
@@ -66,8 +76,8 @@ export const Room = ({gameName, roomCode}) => {
             setTeamMode(teamMode);
         });
 
-        socket.on('request_players', () => {
-            socket.emit("get_all_players", roomCode);
+        socket.on('request_room_resync', () => {
+            resync();
         })
 
         socket.on('game_started', () => {
@@ -78,6 +88,23 @@ export const Room = ({gameName, roomCode}) => {
             navigate(`/${gameName}/lobby`, { state: {error: errorMessage}});
         });
 
+        let hiddenTime = null;
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === "hidden") {
+                hiddenTime = Date.now();
+            }
+
+            if (document.visibilityState === "visible") {
+                if (hiddenTime && Date.now() - hiddenTime > 2 * 60 * 1000) { // Away longer than 2 min
+                    refreshPage();
+                }
+            }
+        }
+
+        window.addEventListener("visibilitychange", handleVisibilityChange);
+        window.addEventListener("focus", resync);
+        window.addEventListener("pageshow", resync);
+
         socket.emit('join_room', roomCode);
         socket.emit("get_all_players", roomCode);
 
@@ -86,9 +113,14 @@ export const Room = ({gameName, roomCode}) => {
             socket.off('update_team_data');
             socket.off('update_team_mode');
             socket.off('receive_room_host_id');
-            socket.off('request_players');
+            socket.off('request_room_resync');
             socket.off('game_started');
             socket.off('room_error');
+            socket.off('connect');
+            socket.off('reconnect');
+            window.removeEventListener("visibilitychange", handleVisibilityChange);
+            window.removeEventListener("focus", resync);
+            window.removeEventListener("pageshow", resync);
         };
     }, []);
 
@@ -111,6 +143,11 @@ export const Room = ({gameName, roomCode}) => {
         }
         string += ")"
         return string;
+    }
+
+    const confirmAction = () => {
+        socket.emit("kick_player", roomCode, kickPlayer);
+        setKickPlayer(null);
     }
 
     return (
@@ -143,7 +180,7 @@ export const Room = ({gameName, roomCode}) => {
                     ?
                     <TeamList roomCode={roomCode} teamData={teamData} canStart={canStart}/>
                     :
-                    <PlayerList players={players} isRoomHost={isRoomHost} roomCode={roomCode}/>
+                    <PlayerList players={players} isRoomHost={isRoomHost} setKickPlayer={setKickPlayer}/>
                     }
                 </div>
                 <h2 className="errorText">{isEnoughPlayers() ? "" : (teamMode ? "Needs 2 players on each team" : "Needs at least 2 players")}</h2>
@@ -151,8 +188,21 @@ export const Room = ({gameName, roomCode}) => {
                     <button className="redGradientButton" onClick={goBack}>Leave</button>
                     <button className="gradientButton" onClick={startGame} disabled={!canStart}>{isRoomHost ? "Start" : <>Waiting for <br /> Host...</>}</button>
                 </div>
-
             </div>
+
+            <ConfirmOverlay isOpen={kickPlayer != null} 
+                            onClose={() => {setKickPlayer(null)}} 
+                            onConfirm={confirmAction} 
+                            titleText="Kick Player?"
+                            confirmText="Kick"
+                            cancelText="Cancel"
+            >
+                <>
+                Are you sure you want to kick<br/>
+                <span className="font-bold uppercase">{kickPlayer?.nickname}</span>?
+                </>
+            </ConfirmOverlay>
+            
             <div className={`entirePage bg-black/70 z-[-10] ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}></div>
         </div>
     )

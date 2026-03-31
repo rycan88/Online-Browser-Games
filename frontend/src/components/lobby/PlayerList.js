@@ -2,20 +2,32 @@ import getSocket from "../../socket";
 
 const socket = getSocket();
 
-export const PlayerList = (props) => {
+export const PlayerList = ({players, isRoomHost, setKickPlayer}) => {
     return (
         <div className="flex flex-col gap-2">
-            <h2 className="text-2xl">Players</h2>
-            {props.players.map((player, index) => {
-                return (
-                    <div className="flex">
-                        <h2 className={`text-xl text-right w-[40%] ${socket.userId === player.userId && "text-sky-700"}`}>{index + 1}.</h2>
-                        <h2 className={`text-xl text-left pl-2 w-[60%] ${socket.userId === player.userId && "text-sky-700"}`}>{player.nickname}</h2>
+            <div className={`flex items-center gap-3 py-[1vh] text-sm font-semibold tracking-wider text-slate-800`}>
+                <div className={`flex-1 h-[2px] bg-slate-800/50`}/>
+                
+                <h2 className="text-[2.5vh]">{`Players (${players.length})`}</h2>
+
+                <div className={`flex-1 h-[2px] bg-slate-800/50`}/>
+            </div>
+
+            {players.map((player) => {
+                const isPlayer = socket.userId === player.userId;
+                return (       
+                    <div className={`flex items-center justify-center text-[2.2vh] w-full`}>
+                        <div className={`${isPlayer ? "text-sky-700" : (isRoomHost && "cursor-pointer hover:text-yellow-800 hover:underline")}`}
+                             onClick={() => {
+                                setKickPlayer(player);
+                             }}
+                        >
+                            {player.nickname}
+                        </div>
                     </div>
                 );
 
             })}
         </div>
-
     );
 }

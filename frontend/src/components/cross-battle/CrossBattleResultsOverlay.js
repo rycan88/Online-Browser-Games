@@ -1,25 +1,14 @@
-import { useState } from "react";
 import { useOrientation } from "../../hooks/useOrientation";
 import getSocket from "../../socket";
 import { Overlay } from "../Overlay";
 import { ReadyStatusIcon } from "../ReadyStatusIcon";
 import useFullscreen from "../../hooks/useFullscreen";
-import { CrossBattlePlayerList } from "./CrossBattlePlayerList";
 import { InfoButton } from "../InfoButton";
 import { CrossBattleSettings } from "./CrossBattleSettings";
 import { FullscreenButton } from "../FullscreenButton";
 import { CrossBattleRules } from "./CrossBattleRules";
-import { GiSprout } from "react-icons/gi";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
-
-// z2 = 0
-// z3 = 3
-// z4 = 7
-// z_i = z_(i-1) + i = z_(i-2) + i + i - 1
-// (3 + i) / 2  *  (i - 2) = 
-
-// (i ** 2 + i - 6) / 2 
 
 const socket = getSocket();
 const longestWordUser = "longestWords";

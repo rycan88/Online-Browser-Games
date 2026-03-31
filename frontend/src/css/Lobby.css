@@ -16,11 +16,7 @@
   }
 
   .lobbyPage .buttonsContainer button {
-    @apply text-slate-200 w-[45%] sm:w-[40%] h-[60px] sm:h-[100px] text-xl sm:text-3xl my-3 shadow-xl rounded-xl;
-  }
-
-  .lobbyPage .gameTitle {
-    @apply text-4xl sm:text-5xl;
+    @apply text-slate-200 w-[45%] sm:w-[40%] h-[11vh] text-[3vh] my-3 shadow-xl rounded-xl;
   }
 
   .lobbyPage .lobbyInput {

@@ -87,7 +87,7 @@ export const Lobby = ({gameName}) => {
             </div>
 
             <div className="lobbyBox">
-                <h1 className="gameTitle">{gameData ? gameData.title : ""}</h1>
+                <h1 className="text-[3.5vh]">{gameData ? gameData.title : ""}</h1>
 
                 <div className="flex gap-[16px] w-full h-[15%] pt-[5%] justify-center items-center text-black">
                     <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg">{gameData.playerLimitText}</div>

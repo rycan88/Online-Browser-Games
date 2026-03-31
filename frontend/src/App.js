@@ -121,6 +121,19 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const importAll = (r) => r.keys().map(r);
+
+    const images = importAll(
+      require.context('./images', false, /\.(png|jpe?g|svg)$/)
+    );
+
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
   if (!isDataLoaded) return <></>
 
   return (

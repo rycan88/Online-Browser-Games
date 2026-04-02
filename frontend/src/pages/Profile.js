@@ -1,8 +1,8 @@
-import { getNickname, refreshPage, sendRefreshBroadcast } from "../utils";
+import { getNickname, refreshPage } from "../utils";
 import { useState, useRef } from "react";
 import Cookies from "js-cookie";
 import getSocket from "../socket";
-import { ToggleSwitch } from "../components/ToggleSwitch";
+import '../css/Profile.css';
 import { useNavigate } from "react-router-dom";
 
 const socket = getSocket();
@@ -24,10 +24,9 @@ export const Profile = () => {
     const changeNickname = () => {
         if (typedWord.trim() !== "") {
             Cookies.set('nickname', typedWord, { expires: 365});
-            socket.nickname = typedWord;
-            fName.current.value = "";
-            setTypedWord("");
+
             refreshPage();
+
             socket.emit("nickname_changed", typedWord);
         }
     }
@@ -38,24 +37,47 @@ export const Profile = () => {
     const fName = useRef('');
 
     return (
-        <div className="entirePage">
-            <div className="flex flex-col h-full w-full items-center">
-                <div className="flex flex-col gap-2 text-[calc(min(5vh,5vw))] py-6">
-                    <h2>Hello {getNickname()}!</h2>
-                </div>
-
-                <div className="flex w-full h-[calc(min(70px,10vh))] justify-center">
-                    <input className="w-[200px] sm:w-[300px] text-center" onChange={handleTextChange} onKeyDown={ keyDownHandler } ref={fName} maxLength="12"></input>
-                    <button className="w-[100px] sm:w-[100px] gradientButton text-white" onClick={changeNickname}>Change Username</button>
-                </div>
-                <div className="flex h-[70%] items-center justify-center">
-                    <button className="gradientButton p-[10px] rounded-[5%] text-white"
-                            onClick={goBackToPreviousPage}
-                    >
-                        Return to previous screen
-                    </button>
-                </div>
+        <div className="profilePage entirePage justify-center items-center">
+            <div className="relative w-full max-w-md bg-slate-800 backdrop-blur-xl border border-slate-700 rounded-2xl p-6 shadow-xl">
+        
+            <div className="no-wrap absolute -top-[10vh] left-1/2 -translate-x-[50%] text-[4vh] font-semibold text-slate-200">
+                <div>{getNickname()}</div>
             </div>
+
+            <div className="text-[2vh] font-semibold text-slate-200">
+                Set New Username
+            </div>
+
+            <div className="h-[5vh] mt-5 mb-2"> 
+                <input ref={fName}
+                       onChange={handleTextChange}
+                       onKeyDown={keyDownHandler} 
+                       maxLength="12"
+                       placeholder="Enter new username"
+                       className="w-full h-full px-4 py-2 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:ring-2 focus:ring-sky-500/40 outline-none transition mb-4"
+                />
+
+            </div>
+
+            <button
+                onClick={changeNickname}
+                className="gradientButton w-full py-2 font-medium text-slate-200 rounded-lg transition shadow-sm"
+            >
+                Set Username
+            </button>     
+
+            <div className="absolute -bottom-[10vh] left-1/2 -translate-x-1/2 w-full">
+
+                <button
+                    onClick={goBackToPreviousPage}
+                    className="w-[80%] bg-slate-700 hover:bg-slate-600 border border-slate-500 text-slate-200 font-medium py-2 rounded-lg transition"
+                >
+                    Return to previous page
+                </button>
+            </div>
+
         </div>
-    );
+        <div className={`entirePage bg-black/70 z-[-10]`}></div>
+      </div>
+    )
 }

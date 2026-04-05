@@ -1,26 +1,22 @@
-import { HanabiCard } from "../components/hanabi/HanabiCard";
-
 
 export const TailwindTest = () => {
- 
+  const userId = "Rycan88";
   
   return (
-    <div>
-      <HanabiCard number={2} suit={"red"} id={3} />
-      <HanabiCard number={2} suit={"rainbow"} id={3} />
-      <div className="flex">
-        <HanabiCard number={1} suit={"rainbow"} id={3} width={150}/>
-        <HanabiCard number={2} suit={"rainbow"} id={3} width={150}/>
-        <HanabiCard number={3} suit={"rainbow"} id={3} width={150}/>
-        <HanabiCard number={4} suit={"rainbow"} id={3} width={150}/>
-        <HanabiCard number={5} suit={"rainbow"} id={3} width={150}/>
+    <button className="gradientButton"
+      // onClick={async () => {
+      //   const res = await fetch("/api/cross_battle_leaderboard/submit", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({ userId }),
+      //   });
 
-      </div>
-
-      <div className="rainbowText text-8xl">
-        H
-      </div>
-    </div>
+      //   const data = await res.json();
+      //   console.log("Server responded:", data);
+      // }}
+    >
+      PRESS
+    </button>
 
   );
 };

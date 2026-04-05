@@ -138,6 +138,7 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
             <div className="topTaskBar">
                 <button className="gradientButton text-slate-200 py-[6px] px-[12px] rounded-lg mx-[6px]"
                     onClick={() => {
+                        socket.emit("cross_battle_submit_to_database", roomCode);
                         socket.emit("cross_battle_is_ready", roomCode, true);
                     }}
                     disabled={playersData[socket.userId].isReady}

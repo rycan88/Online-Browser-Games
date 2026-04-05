@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { v4: uuidv4 } = require('uuid');
 const path = require("path");
@@ -6,13 +7,21 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 
+const {crossBattleLeaderboardRoutes} = require("./routes/crossBattleLeaderboardRoutes");
+
+
+app.use(express.json());
+
+// Routes
+app.use("/api/cross_battle_leaderboard", crossBattleLeaderboardRoutes);
+
 app.use(cors());
 
 // --------------------------deployment----------------------------------------
 
 const _dirname1 = path.resolve();
 if (process.env.NODE_ENV === "production") {
-    app.use(express.static(path.join(_dirname1, "frontend/build")));
+    app.use(express.static(path.join(_dirname1, "../frontend/build")));
     app.get("*", (req, res) =>
         res.sendFile(path.resolve(_dirname1, "frontend", "build", "index.html"))
     );
@@ -24,8 +33,8 @@ if (process.env.NODE_ENV === "production") {
 
 // --------------------------deployment----------------------------------------
 const MY_WEBSITE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://rycan88-online-games.onrender.com'
-  : 'http://localhost:3000';
+  ? 'http://localhost:3000'
+  : 'https://rycan88-online-games.onrender.com';
 
 const server = http.createServer(app);
 

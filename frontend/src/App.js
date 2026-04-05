@@ -84,11 +84,18 @@ function App() {
   const redirectLobbyRoutes = (rooms) => {
       return gameNames.map((gameName) => {
           return (
+            <>
               <Route
                 key={gameName + "-redirect"}
                 path={`/${gameName}/lobby/:roomCode`}
                 element={<LobbyRedirect rooms={rooms} gameName={gameName}/>}
               />
+              <Route
+                key={gameName + "-redirect"}
+                path={`/${gameName}/:roomCode`}
+                element={<LobbyRedirect rooms={rooms} gameName={gameName}/>}
+              />
+            </>
           );
       })
   }

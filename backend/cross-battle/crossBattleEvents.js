@@ -1,3 +1,4 @@
+const { saveScore, getTopScores } = require("../routes/crossBattleLeaderboardRoutes");
 const { updateRoomHost } = require("../serverUtils");
 const { isValidWord } = require("../utils/dictionaryUtils");
 const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound, getStartingTileToSpace } = require("./crossBattleHelper");
@@ -106,6 +107,13 @@ const crossBattleEvents = (io, socket, rooms) => {
         
         rooms[roomCode].playersData[socket.userId].tileToSpace = getStartingTileToSpace(rooms[roomCode].gameData.letters.length);
         socket.emit("receive_all_data");
+    });
+
+    socket.on("cross_battle_submit_to_database", (roomCode) => {
+        if (!rooms[roomCode] || !rooms[roomCode].gameData.shouldShowResults) { return; }
+        
+        saveScore(socket.userId, socket.nickname, rooms[roomCode].playersData[socket.userId].score);
+        getTopScores();
     });
 }
 

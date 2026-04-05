@@ -9,6 +9,7 @@ import { GamesData } from "../GamesData";
 import { FullscreenButton } from "../FullscreenButton";
 import useFullscreen from "../../hooks/useFullscreen";
 import { Rules } from "./Room";
+import { FaCalendarDays, FaUserPlus } from "react-icons/fa6";
 
 const socket = getSocket();
 export const Lobby = ({gameName}) => {
@@ -94,20 +95,8 @@ export const Lobby = ({gameName}) => {
                     <div className="myContainerCardInnerBox bg-sky-900/80 text-white px-[3%] py-[2%] shadow-lg ">{gameData.duration}</div>
                 </div>
 
-                <div className="flex flex-col gap-[4%] h-[45%] my-4 px-2 text-[1.5em] overflow-y-auto">
-                    <div>{gameData.description}</div>
-                </div>
-                <input className="lobbyInput"
-                        type="text" 
-                        value={typedCode}
-                        placeholder="Enter 4-letter code..."
-                        onChange={ handleTextChange } 
-                        onKeyDown={ keyDownHandler }
-                        maxLength="4"
-                ></input>
-                <p className="errorText">{errorMessage}</p>
-                <div className="buttonsContainer">
-                    <button className="gradientButton" onClick={() => {
+                <div className="flex-1 flex flex-col gap-[6vh] justify-center items-center w-[90%] pb-[3vh]">                    
+                    <button className="gradientButton flex items-center justify-center gap-2 text-slate-200 h-[11vh] w-full text-[3vh] shadow-xl rounded-xl" onClick={() => {
                         let roomCode = generateRoomCode();
                         // Makes sure room does not already exist
                         while (roomArray.includes(roomCode)) {
@@ -115,14 +104,43 @@ export const Lobby = ({gameName}) => {
                         }
                         createRoom(gameName, roomCode);
                     }}>
-                        <h2>Create</h2>
+                        <FaUserPlus />
+                        <h2>Host</h2>
                     </button>
-                    <button className="gradientButton" onClick={() => {
-                        joinRoom(typedCode);
+
+                    {/* <button className="greenGradientButton flex items-center justify-center gap-2 text-slate-200 h-[11vh] w-full text-[3vh] shadow-xl rounded-xl" onClick={() => {
+                        let roomCode = generateRoomCode();
+                        // Makes sure room does not already exist
+                        while (roomArray.includes(roomCode)) {
+                            roomCode = generateRoomCode();
+                        }
+                        createRoom(gameName, roomCode);
                     }}>
-                        <h2>Join</h2>
-                    </button>
+                        <FaCalendarDays />
+                        <h2>Daily</h2>
+                    </button>   */}
+
+                    <div className="relative flex flex-col gap-2 justify-center items-center w-full">
+                        <div className="flex rounded-xl justify-center items-center w-full overflow-hidden h-[8vh]">
+                            <input className="lobbyInput w-full h-full text-center text-[3vh] focus:placeholder-transparent"
+                                    type="text" 
+                                    value={typedCode}
+                                    placeholder="Enter 4-letter code..."
+                                    onChange={ handleTextChange } 
+                                    onKeyDown={ keyDownHandler }
+                                    maxLength="4"
+                            />
+
+                            <button className="gradientButton text-slate-200 w-[12vh] h-full text-[2vh] shadow-xl " onClick={() => {
+                                joinRoom(typedCode);
+                            }}>
+                                <h2>Join</h2>
+                            </button>
+                        </div>
+                        <p className="absolute -bottom-[4vh] text-red-600 text-[2vh]">{errorMessage}</p>
+                    </div>              
                 </div>
+
 
  
             </div>

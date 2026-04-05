@@ -19,12 +19,8 @@
     @apply text-slate-200 w-[45%] sm:w-[40%] h-[11vh] text-[3vh] my-3 shadow-xl rounded-xl;
   }
 
-  .lobbyPage .lobbyInput {
-    @apply w-[80%] h-[65px] sm:h-[80px] text-center my-auto text-4xl sm:text-5xl focus:placeholder-transparent;
-  }
-
   .lobbyPage .lobbyInput::placeholder {
-    @apply absolute  top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 text-lg;
+    @apply absolute top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2 text-[2vh];
   }
 
   .lobbyPage .errorText {

@@ -54,7 +54,7 @@ export const Profile = () => {
                        onKeyDown={keyDownHandler} 
                        maxLength="12"
                        placeholder="Enter new username"
-                       className="w-full h-full px-4 py-2 rounded-lg bg-slate-900 border border-slate-600 text-slate-200 placeholder-slate-500 focus:border-sky-400 focus:ring-2 focus:ring-sky-500/40 outline-none transition mb-4"
+                       className="myInputBar w-full h-full px-4 py-2 mb-4"
                 />
 
             </div>

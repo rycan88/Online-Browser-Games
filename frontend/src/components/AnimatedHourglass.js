@@ -5,7 +5,7 @@ import { FaHourglass, FaHourglassStart } from "react-icons/fa6";
 export const AnimatedHourglass = ({animationDuration=2000, breakDuration=4000}) => {
     const [rotation, setRotation] = useState(0);
     const [timingIndex, setTimingIndex] = useState(0);
-    console.log(timingIndex)
+
     const timingStates = [BsHourglassTop, BsHourglassSplit, BsHourglassBottom];
 
     const intervalRef = useRef(null);
@@ -21,7 +21,6 @@ export const AnimatedHourglass = ({animationDuration=2000, breakDuration=4000}) 
     }, []);
 
     const handleEndAnimation = () => {
-        console.log("yes")
         setRotation(rotation % 360);
         if (intervalRef.current) {
             clearInterval(intervalRef.current);

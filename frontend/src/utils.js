@@ -41,3 +41,8 @@ export const getPlayerCoords = (playerCount, width, height, centerX, centerY) =>
 
     return positions;
 }
+
+const EIGHT_HOURS = 8 * 60 * 60 * 1000;
+export const getPSTDate = () => {
+    return new Date(Date.now() - EIGHT_HOURS).toISOString().slice(0, 10);
+}

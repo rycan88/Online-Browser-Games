@@ -25,6 +25,7 @@ import { RPSMelee } from './pages/RPSMelee';
 import { Hanabi } from './pages/Hanabi';
 import { CrossBattle } from './pages/CrossBattle';
 import { LobbyRedirect } from './components/lobby/LobbyRedirect';
+import { CrossBattleDaily } from './components/cross-battle/CrossBattleDaily';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -53,6 +54,8 @@ function App() {
 
   const roomRoutes = (rooms) => {
     return Object.keys(rooms).map((roomCode) => {
+      if (roomCode.length > 4) { return <></>; }
+
       const gameName = rooms[roomCode];
 
       return <Route key={roomCode} 
@@ -63,6 +66,8 @@ function App() {
 
   const gameRoutes = (rooms) => {
     return Object.keys(rooms).map((roomCode) => {
+      if (roomCode.length > 4) { return <></>; }
+
       const gameName = rooms[roomCode];
       return <Route key={roomCode} 
                     path={`/${gameName}/${roomCode}`} 
@@ -102,7 +107,6 @@ function App() {
 
   useEffect(() => {
     socket.on('update_rooms', (rooms) => {
-        console.log("Rooms updated");
         setRooms(rooms);
         setIsDataLoaded(true);
     });
@@ -152,6 +156,7 @@ function App() {
             <Routes>
               <Route path="/home" element={<Home />} />
               <Route path="/" element={<Games />} />
+              <Route path="/cross_battle/daily" element={<CrossBattleDaily />} />
               {lobbyRoutes()}
               {roomRoutes(rooms)}
               {gameRoutes(rooms)}
@@ -161,8 +166,6 @@ function App() {
               <Route path="/profile" element={<Profile/>} />
               <Route path="/test" element={<TailwindTest />} />
               <Route path="/odd_colour_out" element={<OddColourOut />} />
-              <Route path="/thirty_one" element={<ThirtyOne />} />
-              <Route path="/cross_battle" element={<CrossBattle />} />
               <Route path="*" element={isDataLoaded ? <ErrorPage/> : <LoadingScreen />} />
             </Routes>
           </Router>

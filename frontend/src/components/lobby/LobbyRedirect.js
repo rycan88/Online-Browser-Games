@@ -4,7 +4,7 @@ export const LobbyRedirect = ({rooms, gameName}) => {
     const { roomCode } = useParams();
 
     // No room code -> send to base lobby
-    if (!roomCode) {
+    if (!roomCode || roomCode.length > 4) {
         return <Navigate to={`/${gameName}/lobby`} replace />;
     }
 

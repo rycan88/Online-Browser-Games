@@ -21,13 +21,11 @@ import { RiInfinityFill, RiTimerLine } from 'react-icons/ri';
 import { refreshPage } from '../utils';
 import { CrossBattleRules } from '../components/cross-battle/CrossBattleRules';
 import { ConfirmOverlay } from '../components/ConfirmOverlay';
-
-// Bug fix: Dont let timeLimit change immediately after changing it
-
+import { CrossBattleDailyResultsOverlay } from '../components/cross-battle/CrossBattleDailyResultsOverlay';
 
 const socket = getSocket();
 
-export const CrossBattle = ({roomCode}) => {
+export const CrossBattle = ({roomCode, isDaily=false}) => {
     const orientation = useOrientation();
     const isFullscreen = useFullscreen();
     const navigate = useNavigate();
@@ -96,7 +94,7 @@ export const CrossBattle = ({roomCode}) => {
 
     const [dataInitialized, setDataInitialized] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false);
-    const [playersData, setPlayersData] = useState([]);
+    const [playersData, setPlayersData] = useState({});
     const [isSeeded, setIsSeeded] = useState(false);
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
@@ -336,17 +334,25 @@ export const CrossBattle = ({roomCode}) => {
 
         >
             <div className={`crossBattlePage entirePage select-none ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
-                <CrossBattleResultsOverlay
-                    roomCode={roomCode}
-                    playersData={playersData}
-                    onClose={onClose}
-                    isOpen={shouldShowResults}
-                    currentUser={currentUser}
-                    setCurrentUser={setCurrentUser}
-                    letters={letters}
-                    isSeeded={isSeeded}
-                    longestWordsData={longestWordsData}
-                />     
+                { shouldShowResults && 
+                  (isDaily ?
+                    <CrossBattleDailyResultsOverlay
+                        roomCode={roomCode}
+                        isOpen={shouldShowResults}
+                    />                          
+                :
+                    <CrossBattleResultsOverlay
+                        roomCode={roomCode}
+                        playersData={playersData}
+                        isOpen={shouldShowResults}
+                        currentUser={currentUser}
+                        setCurrentUser={setCurrentUser}
+                        letters={letters}
+                        isSeeded={isSeeded}
+                        longestWordsData={longestWordsData}
+                    />     
+                )}
+
 
                 <ConfirmOverlay isOpen={showReturnToRackOverlay} 
                                 onClose={() => {setShowReturnToRackOverlay(false)}}
@@ -367,8 +373,8 @@ export const CrossBattle = ({roomCode}) => {
                     <div className="topTaskBar z-[11]">
                         <CrossBattleSubmitButton 
                             roomCode={roomCode}
-                            hasSubmitted={hasSubmitted} 
                             setHasSubmitted={setHasSubmitted}
+                            isDaily={isDaily}
                         />
                         <CrossBattlePlayerList playersData={playersData} />
                         <InfoButton buttonType="info" fullScreen={isFullscreen}>

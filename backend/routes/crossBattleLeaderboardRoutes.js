@@ -2,15 +2,23 @@
 const express = require("express");
 const crossBattleLeaderboardRoutes = express.Router();
 const connectDB = require("../db/db");
+const { getPSTDate } = require("../serverUtils");
 
 const CROSS_BATTLE_LEADERBOARD = "cross_battle_leaderboard";
-async function saveScore(userId, nickname, score) {
+
+async function saveScore(userId, nickname, score, letters, validWords, invalidWords, unusedLetters, coords) {
   const db = await connectDB();
 
   const entry = {
-    userId,
+    userId, 
     nickname,
     score,
+    letters,
+    validWords,
+    invalidWords,
+    unusedLetters,
+    coords,
+    datePST: getPSTDate(),
     createdAt: new Date(),
   };
 
@@ -21,18 +29,35 @@ async function saveScore(userId, nickname, score) {
 async function getTopScores() {
   const db = await connectDB();
 
+  const today = getPSTDate();
+
   const topScores = await db
     .collection(CROSS_BATTLE_LEADERBOARD)
-    .find()
+    .find({ datePST: today})
     .sort({ score: -1 })
-    .limit(10)
+    .limit(100)
     .toArray();
 
   return topScores;
 };
 
+async function getPlayerResults(userId) {
+  const db = await connectDB();
+
+  const today = getPSTDate();
+  
+  const myResults = await db
+    .collection(CROSS_BATTLE_LEADERBOARD)
+    .findOne({ datePST: today, userId: userId})
+
+  return myResults;
+}
+
+
+
 module.exports = {
     saveScore,
     getTopScores,
+    getPlayerResults,
     crossBattleLeaderboardRoutes,
 };

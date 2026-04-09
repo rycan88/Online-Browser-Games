@@ -7,7 +7,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 
-const {crossBattleLeaderboardRoutes} = require("./routes/crossBattleLeaderboardRoutes");
+const {crossBattleLeaderboardRoutes, getPlayerResults} = require("./routes/crossBattleLeaderboardRoutes");
 
 
 app.use(express.json());
@@ -46,7 +46,7 @@ const io = new Server(server, {
 });
 
 
-const { User, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms, updateRoomHost} = require("./serverUtils");
+const { User, leaveAllRooms, addToTeamList, removeFromTeamList ,containsSocketId, containsUserId, startDeleteTimer, clearDeleteTimer, getSimplifiedRooms, updateRoomHost, generateRoomCode, getPSTDate} = require("./serverUtils");
 const { setUpPlayerData, setUpGameData } = require("./gameUtils");
 const { telepathEvents } = require("./telepath/telepathEvents");
 const { thirtyOneEvents } = require("./thirty-one/thirtyOneEvents");
@@ -112,10 +112,28 @@ io.on("connection", (socket) => {
         });
     });
 
-    socket.on('create_room', (gameName, roomCode) => {
-        //socket.leaveAll();
+    socket.on('create_room', async (gameName, isDaily=false) => {
+        // Make room code
+        let roomCode;
+        if (isDaily) {
+            const dateString = getPSTDate();
+            roomCode = socket.userId + dateString; 
+            try {
+                const myResults = await getPlayerResults(socket.userId);
+                socket.emit("has_played_daily", myResults !== null);
+            } catch (err) {
+                console.error("Error fetching results:", err);
+            }
+        } else {
+            roomCode = generateRoomCode(4);
+            while (rooms[roomCode] != null) {
+                roomCode = generateRoomCode(4);
+            }
+        }
+
+
         leaveAllRooms(io, rooms, deleteTimers, socket);
-        rooms[roomCode] = { players: [], spectators: [], roomHostId: currentUser.userId, gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false };
+        rooms[roomCode] = { players: [], spectators: [], roomHostId: currentUser.userId, gameName: gameName, gameStarted: false, playersData: {}, teamData: [], gameData: {}, teamMode: false, isDaily: isDaily };
         if (gameName === "telepath") {
             rooms[roomCode].teamMode = true;
         }
@@ -146,7 +164,8 @@ io.on("connection", (socket) => {
     
     socket.on('join_room', (roomCode) => {
         if (!rooms[roomCode]) {
-            socket.emit('room_error', `Lobby ${roomCode} does not exist`);
+            const error = (roomCode && roomCode.length <= 4) ? `Lobby ${roomCode} does not exist` : "";
+            socket.emit('room_error', error);
         } else if (rooms[roomCode].gameStarted && !Object.keys(rooms[roomCode].playersData).includes(socket.userId)) { // If they arent a player in the game that started
             socket.emit('room_error', `Game ${roomCode} has already started`);
         } else if (!containsUserId(rooms[roomCode].players, socket.userId) && rooms[roomCode].players.length >= gamePlayerLimits[rooms[roomCode].gameName]) {

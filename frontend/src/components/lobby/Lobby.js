@@ -12,6 +12,7 @@ import { Rules } from "./Room";
 import { FaCalendarDays, FaUserPlus } from "react-icons/fa6";
 
 const socket = getSocket();
+
 export const Lobby = ({gameName}) => {
     const navigate = useNavigate();
     const isFullscreen = useFullscreen();
@@ -44,8 +45,8 @@ export const Lobby = ({gameName}) => {
     const goToRoom = (gameName, roomCode) => {
         navigate(`/${gameName}/lobby/${roomCode}`);
     }
-    const createRoom = (gameName, roomCode) => {
-        socket.emit('create_room', gameName, roomCode);
+    const createRoom = (gameName) => {
+        socket.emit('create_room', gameName);
     };
   
     const joinRoom = (roomCode) => {
@@ -57,7 +58,9 @@ export const Lobby = ({gameName}) => {
             const gameName = rooms[roomCode];
             goToRoom(gameName, roomCode);
         } else {
-            setErrorMessage("Lobby " + roomCode + " does not exist");
+            if (roomCode && roomCode.length <= 4) {
+                setErrorMessage("Lobby " + roomCode + " does not exist");
+            }
         }
     };
   
@@ -66,15 +69,6 @@ export const Lobby = ({gameName}) => {
             joinRoom(typedCode);
         } 
     };
-
-    const generateRoomCode = () => {
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWYZ"; // NO GOOD X WORDS
-        let code = "";
-        for (let i = 0; i < 4; i++) {
-            code += letters[Math.floor(Math.random() * letters.length)];
-        }
-        return code;
-    }
 
     return (
         <div className={`lobbyPage entirePage place-content-center items-center ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
@@ -96,29 +90,26 @@ export const Lobby = ({gameName}) => {
                 </div>
 
                 <div className="flex-1 flex flex-col gap-[6vh] justify-center items-center w-[90%] pb-[3vh]">                    
-                    <button className="gradientButton flex items-center justify-center gap-2 text-slate-200 h-[11vh] w-full text-[3vh] shadow-xl rounded-xl" onClick={() => {
-                        let roomCode = generateRoomCode();
-                        // Makes sure room does not already exist
-                        while (roomArray.includes(roomCode)) {
-                            roomCode = generateRoomCode();
-                        }
-                        createRoom(gameName, roomCode);
-                    }}>
+                    { gameName === "cross_battle" &&
+                        <button className="greenGradientButton flex items-center justify-center gap-2 text-slate-200 h-[11vh] w-full text-[3vh] shadow-xl rounded-xl" 
+                            onClick={() => {
+                                navigate(`/${gameName}/daily`);
+                            }}
+                        >
+                            <FaCalendarDays />
+                            <h2>Daily</h2>
+                        </button>  
+                    }                    
+                    
+                    <button className="gradientButton flex items-center justify-center gap-2 text-slate-200 h-[11vh] w-full text-[3vh] shadow-xl rounded-xl" 
+                        onClick={() => {
+                            createRoom(gameName);
+                        }}
+                    >
                         <FaUserPlus />
                         <h2>Host</h2>
                     </button>
 
-                    {/* <button className="greenGradientButton flex items-center justify-center gap-2 text-slate-200 h-[11vh] w-full text-[3vh] shadow-xl rounded-xl" onClick={() => {
-                        let roomCode = generateRoomCode();
-                        // Makes sure room does not already exist
-                        while (roomArray.includes(roomCode)) {
-                            roomCode = generateRoomCode();
-                        }
-                        createRoom(gameName, roomCode);
-                    }}>
-                        <FaCalendarDays />
-                        <h2>Daily</h2>
-                    </button>   */}
 
                     <div className="relative flex flex-col gap-2 justify-center items-center w-full">
                         <div className="flex rounded-xl justify-center items-center w-full overflow-hidden h-[8vh]">

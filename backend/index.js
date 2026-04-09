@@ -33,8 +33,8 @@ if (process.env.NODE_ENV === "production") {
 
 // --------------------------deployment----------------------------------------
 const MY_WEBSITE_URL = process.env.NODE_ENV === 'production'
-  ? 'http://localhost:3000'
-  : 'https://rycan88-online-games.onrender.com';
+  ? 'https://rycan88-online-games.onrender.com'
+  : 'http://localhost:3000';
 
 const server = http.createServer(app);
 

@@ -23,19 +23,20 @@ export const CrossBattleDaily = () => {
     useEffect(() => {
         socket.on("room_created", (gameName, verifyRoomCode) => {
             if (verifyRoomCode === roomCode) {
-                socket.emit('start_game', roomCode);    
+                socket.emit('start_game', roomCode); 
+                setDataInitialized(true);   
             }
         })
 
         socket.on("has_played_daily", (hasPlayedDaily) => {
             setHasPlayedDaily(hasPlayedDaily);
-            setDataInitialized(true);
         })
 
         if (!roomsArray.includes(roomCode)) {
             socket.emit("create_room", gameName, isDaily);
         } else {
             socket.emit("has_cross_battle_daily_been_played", roomCode);
+            setDataInitialized(true); 
         }
 
         return () => {
@@ -44,7 +45,7 @@ export const CrossBattleDaily = () => {
         };
     }, []);
 
-    if (hasPlayedDaily === null) {
+    if (hasPlayedDaily === null || !dataInitialized) {
         return <LoadingScreen />;
     }
 
@@ -56,7 +57,8 @@ export const CrossBattleDaily = () => {
             />
         )
     } else {
-        return <CrossBattle roomCode={roomCode} isDaily={true} hasPlayedDaily={hasPlayedDaily}/>
+        console.log("Has not played daily yet!");
+        return <CrossBattle roomCode={roomCode} isDaily={true} />
     }
 
 

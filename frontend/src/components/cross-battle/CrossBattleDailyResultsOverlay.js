@@ -172,7 +172,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
     }
 
     return (
-        <div className={`crossBattlePage entirePage select-none ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
+        <div className={`crossBattlePage entirePage z-[30] select-none ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
             <Overlay isOpen={isOpen}>
                 <div className="topTaskBar">
                     <button className="gradientButton text-slate-200 py-[6px] px-[12px] rounded-lg mx-[6px]"
@@ -319,6 +319,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
 
                 </div>
             </Overlay>
+            <div className={`entirePage bg-black/70 z-[-10] ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}></div>
         </div>
     )
 }

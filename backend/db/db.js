@@ -2,7 +2,11 @@ require("dotenv").config();
 const { MongoClient } = require("mongodb");
 
 const dbURI = process.env.MONGO_URI;
-const client = new MongoClient(dbURI)
+
+const client = new MongoClient(dbURI, {
+    tls: true,
+    tlsAllowInvalidCertificates: false,  // change to true only for testing
+});
 
 let db;
 

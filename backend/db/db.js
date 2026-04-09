@@ -5,7 +5,7 @@ const dbURI = process.env.MONGO_URI;
 
 const client = new MongoClient(dbURI, {
     tls: true,
-    tlsAllowInvalidCertificates: true,  // change to true only for testing
+    tlsAllowInvalidCertificates: false,  // change to true only for testing
 });
 
 let db;

@@ -125,6 +125,7 @@ export const CrossBattle = ({roomCode, isDaily=false}) => {
 
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData)
+            console.log(playersData)
             setHasSubmitted(playersData[socket.userId].hasSubmitted);
         });
 
@@ -373,7 +374,7 @@ export const CrossBattle = ({roomCode, isDaily=false}) => {
                     <div className="topTaskBar z-[11]">
                         <CrossBattleSubmitButton 
                             roomCode={roomCode}
-                            setHasSubmitted={setHasSubmitted}
+                            hasSubmitted={hasSubmitted}
                             isDaily={isDaily}
                         />
                         <CrossBattlePlayerList playersData={playersData} />

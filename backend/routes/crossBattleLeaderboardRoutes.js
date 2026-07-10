@@ -4,7 +4,7 @@ const crossBattleLeaderboardRoutes = express.Router();
 const connectDB = require("../db/db");
 const { getPSTDate } = require("../serverUtils");
 
-const CROSS_BATTLE_LEADERBOARD = "cross_battle_leaderboard";
+const CROSS_BATTLE_LEADERBOARD = process.env.NODE_ENV === 'production' ? "cross_battle_leaderboard" : "cross_battle_leaderboard_dev";
 
 async function saveScore(userId, nickname, score, letters, validWords, invalidWords, unusedLetters, coords) {
   const db = await connectDB();

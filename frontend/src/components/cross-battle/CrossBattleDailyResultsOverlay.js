@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoadingScreen from "../LoadingScreen";
 import { CrossBattleLeaderboardPlayerOverlay } from "./CrossBattleLeaderboardPlayerOverlay";
+import { getNextResetDiff, getPSTDate } from "../../utils";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
@@ -28,6 +29,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
     const [currentPlayerUserId, setCurrentPlayerUserId] = useState(null);
     const [currentUser, setCurrentUser] = useState(socket.userId);
     const [longestWordsData, setLongestWordsData] = useState(null);
+    const [dailyTimeRemaining, setDailyTimeRemaining] = useState({hours: "30", minutes: "00", seconds: "00"});
 
     useEffect(() => {
         socket.on('receive_leaderboard', (leaderboardData) => {
@@ -56,6 +58,17 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
         socket.emit("get_cross_battle_leaderboard", roomCode); 
         socket.emit("cross_battle_get_daily_longest_words", roomCode); 
     }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const resetDiff = getNextResetDiff();
+            setDailyTimeRemaining(resetDiff);
+        }, 1000); // update once per second
+
+        return () => clearInterval(interval);
+    }, [])
+
+
 
     if (leaderboardData && playerData === null && !myResultsRequested) {
         socket.emit('cross_battle_get_my_results', roomCode);
@@ -256,7 +269,10 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
                         }
                         { currentUser === "leaderboard" &&
                             <div className="w-full h-full flex flex-col text-slate-200 font-mono">
-                                {/* Header */}
+                                <div className="flex items-center justify-between w-full text-[1.5vh] py-[4px] px-3 border-b-[1px] border-slate-500">
+                                    <div>{getPSTDate()}</div>
+                                    <div>{`Time Remaining: ${dailyTimeRemaining.hours}:${dailyTimeRemaining.minutes}:${dailyTimeRemaining.seconds}`}</div>
+                                </div>
                                 <div className="grid grid-cols-[40px_1fr_50px] px-3 py-2 text-xs text-slate-400 border-b border-slate-600">
                                     <div>#</div>
                                     <div>USERNAME</div>

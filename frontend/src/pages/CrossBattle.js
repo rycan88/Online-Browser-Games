@@ -22,8 +22,13 @@ import { refreshPage } from '../utils';
 import { CrossBattleRules } from '../components/cross-battle/CrossBattleRules';
 import { ConfirmOverlay } from '../components/ConfirmOverlay';
 import { CrossBattleDailyResultsOverlay } from '../components/cross-battle/CrossBattleDailyResultsOverlay';
+import Cookies from "js-cookie";
 
 const socket = getSocket();
+const hasPlayedCrossBattleCookieName = "hasPlayedCrossBattle";
+const hasPlayedCrossBattle = () => {
+    return Cookies.get(hasPlayedCrossBattleCookieName) === "true";
+}
 
 export const CrossBattle = ({roomCode, isDaily=false}) => {
     const orientation = useOrientation();
@@ -107,10 +112,18 @@ export const CrossBattle = ({roomCode, isDaily=false}) => {
     }
 
     const [timeRemaining, setTimeRemaining] = useState(0);
-    const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180};
+    const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180, "300s": 300};
     const timerId = useRef(null);
     const [timeLimit, setTimeLimit] = useState("unlimited");
     const [longestWordsData, setLongestWordsData] = useState([]);
+
+    const shouldShowRules = !hasPlayedCrossBattle() &&  timeLimit === "unlimited";
+    const onRulesClose = () => {
+        if (!hasPlayedCrossBattle()) {
+            Cookies.set(hasPlayedCrossBattleCookieName, "true", { expires: 365});
+        }
+    }
+    console.log(shouldShowRules, hasPlayedCrossBattle(), Cookies.get(hasPlayedCrossBattleCookieName))
 
     useEffect(() => {
         socket.on('receive_player_data', (playerData) => {
@@ -378,7 +391,7 @@ export const CrossBattle = ({roomCode, isDaily=false}) => {
                             isDaily={isDaily}
                         />
                         <CrossBattlePlayerList playersData={playersData} />
-                        <InfoButton buttonType="info" fullScreen={isFullscreen}>
+                        <InfoButton buttonType="info" startOpen={shouldShowRules} extraOnCloseAction={onRulesClose} fullScreen={isFullscreen}>
                             <CrossBattleRules />
                         </InfoButton>
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>

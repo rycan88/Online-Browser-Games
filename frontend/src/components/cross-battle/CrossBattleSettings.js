@@ -10,7 +10,7 @@ import { SectionHeading } from "../SectionHeading";
 
 const socket = getSocket()
 
-const timeLimitChoices = {"unlimited": "Unlimited", "30s": "30s", "60s": "60s", "90s": "90s", "120s": "120s", "180s": "180s"}
+const timeLimitChoices = {"unlimited": "Unlimited", "30s": "30s", "60s": "60s", "90s": "90s", "120s": "120s", "180s": "180s", "300s": "300s"}
 const canTileSwapCookieName = "crossBattleCanTileSwap";
 export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShowResults}) => {
     const [timeLimit, setTimeLimit] = useState("unlimited");

@@ -5,15 +5,20 @@ import { FaGear } from "react-icons/fa6";
 
 const buttonIcon = {"info": <BsInfoCircleFill />, "settings": <FaGear className="text-slate-400"/>}
 
-export const InfoButton = ({buttonStyle, buttonType="info", children, fullScreen=false}) => {
-    const [isOpen, setIsOpen] = useState(false)
+const noop = () => {};
+export const InfoButton = ({buttonStyle, buttonType="info", children, startOpen=false, extraOnCloseAction=noop, fullScreen=false}) => {
+    const [isOpen, setIsOpen] = useState(startOpen)
 
     const toggleOverlay = () => {
+        if (isOpen) {
+            extraOnCloseAction();
+        }
         setIsOpen(!isOpen);
     }
 
     const closeOverlay = () => {
         setIsOpen(false);
+        extraOnCloseAction();
     }
 
     const childrenWithClose = React.Children.map(children, (child) => {

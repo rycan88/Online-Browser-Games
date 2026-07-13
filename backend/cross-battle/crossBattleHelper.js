@@ -1,3 +1,5 @@
+const { saveScore } = require("../routes/crossBattleLeaderboardRoutes");
+const { getPSTDate } = require("../serverUtils");
 const { isValidWord, getLongestWords } = require("../utils/dictionaryUtils");
 const { crossBattlePlayerData } = require("./crossBattlePlayerData");
 
@@ -23,13 +25,31 @@ Object.entries(allLetterTiles).forEach((entry) => {
     }
 });
 
-const randomCombo = (length) => {
+function mulberry32(a) {
+    return function() {
+        a |= 0; a = a + 0x6D2B79F5 | 0;
+        let t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function getDailyLetters(length) {
+    const dateString = getPSTDate();
+    const seed = Number(dateString.replace(/-/g, ""));
+    const rand = mulberry32(seed);
+
+    return randomCombo(length, rand);
+}
+
+
+const randomCombo = (length, rand=Math.random) => {
     const tilePoolLength = letterTileString.length;
     while (true) {
         let newLetters = "";
         const counter = {}
         while (newLetters.length < length) {
-            const num = Math.floor(Math.random() * tilePoolLength);
+            const num = Math.floor(rand() * tilePoolLength);
             const letter = letterTileString[num];
             if (!counter[letter]) { counter[letter] = 0; }
             
@@ -260,9 +280,10 @@ const crossBattleConfigurePlayersData = (rooms, roomCode) => {
 }
 
 const crossBattleConfigureGameData = (io, rooms, roomCode) => {
+    const isDaily = rooms[roomCode].isDaily;
     const nextSeed = rooms[roomCode].gameData.nextSeed;
     const isSeeded = nextSeed ? true : false; 
-    const letters = isSeeded ? nextSeed : randomCombo(22);
+    const letters = isDaily ? getDailyLetters(22) : (isSeeded ? nextSeed : randomCombo(22));
     const playerDataArray = Object.values(rooms[roomCode].playersData);
 
     const gameData = rooms[roomCode].gameData;
@@ -274,7 +295,7 @@ const crossBattleConfigureGameData = (io, rooms, roomCode) => {
     crossBattleSetTimer(io, rooms, roomCode);
 }
 
-const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180};
+const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180, "300s": 300};
 const crossBattleSetTimer = (io, rooms, roomCode) => {
     const gameData = rooms[roomCode].gameData;
 
@@ -296,14 +317,18 @@ const crossBattleEndRound = (io, rooms, roomCode) => {
     const playersData = rooms[roomCode].playersData;
     const gameData = rooms[roomCode].gameData;
 
-
-
     gameData.lobbyLongestWords = new Set();
     Object.values(playersData).map((playerData) => {
         Object.assign(playerData, 
             scoreGrid(playerData.tileToSpace, gameData.letters)
         );
+
+        if (rooms[roomCode].isDaily) {
+            submitToDatabase(rooms, roomCode, playerData.nameData.userId, playerData.nameData.nickname);
+        }
     });
+
+
 
     const longestWords = getLongestWords(gameData.letters);
     gameData.longestWordsData = longestWords.map((word) => {
@@ -318,13 +343,28 @@ const crossBattleEndRound = (io, rooms, roomCode) => {
     })
 }
 
+const submitToDatabase = (rooms, roomCode, userId, nickname) => {
+    if (!rooms[roomCode] || !rooms[roomCode].gameData.shouldShowResults) { return; }
+    
+    const score = rooms[roomCode].playersData[userId].score;
+    const letters = rooms[roomCode].gameData.letters;
+    const validWords = rooms[roomCode].playersData[userId].validWords;
+    const invalidWords = rooms[roomCode].playersData[userId].invalidWords;
+    const unusedLetters = rooms[roomCode].playersData[userId].unusedLetters;
+    const coords = rooms[roomCode].playersData[userId].coords;
+
+    saveScore(userId, nickname, score, letters, validWords, invalidWords, unusedLetters, coords);
+}
+
 module.exports = {
     randomCombo,
     scoreGrid,
     getStartingTileToSpace,
+    getDailyLetters,
     crossBattleScoring,
     crossBattleConfigurePlayersData,
     crossBattleConfigureGameData,
     crossBattleSetTimer,
     crossBattleEndRound,
+    submitToDatabase,
 }

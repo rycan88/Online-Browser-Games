@@ -1,7 +1,6 @@
 const crossBattlePlayerData = (nameData) => {    
     return {
         nameData: nameData,
-        cards: [],
         isReady: false,
         hasSubmitted: false,
         validWords: [],

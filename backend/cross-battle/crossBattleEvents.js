@@ -1,6 +1,7 @@
+const { saveScore, getTopScores, getPlayerResults } = require("../routes/crossBattleLeaderboardRoutes");
 const { updateRoomHost } = require("../serverUtils");
-const { isValidWord } = require("../utils/dictionaryUtils");
-const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound, getStartingTileToSpace } = require("./crossBattleHelper");
+const { isValidWord, getLongestWords } = require("../utils/dictionaryUtils");
+const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound, getStartingTileToSpace, submitToDatabase, getDailyLetters } = require("./crossBattleHelper");
 
 const crossBattleEvents = (io, socket, rooms) => {    
     socket.on("get_all_cross_battle_data", (roomCode) => {
@@ -20,7 +21,8 @@ const crossBattleEvents = (io, socket, rooms) => {
             socket.emit("receive_is_seeded", rooms[roomCode].gameData.isSeeded);
             socket.emit("receive_player_data", rooms[roomCode].playersData[socket.userId]);
         } else {
-            socket.emit('room_error', `Lobby ${roomCode} does not exist`);
+            const error = (roomCode && roomCode.length <= 4) ? `Lobby ${roomCode} does not exist` : "";
+            socket.emit('room_error', error);
         }
     });
 
@@ -107,7 +109,65 @@ const crossBattleEvents = (io, socket, rooms) => {
         rooms[roomCode].playersData[socket.userId].tileToSpace = getStartingTileToSpace(rooms[roomCode].gameData.letters.length);
         socket.emit("receive_all_data");
     });
+
+    socket.on("cross_battle_submit_to_database", (roomCode) => {
+        //submitToDatabase(rooms, roomCode, socket.userId, socket.nickname);
+    });
+
+    socket.on("get_cross_battle_leaderboard", async (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+        
+        try {
+            const leaderboard = await getTopScores();
+            socket.emit("receive_leaderboard", leaderboard);
+        } catch (err) {
+            console.error("Error fetching leaderboard:", err);
+        }
+    });
+
+    socket.on("cross_battle_get_my_results", async (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+        
+        try {
+            const myResults = await getPlayerResults(socket.userId);
+            socket.emit("receive_my_results", myResults);
+        } catch (err) {
+            console.error("Error fetching results:", err);
+        }
+    })
+
+    socket.on("cross_battle_get_player_results", async (roomCode, userId) => {
+        if (!rooms[roomCode]) { return; }
+        
+        try {
+            const playerResults = await getPlayerResults(userId);
+            socket.emit("receive_player_results", playerResults);
+        } catch (err) {
+            console.error("Error fetching results:", err);
+        }
+    })
+
+    socket.on("cross_battle_get_daily_longest_words", (roomCode) => {
+        if (!rooms[roomCode]) { return; }
+        
+        const letters = getDailyLetters(22);
+        const longestWords = getLongestWords(letters);
+
+        socket.emit("receive_daily_longest_words", longestWords);
+    })
+
+    socket.on("has_cross_battle_daily_been_played", async (roomCode) => {
+        try {
+            const myResults = await getPlayerResults(socket.userId);
+            socket.emit("has_played_daily", myResults !== null);
+        } catch (err) {
+            console.error("Error fetching results:", err);
+        }
+    });
 }
+
+
+
 
 module.exports = {
     crossBattleEvents,

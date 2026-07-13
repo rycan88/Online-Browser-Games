@@ -7,6 +7,7 @@ import { InfoButton } from "../InfoButton";
 import { CrossBattleSettings } from "./CrossBattleSettings";
 import { FullscreenButton } from "../FullscreenButton";
 import { CrossBattleRules } from "./CrossBattleRules";
+import { useNavigate } from "react-router-dom";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
@@ -15,7 +16,7 @@ const longestWordUser = "longestWords";
 
 export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, currentUser, setCurrentUser, letters, isSeeded, longestWordsData}) => {
     const orientation = useOrientation();
-
+    const navigate = useNavigate();
     const isFullscreen = useFullscreen();
 
     if (!currentUser || !playersData) { 
@@ -79,12 +80,6 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
         );
     }
 
-
-
-
-    console.log(longestWordsData, socket.userId)
-
-
     const tabBarElements = () => {
         let arr = Object.values(playersData);
         const i = arr.findIndex((data) => data.nameData.userId === socket.userId);
@@ -103,10 +98,11 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
                      onClick={() => {
                         setCurrentUser(playerData.nameData.userId);
                      }}
-                >
+                >           
                     <div className="absolute right-[10px] top-1/2 -translate-y-1/2">
                         <ReadyStatusIcon isReady={ playerData.isReady }/>
                     </div>
+                    
                     <div>  { playerData.nameData.nickname } </div>
                     <div className={`${playerData.score > 0 ? "text-green-500" : "text-red-400"}`}> 
                         { `(${playerData.score})` } 
@@ -142,7 +138,7 @@ export const CrossBattleResultsOverlay = ({roomCode, playersData, isOpen, curren
                     }}
                     disabled={playersData[socket.userId].isReady}
                 >
-                    {playersData[socket.userId].isReady ? "Waiting for others..." : "Next Game" }
+                    {playersData[socket.userId].isReady ? "Waiting for others..." : "Next Game"}
                 </button>
 
                 <InfoButton buttonType="info" fullScreen={isFullscreen}>

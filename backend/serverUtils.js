@@ -14,6 +14,20 @@ const containsUserId = (lst, userId) => {
     return lst.find(user => user.userId === userId);
 }
 
+const generateRoomCode = (length) => {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWYZ"; // NO GOOD X WORDS
+    let code = "";
+    for (let i = 0; i < length; i++) {
+        code += letters[Math.floor(Math.random() * letters.length)];
+    }
+    return code;
+}
+
+const EIGHT_HOURS = 8 * 60 * 60 * 1000;
+const getPSTDate = () => {
+    return new Date(Date.now() - EIGHT_HOURS).toISOString().slice(0, 10);
+}
+
 const updateRoomHost = (rooms, roomCode) => {
     if (rooms[roomCode].players.length > 0) {
         rooms[roomCode].roomHostId = rooms[roomCode].players[0].userId;
@@ -128,6 +142,7 @@ module.exports = {
     updateRoomHost,
     isRoomHost,
     leaveAllRooms,
+    generateRoomCode,
     addToTeamList,
     removeFromTeamList,
     containsSocketId,
@@ -135,4 +150,5 @@ module.exports = {
     startDeleteTimer,
     clearDeleteTimer,
     getSimplifiedRooms,
+    getPSTDate,
 };

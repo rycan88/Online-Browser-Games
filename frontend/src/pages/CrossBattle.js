@@ -21,13 +21,16 @@ import { RiInfinityFill, RiTimerLine } from 'react-icons/ri';
 import { refreshPage } from '../utils';
 import { CrossBattleRules } from '../components/cross-battle/CrossBattleRules';
 import { ConfirmOverlay } from '../components/ConfirmOverlay';
-
-// Bug fix: Dont let timeLimit change immediately after changing it
-
+import { CrossBattleDailyResultsOverlay } from '../components/cross-battle/CrossBattleDailyResultsOverlay';
+import Cookies from "js-cookie";
 
 const socket = getSocket();
+const hasPlayedCrossBattleCookieName = "hasPlayedCrossBattle";
+const hasPlayedCrossBattle = () => {
+    return Cookies.get(hasPlayedCrossBattleCookieName) === "true";
+}
 
-export const CrossBattle = ({roomCode}) => {
+export const CrossBattle = ({roomCode, isDaily=false}) => {
     const orientation = useOrientation();
     const isFullscreen = useFullscreen();
     const navigate = useNavigate();
@@ -96,7 +99,7 @@ export const CrossBattle = ({roomCode}) => {
 
     const [dataInitialized, setDataInitialized] = useState(false);
     const [hasSubmitted, setHasSubmitted] = useState(false);
-    const [playersData, setPlayersData] = useState([]);
+    const [playersData, setPlayersData] = useState({});
     const [isSeeded, setIsSeeded] = useState(false);
 
     const [shouldShowResults, setShouldShowResults] = useState(false);
@@ -109,10 +112,18 @@ export const CrossBattle = ({roomCode}) => {
     }
 
     const [timeRemaining, setTimeRemaining] = useState(0);
-    const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180};
+    const timeControls = {"10s": 10, "15s": 15, "30s": 30, "45s": 45, "60s": 60, "90s": 90, "120s": 120, "180s": 180, "300s": 300};
     const timerId = useRef(null);
     const [timeLimit, setTimeLimit] = useState("unlimited");
     const [longestWordsData, setLongestWordsData] = useState([]);
+
+    const shouldShowRules = !hasPlayedCrossBattle() &&  timeLimit === "unlimited";
+    const onRulesClose = () => {
+        if (!hasPlayedCrossBattle()) {
+            Cookies.set(hasPlayedCrossBattleCookieName, "true", { expires: 365});
+        }
+    }
+    console.log(shouldShowRules, hasPlayedCrossBattle(), Cookies.get(hasPlayedCrossBattleCookieName))
 
     useEffect(() => {
         socket.on('receive_player_data', (playerData) => {
@@ -127,6 +138,7 @@ export const CrossBattle = ({roomCode}) => {
 
         socket.on('receive_players_data', (playersData) => {
             setPlayersData(playersData)
+            console.log(playersData)
             setHasSubmitted(playersData[socket.userId].hasSubmitted);
         });
 
@@ -336,17 +348,25 @@ export const CrossBattle = ({roomCode}) => {
 
         >
             <div className={`crossBattlePage entirePage select-none ${isFullscreen ? "h-[100vh]" : "md:h-[calc(100vh-60px)]"}`}>
-                <CrossBattleResultsOverlay
-                    roomCode={roomCode}
-                    playersData={playersData}
-                    onClose={onClose}
-                    isOpen={shouldShowResults}
-                    currentUser={currentUser}
-                    setCurrentUser={setCurrentUser}
-                    letters={letters}
-                    isSeeded={isSeeded}
-                    longestWordsData={longestWordsData}
-                />     
+                { shouldShowResults && 
+                  (isDaily ?
+                    <CrossBattleDailyResultsOverlay
+                        roomCode={roomCode}
+                        isOpen={shouldShowResults}
+                    />                          
+                :
+                    <CrossBattleResultsOverlay
+                        roomCode={roomCode}
+                        playersData={playersData}
+                        isOpen={shouldShowResults}
+                        currentUser={currentUser}
+                        setCurrentUser={setCurrentUser}
+                        letters={letters}
+                        isSeeded={isSeeded}
+                        longestWordsData={longestWordsData}
+                    />     
+                )}
+
 
                 <ConfirmOverlay isOpen={showReturnToRackOverlay} 
                                 onClose={() => {setShowReturnToRackOverlay(false)}}
@@ -367,11 +387,11 @@ export const CrossBattle = ({roomCode}) => {
                     <div className="topTaskBar z-[11]">
                         <CrossBattleSubmitButton 
                             roomCode={roomCode}
-                            hasSubmitted={hasSubmitted} 
-                            setHasSubmitted={setHasSubmitted}
+                            hasSubmitted={hasSubmitted}
+                            isDaily={isDaily}
                         />
                         <CrossBattlePlayerList playersData={playersData} />
-                        <InfoButton buttonType="info" fullScreen={isFullscreen}>
+                        <InfoButton buttonType="info" startOpen={shouldShowRules} extraOnCloseAction={onRulesClose} fullScreen={isFullscreen}>
                             <CrossBattleRules />
                         </InfoButton>
                         <InfoButton buttonType="settings" fullScreen={isFullscreen}>

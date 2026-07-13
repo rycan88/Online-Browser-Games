@@ -41,3 +41,37 @@ export const getPlayerCoords = (playerCount, width, height, centerX, centerY) =>
 
     return positions;
 }
+
+const EIGHT_HOURS = 8 * 60 * 60 * 1000;
+export const getPSTDate = () => {
+    return new Date(Date.now() - EIGHT_HOURS).toISOString().slice(0, 10);
+}
+
+export const getNextResetDiff = () => {
+    const now = new Date();
+
+    // Get current time in Pacific Time
+    const pstNow = new Date(
+      now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
+    );
+
+    // Create reset time (1:00 AM today in PST/PDT)
+    const reset = new Date(pstNow);
+    reset.setHours(1, 0, 0, 0);
+
+    // If already past, move to tomorrow
+    if (pstNow >= reset) {
+      reset.setDate(reset.getDate() + 1);
+    }
+
+    // 🔑 Convert that PST time back into a real UTC timestamp
+
+    const diff = reset.getTime() - Date.now();
+    const totalSeconds = Math.floor(diff / 1000);
+
+    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+
+    return { hours, minutes, seconds};
+}

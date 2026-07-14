@@ -11,7 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LoadingScreen from "../LoadingScreen";
 import { CrossBattleLeaderboardPlayerOverlay } from "./CrossBattleLeaderboardPlayerOverlay";
-import { getNextResetDiff, getPSTDate } from "../../utils";
+import { addDays, getNextResetDiff, getPSTDate } from "../../utils";
+import { MdOutlineCalendarMonth } from "react-icons/md";
 
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
@@ -30,6 +31,10 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
     const [currentUser, setCurrentUser] = useState(socket.userId);
     const [longestWordsData, setLongestWordsData] = useState(null);
     const [dailyTimeRemaining, setDailyTimeRemaining] = useState({hours: "30", minutes: "00", seconds: "00"});
+    const [selectedDate, setSelectedDate] = useState(getPSTDate()) 
+    const todaysDate = getPSTDate();
+    const isTodaySelected = selectedDate === todaysDate;
+    const isYesterdaySelected = selectedDate === addDays(todaysDate, -1);
 
     useEffect(() => {
         socket.on('receive_leaderboard', (leaderboardData) => {
@@ -55,8 +60,8 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
     }, []);
 
     useEffect(() => {
-        socket.emit("get_cross_battle_leaderboard", roomCode); 
-        socket.emit("cross_battle_get_daily_longest_words", roomCode); 
+        socket.emit("get_cross_battle_leaderboard", roomCode, todaysDate); 
+        socket.emit("cross_battle_get_daily_longest_words", roomCode, todaysDate); 
     }, []);
 
     useEffect(() => {
@@ -71,7 +76,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
 
 
     if (leaderboardData && playerData === null && !myResultsRequested) {
-        socket.emit('cross_battle_get_my_results', roomCode);
+        socket.emit('cross_battle_get_my_results', roomCode, todaysDate);
         setMyResultsRequested(true);
     }
 
@@ -136,22 +141,23 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
 
     const tabBarElements = () => {
         const tabs = [];
-
-        tabs.push(
-            <div className={`flex flex-col rounded-t-md  text-center pt-[5px] pb-[8px] px-[40px] backdrop-blur-md
-                                ${currentUser === socket.userId ? "cursor-default bg-[rgb(22,70,110)]" 
-                                                : "hover:cursor-pointer hover:bg-[rgb(22,66,110)] bg-slate-800"}`
-                            }
-                    onClick={() => {
-                        setCurrentUser(playerData.userId);
-                    }}
-            >           
-                <div>  { playerData.nickname } </div>
-                <div className={`${playerData.score > 0 ? "text-green-500" : "text-red-400"}`}> 
-                    { `(${playerData.score})` } 
+        if (isTodaySelected) {
+            tabs.push(
+                <div className={`flex flex-col rounded-t-md  text-center pt-[5px] pb-[8px] px-[40px] backdrop-blur-md
+                                    ${currentUser === socket.userId ? "cursor-default bg-[rgb(22,70,110)]" 
+                                                    : "hover:cursor-pointer hover:bg-[rgb(22,66,110)] bg-slate-800"}`
+                                }
+                        onClick={() => {
+                            setCurrentUser(playerData.userId);
+                        }}
+                >           
+                    <div>  { playerData.nickname } </div>
+                    <div className={`${playerData.score > 0 ? "text-green-500" : "text-red-400"}`}> 
+                        { `(${playerData.score})` } 
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
             
         tabs.push(
             <div className={`flex flex-col justify-center rounded-t-md  text-center px-[20px] backdrop-blur-md
@@ -211,11 +217,44 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
                     isOpen={currentPlayerUserId} 
                     setCurrentPlayerUserId={setCurrentPlayerUserId}
                     userId={currentPlayerUserId}
+                    selectedDate={selectedDate}
                 />
 
 
-                <div className="myContainerCard gap-[0px] text-[2vh] pt-[2vh] pb-[3vh] select-none bg-gradient-to-tr from-slate-950 to-slate-950">
-                    <div className="flex w-full text-left translate-y-[2px] text-sm overflow-x-scroll overflow-y-hidden">
+                <div className="myContainerCard h-[90%] gap-[0px] text-[2vh] pt-[0] pb-[3vh] select-none bg-gradient-to-tr from-slate-950 to-slate-950">
+                    <div className="flex w-full h-[9%] items-center justify-center gap-[2vh] font-mono">
+                        <button className="px-[1vh] h-[3vh] bg-[rgb(22,70,110)] border border-slate-700 rounded-sm"
+                                onClick={() => {
+                                    const newDate = addDays(selectedDate, -1);
+                                    setSelectedDate(newDate);
+                                    socket.emit("get_cross_battle_leaderboard", roomCode, newDate); 
+                                    socket.emit("cross_battle_get_daily_longest_words", roomCode, newDate); 
+                                    if (!["leaderboard", "longestWords"].includes(currentUser)) {
+                                        setCurrentUser("leaderboard");
+                                    }
+                                }}
+                        >
+                            {"<"}
+                        </button>
+                        <button className="flex items-center gap-[0.8vh] justify-center px-[1vh] h-[3vh] min-w-[14ch] bg-[rgb(22,70,110)] border border-slate-500 rounded-sm">
+                            <MdOutlineCalendarMonth />
+                            <div className="text-[1.8vh]">{ isTodaySelected ? "Today" : (isYesterdaySelected ? "Yesterday" : selectedDate) }</div>
+                        </button> 
+                        <button className={`${isTodaySelected && "invisible"} px-[1vh] h-[3vh] bg-[rgb(22,70,110)] border border-slate-700 rounded-sm`}
+                                onClick={() => {
+                                    const newDate = addDays(selectedDate, 1);
+                                    setSelectedDate(newDate);
+                                    socket.emit("get_cross_battle_leaderboard", roomCode, newDate); 
+                                    socket.emit("cross_battle_get_daily_longest_words", roomCode, newDate); 
+                                    if (!["leaderboard", "longestWords"].includes(currentUser)) {
+                                        setCurrentUser("leaderboard");
+                                    }
+                                }}
+                        >
+                            {">"}
+                        </button>
+                    </div>
+                    <div className="flex w-full h-[6vh] text-left translate-y-[2px] text-sm overflow-x-scroll overflow-y-hidden">
                         { tabBarElements() }
                     </div>
                     <div className=" bg-[rgb(22,70,110)] h-full w-full overflow-x-auto scrollbar-hide flex gap-2 text-start backdrop-blur-md z-[10]">
@@ -270,8 +309,8 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
                         { currentUser === "leaderboard" &&
                             <div className="w-full h-full flex flex-col text-slate-200 font-mono">
                                 <div className="flex items-center justify-between w-full text-[1.5vh] py-[4px] px-3 border-b-[1px] border-slate-500">
-                                    <div>{getPSTDate()}</div>
-                                    <div>{`Time Remaining: ${dailyTimeRemaining.hours}:${dailyTimeRemaining.minutes}:${dailyTimeRemaining.seconds}`}</div>
+                                    <div>{selectedDate}</div>
+                                    <div className={`${!isTodaySelected && "invisible"}`}>{`Time Remaining: ${dailyTimeRemaining.hours}:${dailyTimeRemaining.minutes}:${dailyTimeRemaining.seconds}`}</div>
                                 </div>
                                 <div className="grid grid-cols-[40px_1fr_50px] px-3 py-2 text-xs text-slate-400 border-b border-slate-600">
                                     <div>#</div>

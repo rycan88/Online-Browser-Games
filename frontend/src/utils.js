@@ -47,6 +47,12 @@ export const getPSTDate = () => {
     return new Date(Date.now() - EIGHT_HOURS).toISOString().slice(0, 10);
 }
 
+export const addDays = (dateString, days) => {
+    const date = new Date(dateString);
+    date.setDate(date.getDate() + days);
+    return date.toISOString().slice(0, 10);
+}
+
 export const getNextResetDiff = () => {
     const now = new Date();
 

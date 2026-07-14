@@ -119,7 +119,7 @@ io.on("connection", (socket) => {
             const dateString = getPSTDate();
             roomCode = socket.userId + dateString; 
             try {
-                const myResults = await getPlayerResults(socket.userId);
+                const myResults = await getPlayerResults(socket.userId, dateString);
                 socket.emit("has_played_daily", myResults !== null);
             } catch (err) {
                 console.error("Error fetching results:", err);

@@ -34,9 +34,8 @@ function mulberry32(a) {
     }
 }
 
-function getDailyLetters(length) {
-    const dateString = getPSTDate();
-    const seed = Number(dateString.replace(/-/g, ""));
+function getDailyLetters(length, selectedDate=getPSTDate()) {
+    const seed = Number(selectedDate.replace(/-/g, ""));
     const rand = mulberry32(seed);
 
     return randomCombo(length, rand);

@@ -9,7 +9,7 @@ import LoadingScreen from "../LoadingScreen";
 const crossBattleScoring = {2: 0, 3: 3, 4: 7, 5: 12, 6: 18, 7: 25, 8: 33, 9: 42, 10: 52, 11: 63, 12: 75, 13: 88, 14: 102, 15: 117};
 
 const socket = getSocket();
-export const CrossBattleLeaderboardPlayerOverlay = ({roomCode, isOpen, setCurrentPlayerUserId, userId}) => {
+export const CrossBattleLeaderboardPlayerOverlay = ({roomCode, isOpen, setCurrentPlayerUserId, userId, selectedDate}) => {
     const orientation = useOrientation();
     const navigate = useNavigate();
     const isFullscreen = useFullscreen();
@@ -28,7 +28,7 @@ export const CrossBattleLeaderboardPlayerOverlay = ({roomCode, isOpen, setCurren
     }, []);
 
     useEffect(() => {
-        socket.emit("cross_battle_get_player_results", roomCode, userId);
+        socket.emit("cross_battle_get_player_results", roomCode, userId, selectedDate);
     }, [isOpen]);
 
     if (playerData === null) { 

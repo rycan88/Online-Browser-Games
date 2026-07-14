@@ -146,13 +146,6 @@ export const CrossBattleSettings = ({roomCode, letters, closeOverlay, shouldShow
                                      disabled:bg-sky-900/40 disabled:text-slate-500 disabled:border-sky-800 disabled:cursor-not-allowed disabled:opacity-70 disabled:focus:ring-0 disabled:focus:border-sky-700"
                             disabled={!isRoomHost}
                         />
-
-                        <button className="gradientButton py-[6px] px-[12px] rounded-lg"
-                                onClick={handlePasteSeed}
-                                disabled={!isRoomHost}
-                        >
-                            Paste Seed
-                        </button>
                     </div>
                 }
                 <SectionHeading text="User Settings" />

@@ -26,14 +26,12 @@ async function saveScore(userId, nickname, score, letters, validWords, invalidWo
 };
 
 
-async function getTopScores() {
+async function getTopScores(selectedDate) {
   const db = await connectDB();
-
-  const today = getPSTDate();
 
   const topScores = await db
     .collection(CROSS_BATTLE_LEADERBOARD)
-    .find({ datePST: today})
+    .find({ datePST: selectedDate})
     .sort({ score: -1 })
     .limit(100)
     .toArray();
@@ -41,14 +39,12 @@ async function getTopScores() {
   return topScores;
 };
 
-async function getPlayerResults(userId) {
+async function getPlayerResults(userId, selectedDate) {
   const db = await connectDB();
-
-  const today = getPSTDate();
   
   const myResults = await db
     .collection(CROSS_BATTLE_LEADERBOARD)
-    .findOne({ datePST: today, userId: userId})
+    .findOne({ datePST: selectedDate, userId: userId})
 
   return myResults;
 }

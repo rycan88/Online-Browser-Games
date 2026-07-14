@@ -1,5 +1,5 @@
 const { saveScore, getTopScores, getPlayerResults } = require("../routes/crossBattleLeaderboardRoutes");
-const { updateRoomHost } = require("../serverUtils");
+const { updateRoomHost, getPSTDate } = require("../serverUtils");
 const { isValidWord, getLongestWords } = require("../utils/dictionaryUtils");
 const { scoreGrid, crossBattleConfigureGameData, crossBattleConfigurePlayersData, crossBattleSetTimer, crossBattleEndRound, getStartingTileToSpace, submitToDatabase, getDailyLetters } = require("./crossBattleHelper");
 
@@ -114,43 +114,43 @@ const crossBattleEvents = (io, socket, rooms) => {
         //submitToDatabase(rooms, roomCode, socket.userId, socket.nickname);
     });
 
-    socket.on("get_cross_battle_leaderboard", async (roomCode) => {
+    socket.on("get_cross_battle_leaderboard", async (roomCode, selectedDate) => {
         if (!rooms[roomCode]) { return; }
         
         try {
-            const leaderboard = await getTopScores();
+            const leaderboard = await getTopScores(selectedDate);
             socket.emit("receive_leaderboard", leaderboard);
         } catch (err) {
             console.error("Error fetching leaderboard:", err);
         }
     });
 
-    socket.on("cross_battle_get_my_results", async (roomCode) => {
+    socket.on("cross_battle_get_my_results", async (roomCode, selectedDate) => {
         if (!rooms[roomCode]) { return; }
         
         try {
-            const myResults = await getPlayerResults(socket.userId);
+            const myResults = await getPlayerResults(socket.userId, selectedDate);
             socket.emit("receive_my_results", myResults);
         } catch (err) {
             console.error("Error fetching results:", err);
         }
     })
 
-    socket.on("cross_battle_get_player_results", async (roomCode, userId) => {
+    socket.on("cross_battle_get_player_results", async (roomCode, userId, selectedDate) => {
         if (!rooms[roomCode]) { return; }
         
         try {
-            const playerResults = await getPlayerResults(userId);
+            const playerResults = await getPlayerResults(userId, selectedDate);
             socket.emit("receive_player_results", playerResults);
         } catch (err) {
             console.error("Error fetching results:", err);
         }
     })
 
-    socket.on("cross_battle_get_daily_longest_words", (roomCode) => {
+    socket.on("cross_battle_get_daily_longest_words", (roomCode, selectedDate) => {
         if (!rooms[roomCode]) { return; }
         
-        const letters = getDailyLetters(22);
+        const letters = getDailyLetters(22, selectedDate);
         const longestWords = getLongestWords(letters);
 
         socket.emit("receive_daily_longest_words", longestWords);
@@ -158,7 +158,8 @@ const crossBattleEvents = (io, socket, rooms) => {
 
     socket.on("has_cross_battle_daily_been_played", async (roomCode) => {
         try {
-            const myResults = await getPlayerResults(socket.userId);
+            const today = getPSTDate();
+            const myResults = await getPlayerResults(socket.userId, today);
             socket.emit("has_played_daily", myResults !== null);
         } catch (err) {
             console.error("Error fetching results:", err);

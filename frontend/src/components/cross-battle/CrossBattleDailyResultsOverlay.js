@@ -143,7 +143,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
         const tabs = [];
         if (isTodaySelected) {
             tabs.push(
-                <div className={`flex flex-col rounded-t-md  text-center pt-[5px] pb-[8px] px-[40px] backdrop-blur-md
+                <div className={`flex flex-col rounded-t-md text-center items-center justify-center px-[40px] backdrop-blur-md
                                     ${currentUser === socket.userId ? "cursor-default bg-[rgb(22,70,110)]" 
                                                     : "hover:cursor-pointer hover:bg-[rgb(22,66,110)] bg-slate-800"}`
                                 }
@@ -254,7 +254,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
                             {">"}
                         </button>
                     </div>
-                    <div className="flex w-full h-[6vh] text-left translate-y-[2px] text-sm overflow-x-scroll overflow-y-hidden">
+                    <div className="flex w-full h-[6vh] text-left translate-y-[0px] text-[1.5vh] overflow-x-scroll overflow-y-hidden">
                         { tabBarElements() }
                     </div>
                     <div className=" bg-[rgb(22,70,110)] h-full w-full overflow-x-auto scrollbar-hide flex gap-2 text-start backdrop-blur-md z-[10]">

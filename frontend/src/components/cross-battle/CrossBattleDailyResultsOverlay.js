@@ -143,7 +143,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
         const tabs = [];
         if (isTodaySelected) {
             tabs.push(
-                <div className={`flex flex-col rounded-t-md text-center items-center justify-center px-[40px] backdrop-blur-md
+                <div className={`flex flex-col rounded-t-md text-center items-center justify-center px-[20px] backdrop-blur-md
                                     ${currentUser === socket.userId ? "cursor-default bg-[rgb(22,70,110)]" 
                                                     : "hover:cursor-pointer hover:bg-[rgb(22,66,110)] bg-slate-800"}`
                                 }

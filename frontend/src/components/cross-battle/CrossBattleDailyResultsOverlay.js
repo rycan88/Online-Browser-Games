@@ -8,7 +8,7 @@ import { CrossBattleSettings } from "./CrossBattleSettings";
 import { FullscreenButton } from "../FullscreenButton";
 import { CrossBattleRules } from "./CrossBattleRules";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LoadingScreen from "../LoadingScreen";
 import { CrossBattleLeaderboardPlayerOverlay } from "./CrossBattleLeaderboardPlayerOverlay";
 import { addDays, getNextResetDiff, getPSTDate } from "../../utils";
@@ -29,7 +29,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
 
     const [currentPlayerUserId, setCurrentPlayerUserId] = useState(null);
     const [currentUser, setCurrentUser] = useState(socket.userId);
-    const [longestWordsData, setLongestWordsData] = useState(null);
+    const [longestWords, setLongestWords] = useState(null);
     const [dailyTimeRemaining, setDailyTimeRemaining] = useState({hours: "30", minutes: "00", seconds: "00"});
     const [selectedDate, setSelectedDate] = useState(getPSTDate()) 
     const todaysDate = getPSTDate();
@@ -47,9 +47,9 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
             setPlayerData(playerData);
         })
 
-        socket.on('receive_daily_longest_words', (longestWordsData) => {
-            if (!longestWordsData) { return; }
-            setLongestWordsData(longestWordsData);
+        socket.on('receive_daily_longest_words', (longestWords) => {
+            if (!longestWords) { return; }
+            setLongestWords(longestWords);
         })
 
         return () => {
@@ -73,6 +73,20 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
         return () => clearInterval(interval);
     }, [])
 
+    const longestWordsData = useMemo(() => { // Also shows if anyone found the word
+        if (!leaderboardData || !longestWords) {
+            return [];
+        }
+
+        const foundWords = new Set(
+            leaderboardData.flatMap(player => player.validWords)
+        );
+
+        return longestWords.map((word) => ({
+            word,
+            found: foundWords.has(word)
+        }));
+    }, [leaderboardData, longestWords])
 
 
     if (leaderboardData && playerData === null && !myResultsRequested) {
@@ -81,7 +95,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
     }
 
     if (!currentUser || leaderboardData === null || playerData === null) { 
-        return <LoadingScreen />
+        return <></>
     }
 
     const validWordsText = [];
@@ -172,7 +186,7 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
             </div>            
         )
 
-        if (longestWordsData != null && longestWordsData.length > 0) { 
+        if (longestWords != null && longestWords.length > 0) { 
             tabs.push(
                 <div className={`flex flex-col justify-center rounded-t-md  text-center px-[20px] backdrop-blur-md
                                     ${currentUser === "longestWords" ? "cursor-default bg-[rgb(22,70,110)]" 
@@ -353,17 +367,17 @@ export const CrossBattleDailyResultsOverlay = ({roomCode, isOpen}) => {
 
                                 {/* List */}
                                 <div className="flex-1 overflow-y-auto">
-                                    {longestWordsData.map((word, i) => (
+                                    {longestWordsData.map((data, i) => (
                                         <div
-                                            key={word}
-                                            className={`grid grid-cols-[40px_1fr_50px] px-3 py-2 rounded transition ${playerData.validWords.includes(word) ? "bg-amber-400/80" : "hover:bg-sky-800/40"}`}
+                                            key={data.word}
+                                            className={`grid grid-cols-[40px_1fr_50px] px-3 py-2 rounded transition ${playerData.validWords.includes(data.word) ? "bg-amber-400/80" : (data.found ? "bg-green-300/30" : "hover:bg-sky-800/40")}`}
                                         >
-                                            <div className={`${playerData.validWords.includes(word) && "text-slate-200"}`}>{i + 1}</div>
+                                            <div className={`${playerData.validWords.includes(data.word) && "text-slate-200"}`}>{i + 1}</div>
 
-                                            <div className="truncate">{word}</div>
+                                            <div className="truncate">{data.word}</div>
 
-                                            <div className={`text-right ${playerData.validWords.includes(word) && "text-slate-200"}`}>
-                                                {word.length}
+                                            <div className={`text-right ${playerData.validWords.includes(data.word) && "text-slate-200"}`}>
+                                                {data.word.length}
                                             </div>
                                         </div>
                                     ))}

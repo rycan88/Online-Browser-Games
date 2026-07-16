@@ -18,7 +18,6 @@ import { ErrorPage } from './pages/ErrorPage';
 import { Profile } from './pages/Profile';
 import { refreshPage } from './utils';
 import { Games } from './pages/Games';
-import { enterFullScreen } from './utils';
 import { ThirtyOne } from './pages/ThirtyOne';
 import LoadingScreen from './components/LoadingScreen';
 import { RPSMelee } from './pages/RPSMelee';
@@ -26,6 +25,7 @@ import { Hanabi } from './pages/Hanabi';
 import { CrossBattle } from './pages/CrossBattle';
 import { LobbyRedirect } from './components/lobby/LobbyRedirect';
 import { CrossBattleDaily } from './components/cross-battle/CrossBattleDaily';
+import { UsernamePrompt } from './components/UsernamePrompt';
 
 export const AppContext = createContext();
 const socket = getSocket();
@@ -149,10 +149,11 @@ function App() {
 
   return (
     <div className="App select-none">
-      <AppContext.Provider value={{ rooms, setRooms }}>
+      <AppContext.Provider value={{ rooms, setRooms }}> 
         <QueryClientProvider client={client}>
           <Router>
             <Navbar />
+            <UsernamePrompt />
             <Routes>
               <Route path="/home" element={<Home />} />
               <Route path="/" element={<Games />} />

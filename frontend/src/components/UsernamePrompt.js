@@ -86,5 +86,5 @@ export const UsernamePrompt = () => {
 }
 
 export const hasSetUsername = () => {
-    return Cookies.get(hasSetUsernameCookieName) === "true" || socket.nickname.slice(0, 5) !== "guest";
+    return Cookies.get(hasSetUsernameCookieName) === "true" || (socket.nickname.slice(0, 5) !== "guest" && socket.nickname.slice(0, 4) !== "user");
 }

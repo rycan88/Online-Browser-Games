@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { DateTime } from "luxon";
 
 export const generateNickname = () => {
     return "guest_" + Math.floor(10000 + Math.random() * 90000);
@@ -54,25 +55,25 @@ export const addDays = (dateString, days) => {
 }
 
 export const getNextResetDiff = () => {
-    const now = new Date();
-
     // Get current time in Pacific Time
-    const pstNow = new Date(
-      now.toLocaleString("en-US", { timeZone: "America/Los_Angeles" })
-    );
+    const pstNow = DateTime.now().setZone("America/Los_Angeles");
 
     // Create reset time (1:00 AM today in PST/PDT)
-    const reset = new Date(pstNow);
-    reset.setHours(1, 0, 0, 0);
+    let reset = pstNow.set({
+      hour: 1,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
 
     // If already past, move to tomorrow
     if (pstNow >= reset) {
-      reset.setDate(reset.getDate() + 1);
+      reset = reset.plus({days: 1});
     }
 
     // 🔑 Convert that PST time back into a real UTC timestamp
-
-    const diff = reset.getTime() - Date.now();
+    
+    const diff = reset.diff(pstNow).toMillis();
     const totalSeconds = Math.floor(diff / 1000);
 
     const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
